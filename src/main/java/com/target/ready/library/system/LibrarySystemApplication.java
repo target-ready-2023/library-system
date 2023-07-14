@@ -1,13 +1,13 @@
-package com.targetReady.BookMaster;
+package com.target.ready.library.system;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BookMasterApplication {
+public class LibrarySystemApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BookMasterApplication.class, args);
+		SpringApplication.run(LibrarySystemApplication.class, args);
 	}
 
 }
