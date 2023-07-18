@@ -10,4 +10,6 @@ public class Book {
     private String bookName;
     private String bookDescription;
     private int publicationYear;
+    private String categoryName;
+    private String authorName;
 }

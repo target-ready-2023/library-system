@@ -2,9 +2,7 @@ package com.target.ready.library.system.Controller;
 
 import com.target.ready.library.system.Entity.Book;
 import com.target.ready.library.system.Service.LibrarySystemService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,4 +17,5 @@ public class LibraryController {
     public List<Book> getAllBooks(){
         return librarySystemService.getAllBooks();
     }
+
 }
