@@ -77,11 +77,17 @@ public class LibrarySystemService {
                 .getBody();;
         return book_list_cat;
     }
-    public void deleteBook(int bookId){
-        webclient.delete().uri(
-                "http://localhost:8080/library_service_api/v1/book/"+bookId).accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Void.class)
-                .block();
+    public String deleteBook(int bookId){
+        try {
+            String result = webclient.delete().uri(
+                            "http://localhost:8080/library_service_api/v1/book/" + bookId).accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            return result;
+        }
+        catch (Exception e){
+            throw new RuntimeException("Failed to delete book", e);
+        }
     }
 }

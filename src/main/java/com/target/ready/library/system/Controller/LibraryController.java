@@ -35,8 +35,8 @@ public class LibraryController {
     }
 
     @DeleteMapping("book/{bookId}")
-    public void deleteBook(@PathVariable("bookId") int bookId) {
-        librarySystemService.deleteBook(bookId);
+    public String deleteBook(@PathVariable("bookId") int bookId) {
+        return librarySystemService.deleteBook(bookId);
     }
 
 }
