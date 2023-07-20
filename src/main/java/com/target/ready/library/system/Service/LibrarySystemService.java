@@ -77,6 +77,20 @@ public class LibrarySystemService {
                 .getBody();;
         return book_list_cat;
     }
+    public Book updateBookDetails(int bookId, Book book) {
+        try {
+            WebClient.RequestBodySpec request = webclient.put()
+                    .uri("http://localhost:8080/library_service_api/v1/bookUpdaterService/" + bookId)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.APPLICATION_JSON);
+            String bookJson = objectMapper.writeValueAsString(book);
+            WebClient.ResponseSpec response = request.bodyValue(bookJson).retrieve();
+            Book updatedBook = response.bodyToMono(Book.class).block();
+            return updatedBook;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update book details", e);
+        }
+    }
 }
 
 
