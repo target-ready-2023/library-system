@@ -77,9 +77,9 @@ public class LibrarySystemService {
                 .getBody();;
         return book_list_cat;
     }
-    public void deleteBook(int id){
+    public void deleteBook(int bookId){
         webclient.delete().uri(
-                "http://localhost:8080/library_service_api/v1/deleteBook/"+id).accept(MediaType.APPLICATION_JSON)
+                "http://localhost:8080/library_service_api/v1/book/"+bookId).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
