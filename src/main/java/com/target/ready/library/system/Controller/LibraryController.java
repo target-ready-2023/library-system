@@ -34,6 +34,9 @@ public class LibraryController {
         return librarySystemService.findBookByCategoryName(categoryName);
     }
 
-
+    @DeleteMapping("book/{bookId}")
+    public String deleteBook(@PathVariable("bookId") int bookId) {
+        return librarySystemService.deleteBook(bookId);
+    }
 
 }
