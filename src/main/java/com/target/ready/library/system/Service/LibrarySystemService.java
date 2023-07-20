@@ -27,7 +27,7 @@ public class LibrarySystemService {
         this.webclient = webClient;
     }
     public List<Book> getAllBooks(){
-        List<Book> book_list= webclient.get().uri("http://localhost:8080/library_service_api/v1/getAllBooks").accept(MediaType.APPLICATION_JSON)
+        List<Book> book_list= webclient.get().uri("http://localhost:8080/library_service_api/v1/allBooks").accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntityList(Book.class)
                 .block()
@@ -61,6 +61,13 @@ public class LibrarySystemService {
         }
         }
 
+    public Book findByBookId(int bookId) {
+        Book book=webclient.get().uri("http://localhost:8080/library_service_api/v1/book/"+bookId).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Book.class)
+                .block();
+        return book;
     }
+}
 
 

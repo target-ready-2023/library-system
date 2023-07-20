@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("LibrarySystem/v1")
+@RequestMapping("library_system/v1")
 public class LibraryController {
     private final LibrarySystemService librarySystemService;
     LibraryController(LibrarySystemService librarySystemService){
@@ -23,6 +23,11 @@ public class LibraryController {
     public String addBook(@RequestBody Book book) throws JsonProcessingException {
         String categoryName=book.getCategoryName();
         return librarySystemService.addBook(book,categoryName);
+    }
+
+    @GetMapping("book/{bookId}")
+    public Book findByBookId(@PathVariable int bookId){
+        return librarySystemService.findByBookId(bookId);
     }
 
 
