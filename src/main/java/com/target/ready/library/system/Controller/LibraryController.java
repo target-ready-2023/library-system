@@ -34,7 +34,7 @@ public class LibraryController {
         return librarySystemService.findBookByCategoryName(categoryName);
     }
 
-    @PutMapping("bookUpdater/{id}")
+    @PutMapping("book/update/{id}")
     public Book updateBookDetails(@PathVariable("id") int id,@RequestBody Book book){
         return librarySystemService.updateBookDetails(id, book);
     }
