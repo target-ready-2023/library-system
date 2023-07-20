@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("LibrarySystem/v1")
 public class LibraryController {
-    private LibrarySystemService librarySystemService = null;
+    private final LibrarySystemService librarySystemService;
     LibraryController(LibrarySystemService librarySystemService){
         this.librarySystemService=librarySystemService;
     }
