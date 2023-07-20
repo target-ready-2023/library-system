@@ -68,6 +68,15 @@ public class LibrarySystemService {
                 .block();
         return book;
     }
+
+    public List<Book> findBookByCategoryName(String categoryName) {
+        List<Book> book_list_cat= webclient.get().uri("http://localhost:8080/library_service_api/v1/book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntityList(Book.class)
+                .block()
+                .getBody();;
+        return book_list_cat;
+    }
 }
 
 
