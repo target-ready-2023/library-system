@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("LibrarySystem/v2")
+@RequestMapping("library_system/v2")
 public class CategoryController {
 
     @Autowired
