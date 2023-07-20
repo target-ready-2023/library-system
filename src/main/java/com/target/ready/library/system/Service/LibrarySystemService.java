@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public class LibrarySystemService {
-    private static WebClient webclient = null;
+    private final WebClient webclient;
     public LibrarySystemService(WebClient webClient) {
         this.webclient = webClient;
     }
@@ -23,13 +23,11 @@ public class LibrarySystemService {
         return book_list;
     }
 
-    public static void deleteBook(int id){
+    public void deleteBook(int id){
         webclient.delete().uri(
                 "http://localhost:8080/library_service_api/v1/deleteBook/"+id).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
     }
-
-
 }
