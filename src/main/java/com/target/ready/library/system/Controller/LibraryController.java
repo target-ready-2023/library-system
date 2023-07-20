@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("LibrarySystem/v1")
 public class LibraryController {
-    private final LibrarySystemService librarySystemService;
+    private LibrarySystemService librarySystemService = null;
     LibraryController(LibrarySystemService librarySystemService){
         this.librarySystemService=librarySystemService;
     }
@@ -19,4 +19,9 @@ public class LibraryController {
     public List<Book> getAllBooks(){
         return librarySystemService.getAllBooks();
     }
+    @DeleteMapping("deleteBook/{id}")
+    public void deleteBook(@PathVariable("id") int id) {
+        LibrarySystemService.deleteBook(id);
+    }
+
 }
