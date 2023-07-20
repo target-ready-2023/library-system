@@ -29,6 +29,10 @@ public class LibraryController {
     public Book findByBookId(@PathVariable int bookId){
         return librarySystemService.findByBookId(bookId);
     }
+    @GetMapping("book/category/{categoryName}")
+    public List<Book> findBookByCategoryName(@PathVariable String categoryName){
+        return librarySystemService.findBookByCategoryName(categoryName);
+    }
 
 
 
