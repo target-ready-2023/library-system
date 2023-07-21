@@ -1,6 +1,7 @@
 package com.target.ready.library.system.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target.ready.library.system.Entity.BookCategory;
 import com.target.ready.library.system.Entity.Category;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,22 @@ public class CategoryService {
                 .bodyToMono(Category.class)
                 .block();
         return b;
+    }
+
+    public String addBookCategory(BookCategory bookCategory){
+        try{
+            String b = webclient.post().uri("http://localhost:8080/library_service_api/v2/inventory/book/category")
+
+                    .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(objectMapper.writeValueAsString(bookCategory))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            return b;
+
+        }
+        catch(Exception e){
+            throw new RuntimeException("Failed to add", e);
+        }
     }
 }

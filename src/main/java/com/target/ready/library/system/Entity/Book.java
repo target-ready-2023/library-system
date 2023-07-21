@@ -48,13 +48,6 @@ public class Book {
         this.publicationYear = publicationYear;
     }
 
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
 
     public String getAuthorName() {
         return authorName;
@@ -66,8 +59,7 @@ public class Book {
 
     @JsonProperty
     private int publicationYear;
-    @JsonProperty
-    private String categoryName;
+
     @JsonProperty
     private String authorName;
 }
