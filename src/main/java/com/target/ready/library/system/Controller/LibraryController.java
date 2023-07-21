@@ -2,7 +2,11 @@ package com.target.ready.library.system.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.Entity.Book;
+import com.target.ready.library.system.Exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.Service.LibrarySystemService;
+import org.springframework.expression.spel.ast.NullLiteral;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +20,7 @@ public class LibraryController {
     }
     @GetMapping("getBooks")
     public List<Book> getAllBooks(){
+
         return librarySystemService.getAllBooks();
     }
 
@@ -36,7 +41,21 @@ public class LibraryController {
 
     @DeleteMapping("book/{bookId}")
     public String deleteBook(@PathVariable("bookId") int bookId) {
+
         return librarySystemService.deleteBook(bookId);
     }
 
-}
+    @PutMapping("inventory/bookUpdate/{id}")
+    public ResponseEntity<?> updateBookDetails(@PathVariable("id") int id, @RequestBody Book book) {
+        Book existingBook = librarySystemService.findByBookId(id);
+        if (existingBook == null) {
+            return new ResponseEntity<>("Book with id: " + id + ", does not exist in database", HttpStatus.NOT_FOUND);
+        } else {
+            Book updatedBook = librarySystemService.updateBookDetails(id, book);
+            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+        }
+    }
+
+
+
+    }
