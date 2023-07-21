@@ -14,7 +14,7 @@ public class CategoryService {
     public CategoryService(WebClient webClient) {
         this.webclient = webClient;
     }
-    public String addCategory(Category category){
+    public String addCategory(Category category) {
         try{
             String b = webclient.post().uri("http://localhost:8080/library_service_api/v2/inventory/category")
 
