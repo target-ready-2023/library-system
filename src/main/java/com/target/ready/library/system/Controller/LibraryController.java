@@ -2,7 +2,11 @@ package com.target.ready.library.system.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.Entity.Book;
+
 import com.target.ready.library.system.Exceptions.ResourceNotFoundException;
+
+import com.target.ready.library.system.Entity.BookDto;
+
 import com.target.ready.library.system.Service.LibrarySystemService;
 import org.springframework.expression.spel.ast.NullLiteral;
 import org.springframework.http.HttpStatus;
@@ -25,9 +29,9 @@ public class LibraryController {
     }
 
     @PostMapping("inventory/books")
-    public String addBook(@RequestBody Book book) throws JsonProcessingException {
-        String categoryName=book.getCategoryName();
-        return librarySystemService.addBook(book,categoryName);
+    public String addBook(@RequestBody BookDto bookDto) throws JsonProcessingException {
+
+        return librarySystemService.addBook(bookDto);
     }
 
     @GetMapping("book/{bookId}")

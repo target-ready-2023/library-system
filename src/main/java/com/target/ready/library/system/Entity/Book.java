@@ -16,10 +16,10 @@ public class Book {
     private String bookName;
     @JsonProperty
     private String bookDescription;
+
     @JsonProperty
     private int publicationYear;
-    @JsonProperty
-    private String categoryName;
+
     @JsonProperty
     private String authorName;
 }
