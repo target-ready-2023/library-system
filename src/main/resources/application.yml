@@ -1,2 +1,7 @@
 server:
   port: 8081
+
+library:
+  baseUrl=http://localhost:8080/library/v1/
+  baseUrl2=http://localhost:8080/library/v2/
+

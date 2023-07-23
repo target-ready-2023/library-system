@@ -1,6 +1,5 @@
 package com.target.ready.library.system.Entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
-    private int categoryId;
-    @JsonProperty
+public class BookCategory {
+    private int id;
+    private int bookId;
     private String categoryName;
+
 }
