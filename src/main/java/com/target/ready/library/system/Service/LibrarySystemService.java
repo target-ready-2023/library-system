@@ -21,13 +21,14 @@ public class LibrarySystemService {
 
     @Autowired
     CategoryService categoryService;
-    ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper objectMapper;
     private final WebClient webclient;
     public LibrarySystemService(WebClient webClient) {
         this.webclient = webClient;
     }
     public List<Book> getAllBooks(){
-        List<Book> book_list= webclient.get().uri("http://localhost:8080/library_service_api/v1/allBooks").accept(MediaType.APPLICATION_JSON)
+        List<Book> book_list= webclient.get().uri("http://localhost:8080/library/v1/books").accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntityList(Book.class)
                 .block()
@@ -39,7 +40,7 @@ public class LibrarySystemService {
     public String addBook(Book book,String categoryName)  {
         try {
 
-            String b = webclient.post().uri("http://localhost:8080/library_service_api/v1/inventory/books")
+            String result = webclient.post().uri("http://localhost:8080/library/v1/inventory/books")
 
                     .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(book))
@@ -54,7 +55,7 @@ public class LibrarySystemService {
                 category1.setCategoryName(categoryName);
                 categoryService.addCategory(category1);
             }
-            return b;
+            return result;
         }
         catch (Exception e){
             throw new RuntimeException("Failed to add book and category.", e);
@@ -62,7 +63,7 @@ public class LibrarySystemService {
         }
 
     public Book findByBookId(int bookId) {
-        Book book=webclient.get().uri("http://localhost:8080/library_service_api/v1/book/"+bookId).accept(MediaType.APPLICATION_JSON)
+        Book book=webclient.get().uri("http://localhost:8080/library/v1/book/"+bookId).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Book.class)
                 .block();
@@ -70,17 +71,17 @@ public class LibrarySystemService {
     }
 
     public List<Book> findBookByCategoryName(String categoryName) {
-        List<Book> book_list_cat= webclient.get().uri("http://localhost:8080/library_service_api/v1/book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
+        List<Book> bookList= webclient.get().uri("http://localhost:8080/library/v1/book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntityList(Book.class)
                 .block()
                 .getBody();;
-        return book_list_cat;
+        return bookList;
     }
     public String deleteBook(int bookId){
         try {
             String result = webclient.delete().uri(
-                            "http://localhost:8080/library_service_api/v1/book/" + bookId).accept(MediaType.APPLICATION_JSON)
+                            "http://localhost:8080/library/v1/book/" + bookId).accept(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
@@ -94,7 +95,7 @@ public class LibrarySystemService {
     public Book updateBookDetails(int bookId, Book book) {
         try {
             WebClient.RequestBodySpec request = webclient.put()
-                    .uri("http://localhost:8080/library_service_api/v1/bookUpdaterService/" + bookId)
+                    .uri("http://localhost:8080/library/v1/inventory/book_update/" + bookId)
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON);
             String bookJson = objectMapper.writeValueAsString(book);

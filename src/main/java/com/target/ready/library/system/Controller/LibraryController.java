@@ -18,7 +18,7 @@ public class LibraryController {
     LibraryController(LibrarySystemService librarySystemService){
         this.librarySystemService=librarySystemService;
     }
-    @GetMapping("getBooks")
+    @GetMapping("books")
     public List<Book> getAllBooks(){
 
         return librarySystemService.getAllBooks();
@@ -45,7 +45,7 @@ public class LibraryController {
         return librarySystemService.deleteBook(bookId);
     }
 
-    @PutMapping("inventory/bookUpdate/{id}")
+    @PutMapping("inventory/book_update/{id}")
     public ResponseEntity<?> updateBookDetails(@PathVariable("id") int id, @RequestBody Book book) {
         Book existingBook = librarySystemService.findByBookId(id);
         if (existingBook == null) {
