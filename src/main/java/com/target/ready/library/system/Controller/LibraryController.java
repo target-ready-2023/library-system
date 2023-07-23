@@ -13,19 +13,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("library_system/v1")
 public class LibraryController {
     private final LibrarySystemService librarySystemService;
-    LibraryController(LibrarySystemService librarySystemService){
-        this.librarySystemService=librarySystemService;
-    }
-    @GetMapping("books")
-    public List<Book> getAllBooks(){
 
-        return librarySystemService.getAllBooks();
+    LibraryController(LibrarySystemService librarySystemService) {
+        this.librarySystemService = librarySystemService;
+    }
+
+    @GetMapping("books_directory")
+    public List<Book> getAllBooks(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber) {
+        List<Book> books;
+        int pageSize = 5;
+        try {
+            if (pageNumber < 0) {
+                return Collections.emptyList();
+            }
+            books = librarySystemService.getAllBooks(pageNumber, pageSize);
+            return books;
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 
     @PostMapping("inventory/books")
@@ -35,7 +47,7 @@ public class LibraryController {
     }
 
     @GetMapping("book/{bookId}")
-    public Book findByBookId(@PathVariable int bookId){
+    public Book findByBookId(@PathVariable int bookId) {
         return librarySystemService.findByBookId(bookId);
     }
 //    @GetMapping("book/category/{categoryName}")
@@ -61,5 +73,4 @@ public class LibraryController {
     }
 
 
-
-    }
+}
