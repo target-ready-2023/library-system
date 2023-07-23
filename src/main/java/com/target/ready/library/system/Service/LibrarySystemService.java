@@ -30,30 +30,39 @@ public class LibrarySystemService {
 
     ObjectMapper objectMapper;
     private final WebClient webclient;
+
     public LibrarySystemService(WebClient webClient) {
         this.webclient = webClient;
     }
-    public List<Book> getAllBooks(){
-        List<Book> book_list= webclient.get().uri(libraryBaseUrl+"books").accept(MediaType.APPLICATION_JSON)
+
+    public List<Book> getAllBooks(int pageNumber, int pageSize) {
+        List<Book> bookList = WebClient.builder()
+                .baseUrl(libraryBaseUrl)
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/books_directory/{pageNumber}/{pageSize}")
+                        .build(pageNumber, pageSize))
+                .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntityList(Book.class)
                 .block()
-                .getBody();;
-        return book_list;
+                .getBody();
+        return bookList;
     }
 
     @Transactional
-    public String addBook(BookDto bookDto)  {
+    public String addBook(BookDto bookDto) {
         try {
 
-            String result = webclient.post().uri(libraryBaseUrl+"inventory/books")
+            String result = webclient.post().uri(libraryBaseUrl + "inventory/books")
 
                     .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(bookDto.getBook()))
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
-            int bookId=Integer.valueOf(result);
+            int bookId = Integer.valueOf(result);
             List<String> categoryNames = bookDto.getCategoryNames();
             for (String eachCategoryName : categoryNames) {
 
@@ -64,7 +73,7 @@ public class LibrarySystemService {
                     categoryService.addCategory(category1);
                 }
 
-                BookCategory bookCategory=new BookCategory();
+                BookCategory bookCategory = new BookCategory();
                 bookCategory.setBookId(bookId);
                 bookCategory.setCategoryName(eachCategoryName);
                 categoryService.addBookCategory(bookCategory);
@@ -73,22 +82,21 @@ public class LibrarySystemService {
 
             return "Book Added Successfully";
 
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Failed to add book and category.", e);
         }
     }
 
 
     public Book findByBookId(int bookId) {
-        Book book=webclient.get().uri(libraryBaseUrl+"book/"+bookId).accept(MediaType.APPLICATION_JSON)
+        Book book = webclient.get().uri(libraryBaseUrl + "book/" + bookId).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Book.class)
                 .block();
         return book;
     }
 
-//    public List<Book> findBookByCategoryName(String categoryName) {
+    //    public List<Book> findBookByCategoryName(String categoryName) {
 //        List<Book> bookList= webclient.get().uri("http://localhost:8080/library/v1/book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
 //                .retrieve()
 //                .toEntityList(Book.class)
@@ -96,16 +104,15 @@ public class LibrarySystemService {
 //                .getBody();;
 //        return bookList;
 //    }
-    public String deleteBook(int bookId){
+    public String deleteBook(int bookId) {
         try {
             String result = webclient.delete().uri(
-                            libraryBaseUrl+"book/" + bookId).accept(MediaType.APPLICATION_JSON)
+                            libraryBaseUrl + "book/" + bookId).accept(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
             return result;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Failed to delete book", e);
         }
     }
@@ -113,7 +120,7 @@ public class LibrarySystemService {
     public Book updateBookDetails(int bookId, Book book) {
         try {
             WebClient.RequestBodySpec request = webclient.put()
-                    .uri(libraryBaseUrl+"inventory/book_update/" + bookId)
+                    .uri(libraryBaseUrl + "inventory/book_update/" + bookId)
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON);
             String bookJson = objectMapper.writeValueAsString(book);
