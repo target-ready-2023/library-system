@@ -12,10 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableTransactionManagement
 public class LibrarySystemApplication {
 
-	@Bean
-	public WebClient webClient(){
-		return WebClient.builder().build();
-	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(LibrarySystemApplication.class, args);
 
