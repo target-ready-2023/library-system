@@ -23,7 +23,7 @@ public class LibrarySystemService {
 
     @Autowired
     CategoryService categoryService;
-    ObjectMapper objectMapper = new ObjectMapper();
+    ObjectMapper objectMapper;
     private final WebClient webclient;
     public LibrarySystemService(WebClient webClient) {
         this.webclient = webClient;
