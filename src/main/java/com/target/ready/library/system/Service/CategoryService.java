@@ -1,5 +1,6 @@
 package com.target.ready.library.system.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.Entity.BookCategory;
 import com.target.ready.library.system.Entity.Category;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @Service
 public class CategoryService {
@@ -45,6 +48,24 @@ public class CategoryService {
                 .block();
         return result;
     }
+
+    public List<Category> findAllCategories() {
+        try {
+            String response = webclient.get()
+                    .uri(libraryBaseUrl2 + "/categories")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            return objectMapper.readValue(response, new TypeReference<List<Category>>() {});
+        } catch (Exception e) {
+            // Handle exceptions or log the error
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public String addBookCategory(BookCategory bookCategory) {
         try {
