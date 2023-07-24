@@ -10,7 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class CategoryService {
-    
+
     @Autowired
     ObjectMapper objectMapper;
     private final WebClient webclient;
