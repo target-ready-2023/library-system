@@ -13,10 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 
@@ -29,6 +31,8 @@ public class LibrarySystemService {
     @Autowired
 
     ObjectMapper objectMapper;
+
+
     private final WebClient webclient;
 
     public LibrarySystemService(WebClient webClient) {
@@ -53,38 +57,39 @@ public class LibrarySystemService {
 
     @Transactional
     public String addBook(BookDto bookDto) {
-        try {
 
-            String result = webclient.post().uri(libraryBaseUrl + "inventory/books")
+            try {
 
-                    .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
-                    .bodyValue(objectMapper.writeValueAsString(bookDto.getBook()))
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-            int bookId = Integer.valueOf(result);
-            List<String> categoryNames = bookDto.getCategoryNames();
-            for (String eachCategoryName : categoryNames) {
+                String bookAddedResult = webclient.post().uri(libraryBaseUrl + "inventory/books")
 
-                Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
-                if (category == null) {
-                    Category category1 = new Category();
-                    category1.setCategoryName(eachCategoryName);
-                    categoryService.addCategory(category1);
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(objectMapper.writeValueAsString(bookDto.getBook()))
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
+                int bookId = Integer.valueOf(bookAddedResult);
+                List<String> categoryNames = bookDto.getCategoryNames();
+                for (String eachCategoryName : categoryNames) {
+
+                    Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
+                    if (category == null) {
+                        Category category1 = new Category();
+                        category1.setCategoryName(eachCategoryName);
+                        categoryService.addCategory(category1);
+                    }
+
+                    BookCategory bookCategory = new BookCategory();
+                    bookCategory.setBookId(bookId);
+                    bookCategory.setCategoryName(eachCategoryName);
+                    categoryService.addBookCategory(bookCategory);
                 }
+                return "Book Added Successfully";
 
-                BookCategory bookCategory = new BookCategory();
-                bookCategory.setBookId(bookId);
-                bookCategory.setCategoryName(eachCategoryName);
-                categoryService.addBookCategory(bookCategory);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to add book and category.", e);
             }
 
 
-            return "Book Added Successfully";
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add book and category.", e);
-        }
     }
 
 
