@@ -82,4 +82,25 @@ public class CategoryService {
             throw new RuntimeException("Failed to add", e);
         }
     }
+
+    public String deleteBookCategory(int bookId) {
+        try {
+
+            BookCategory bookCategory = webclient.get().uri(libraryBaseUrl2 + "category/book/" + bookId)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(BookCategory.class)
+                    .block();
+
+            String result = webclient.delete().uri(libraryBaseUrl2 + "inventory/book/category/"+ bookCategory.getId())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            return result;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete", e);
+        }
+    }
 }
