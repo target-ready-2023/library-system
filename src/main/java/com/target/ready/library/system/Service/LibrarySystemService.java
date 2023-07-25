@@ -109,6 +109,7 @@ public class LibrarySystemService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
+            categoryService.deleteBookCategory(bookId);
             return result;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete book", e);
