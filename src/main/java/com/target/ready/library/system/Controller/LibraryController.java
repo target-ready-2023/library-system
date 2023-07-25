@@ -50,7 +50,6 @@ public class LibraryController {
             description = "Addition of books and its details",
             responses = { @ApiResponse(
                     responseCode = "201",
-                    description = "Book Successfully added!",
                     content = @Content(
                             mediaType = "application/json"
                     ))})

@@ -20,10 +20,9 @@ public class CategoryController {
 
     @PostMapping("inventory/category")
     @Operation(
-            description = "Addition of categories",
+            description = "Addition of new categories",
             responses = { @ApiResponse(
             responseCode = "201",
-            description = "Category Successfully added!",
             content = @Content(
                     mediaType = "application/json"
             ))})
@@ -33,7 +32,7 @@ public class CategoryController {
 
     @GetMapping("/categories")
     @Operation(
-            description = "Gives all the books added in the database",
+            description = "Addition of books and its details",
             responses = { @ApiResponse(
                     responseCode = "200",
                     content = @Content(
