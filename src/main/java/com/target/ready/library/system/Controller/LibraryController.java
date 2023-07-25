@@ -2,13 +2,11 @@ package com.target.ready.library.system.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.Entity.Book;
-
-import com.target.ready.library.system.Exceptions.ResourceNotFoundException;
-
-import com.target.ready.library.system.Entity.BookDto;
-
+import com.target.ready.library.system.Dto.BookDto;
 import com.target.ready.library.system.Service.LibrarySystemService;
-import org.springframework.expression.spel.ast.NullLiteral;
+//import io.swagger.v3.oas.annotations.Operation;
+//import io.swagger.v3.oas.annotations.media.Content;
+//import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +24,13 @@ public class LibraryController {
     }
 
     @GetMapping("books_directory")
+//    @Operation(
+//            description = "Get all the books on the given range of pages (range given by the backend)",
+//            responses = { @ApiResponse(
+//                    responseCode = "200",
+//                    content = @Content(
+//                            mediaType = "application/json"
+//                    ))})
     public List<Book> getAllBooks(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber) {
         List<Book> books;
         int pageSize = 5;
@@ -41,12 +46,26 @@ public class LibraryController {
     }
 
     @PostMapping("inventory/books")
+//    @Operation(
+//            description = "Addition of books and its details",
+//            responses = { @ApiResponse(
+//                    responseCode = "201",
+//                    content = @Content(
+//                            mediaType = "application/json"
+//                    ))})
     public String addBook(@RequestBody BookDto bookDto) throws JsonProcessingException {
 
         return librarySystemService.addBook(bookDto);
     }
 
     @GetMapping("book/{bookId}")
+//    @Operation(
+//            description = "Get book according to its id",
+//            responses = { @ApiResponse(
+//                    responseCode = "200",
+//                    content = @Content(
+//                            mediaType = "application/json"
+//                    ))})
     public Book findByBookId(@PathVariable int bookId) {
         return librarySystemService.findByBookId(bookId);
     }

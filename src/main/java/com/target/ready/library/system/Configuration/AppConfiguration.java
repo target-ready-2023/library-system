@@ -20,8 +20,6 @@ public class AppConfiguration {
         return new ObjectMapper();
     }
 
-
-
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -31,6 +29,5 @@ public class AppConfiguration {
             }
         };
     }
-
 
 }

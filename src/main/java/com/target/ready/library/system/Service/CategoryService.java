@@ -4,12 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.Entity.BookCategory;
 import com.target.ready.library.system.Entity.Category;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
@@ -69,7 +67,6 @@ public class CategoryService {
     }
 
 
-
     public String addBookCategory(BookCategory bookCategory) {
         try {
             String result = webclient.post().uri(libraryBaseUrl2 + "inventory/book/category")
@@ -83,6 +80,27 @@ public class CategoryService {
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to add", e);
+        }
+    }
+
+    public String deleteBookCategory(int bookId) {
+        try {
+
+            BookCategory bookCategory = webclient.get().uri(libraryBaseUrl2 + "category/book/" + bookId)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(BookCategory.class)
+                    .block();
+
+            String result = webclient.delete().uri(libraryBaseUrl2 + "inventory/book/category/"+ bookCategory.getId())
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+            return result;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete", e);
         }
     }
 }
