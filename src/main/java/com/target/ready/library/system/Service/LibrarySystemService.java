@@ -93,6 +93,16 @@ public class LibrarySystemService {
         return book;
     }
 
+
+        public List<Book> findBookByCategoryName(String categoryName) {
+        List<Book> bookList= webclient.get().uri(libraryBaseUrl+"book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntityList(Book.class)
+                .block()
+                .getBody();;
+        return bookList;
+    }
+
     public List<Book> findByBookName(String bookName){
        List<Book> books = webclient.get().uri(libraryBaseUrl + "books/" + bookName).accept(MediaType.APPLICATION_JSON)
                .retrieve()
@@ -101,7 +111,6 @@ public class LibrarySystemService {
                .getBody();
        return  books;
     }
-
 
     public String deleteBook(int bookId) {
         try {
@@ -132,13 +141,5 @@ public class LibrarySystemService {
         }
     }
 
-    //    public List<Book> findBookByCategoryName(String categoryName) {
-//        List<Book> bookList= webclient.get().uri("http://localhost:8080/library/v1/book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
-//                .retrieve()
-//                .toEntityList(Book.class)
-//                .block()
-//                .getBody();;
-//        return bookList;
-//    }
 
 }

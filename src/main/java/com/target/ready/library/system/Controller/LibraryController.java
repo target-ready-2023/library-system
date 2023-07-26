@@ -70,6 +70,11 @@ public class LibraryController {
         return librarySystemService.findByBookId(bookId);
     }
 
+
+    @GetMapping("book/category/{categoryName}")
+    public List<Book> findBookByCategoryName(@PathVariable String categoryName) {
+        return librarySystemService.findBookByCategoryName(categoryName);
+    }
     @GetMapping("books/{bookName}")
     @Operation(
             description = "Get book according to its name",
@@ -80,6 +85,7 @@ public class LibraryController {
                     ))})
     public List<Book> findByBookName(@PathVariable String bookName){
         return librarySystemService.findByBookName(bookName);
+
     }
 
     @DeleteMapping("book/{bookId}")
@@ -98,10 +104,5 @@ public class LibraryController {
             return new ResponseEntity<>(updatedBook, HttpStatus.OK);
         }
     }
-
-    //    @GetMapping("book/category/{categoryName}")
-//    public List<Book> findBookByCategoryName(@PathVariable String categoryName){
-//        return librarySystemService.findBookByCategoryName(categoryName);
-//    }
 
 }
