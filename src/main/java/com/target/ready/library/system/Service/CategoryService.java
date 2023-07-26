@@ -86,20 +86,21 @@ public class CategoryService {
 
     public String deleteBookCategory(int bookId) {
         try {
-
             BookCategory bookCategory = webclient.get().uri(libraryBaseUrl2 + "category/book/" + bookId)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve()
                     .bodyToMono(BookCategory.class)
                     .block();
+            if(bookCategory!=null) {
+                String result = webclient.delete().uri(libraryBaseUrl2 + "inventory/book/category/" + bookCategory.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .retrieve()
+                        .bodyToMono(String.class)
+                        .block();
 
-            String result = webclient.delete().uri(libraryBaseUrl2 + "inventory/book/category/"+ bookCategory.getId())
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-            return result;
-
+                return result;
+            }
+            return "Book Category is empty";
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete", e);
         }
