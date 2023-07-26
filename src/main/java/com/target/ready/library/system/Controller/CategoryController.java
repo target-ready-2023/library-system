@@ -3,9 +3,9 @@ package com.target.ready.library.system.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.Entity.Category;
 import com.target.ready.library.system.Service.CategoryService;
-//import io.swagger.v3.oas.annotations.Operation;
-//import io.swagger.v3.oas.annotations.media.Content;
-//import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,25 +19,25 @@ public class CategoryController {
     CategoryService categoryService;
 
     @PostMapping("inventory/category")
-//    @Operation(
-//            description = "Addition of new categories",
-//            responses = { @ApiResponse(
-//            responseCode = "201",
-//            content = @Content(
-//                    mediaType = "application/json"
-//            ))})
+    @Operation(
+            description = "Addition of new categories",
+            responses = { @ApiResponse(
+            responseCode = "201",
+            content = @Content(
+                    mediaType = "application/json"
+            ))})
     public String addCategory(@RequestBody Category category) throws JsonProcessingException {
         return categoryService.addCategory(category);
     }
 
     @GetMapping("/categories")
-//    @Operation(
-//            description = "Addition of books and its details",
-//            responses = { @ApiResponse(
-//                    responseCode = "200",
-//                    content = @Content(
-//                            mediaType = "application/json"
-//                    ))})
+    @Operation(
+            description = "Addition of books and its details",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
     public List<Category> getAllCategories(){
         return categoryService.findAllCategories();
     }
