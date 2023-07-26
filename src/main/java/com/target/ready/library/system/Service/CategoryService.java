@@ -26,14 +26,15 @@ public class CategoryService {
 
     public String addCategory(Category category) {
         try {
-            String result = webclient.post().uri(libraryBaseUrl2 + "inventory/category")
+            Category category1 = webclient.post().uri(libraryBaseUrl2 + "inventory/category")
 
                     .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(category))
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(Category.class)
                     .block();
-            return result;
+
+            return "Category Added Successfully";
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to add category", e);
@@ -67,16 +68,16 @@ public class CategoryService {
     }
 
 
-    public String addBookCategory(BookCategory bookCategory) {
+    public  String addBookCategory(BookCategory bookCategory) {
         try {
-            String result = webclient.post().uri(libraryBaseUrl2 + "inventory/book/category")
+            BookCategory bookCategory1 = webclient.post().uri(libraryBaseUrl2 + "inventory/book/category")
 
                     .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(bookCategory))
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(BookCategory.class)
                     .block();
-            return result;
+            return "Book with all its categories added";
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to add", e);

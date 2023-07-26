@@ -71,6 +71,7 @@ public class LibraryController {
     }
 
 
+
     @GetMapping("book/category/{categoryName}")
     public List<Book> findBookByCategoryName(@PathVariable String categoryName) {
         return librarySystemService.findBookByCategoryName(categoryName);
@@ -87,6 +88,7 @@ public class LibraryController {
         return librarySystemService.findByBookName(bookName);
 
     }
+
 
     @DeleteMapping("book/{bookId}")
     public String deleteBook(@PathVariable("bookId") int bookId) {
@@ -105,4 +107,9 @@ public class LibraryController {
         }
     }
 
+
+
 }
+
+
+

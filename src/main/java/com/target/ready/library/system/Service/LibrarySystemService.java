@@ -54,14 +54,14 @@ public class LibrarySystemService {
     public String addBook(BookDto bookDto) {
         try {
 
-            String result = webclient.post().uri(libraryBaseUrl + "inventory/books")
+            Book book = webclient.post().uri(libraryBaseUrl + "inventory/books")
 
                     .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(bookDto.getBook()))
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(Book.class)
                     .block();
-            int bookId = Integer.valueOf(result);
+            int bookId = book.getBookId();
             List<String> categoryNames = bookDto.getCategoryNames();
             for (String eachCategoryName : categoryNames) {
 
@@ -143,3 +143,7 @@ public class LibrarySystemService {
 
 
 }
+
+
+
+

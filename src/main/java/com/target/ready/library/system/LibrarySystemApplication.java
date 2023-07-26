@@ -1,14 +1,14 @@
 package com.target.ready.library.system;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+//import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+//import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@OpenAPIDefinition(info = @Info(title = "Library Management System API", version = "1.0", description = "Dream School Foundation Digital Library"))
+//@OpenAPIDefinition(info = @Info(title = "Library Management System API", version = "1.0", description = "Dream School Foundation Digital Library"))
 public class LibrarySystemApplication {
 
 
