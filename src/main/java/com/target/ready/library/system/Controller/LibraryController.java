@@ -70,9 +70,22 @@ public class LibraryController {
         return librarySystemService.findByBookId(bookId);
     }
 
+
     @GetMapping("book/category/{categoryName}")
-    public List<Book> findBookByCategoryName(@PathVariable String categoryName){
+    public List<Book> findBookByCategoryName(@PathVariable String categoryName) {
         return librarySystemService.findBookByCategoryName(categoryName);
+    }
+    @GetMapping("books/{bookName}")
+    @Operation(
+            description = "Get book according to its name",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public List<Book> findByBookName(@PathVariable String bookName){
+        return librarySystemService.findByBookName(bookName);
+
     }
 
     @DeleteMapping("book/{bookId}")
@@ -91,6 +104,5 @@ public class LibraryController {
             return new ResponseEntity<>(updatedBook, HttpStatus.OK);
         }
     }
-
 
 }
