@@ -1,5 +1,6 @@
 package com.target.ready.library.system.Entity;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,16 +10,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
-    @JsonProperty
+    @JsonProperty("book_id")
+    @JsonAlias("bookId")
     private int bookId;
-    @JsonProperty
+
+    @JsonProperty("book_name")
+    @JsonAlias("bookName")
     private String bookName;
-    @JsonProperty
+
+    @JsonProperty("book_description")
+    @JsonAlias("bookDescription")
     private String bookDescription;
 
-    @JsonProperty
-    private int publicationYear;
-
-    @JsonProperty
+    @JsonProperty("author_name")
+    @JsonAlias("authorName")
     private String authorName;
+
+    @JsonProperty("publication_year")
+    @JsonAlias("publicationYear")
+    private int publicationYear;
 }
