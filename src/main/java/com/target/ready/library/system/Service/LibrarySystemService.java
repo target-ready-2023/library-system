@@ -126,16 +126,27 @@ public class LibrarySystemService {
         }
     }
 
-    public Book updateBookDetails(int bookId, Book book) {
+    @Transactional
+    public String updateBookDetails(int bookId, BookDto bookDto) {
         try {
-            WebClient.RequestBodySpec request = webclient.put()
-                    .uri(libraryBaseUrl + "inventory/book_update/" + bookId)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .contentType(MediaType.APPLICATION_JSON);
-            String bookJson = objectMapper.writeValueAsString(book);
-            WebClient.ResponseSpec response = request.bodyValue(bookJson).retrieve();
-            Book updatedBook = response.bodyToMono(Book.class).block();
-            return updatedBook;
+            Book book = webclient.put().uri(libraryBaseUrl + "inventory/book/update/"+bookId)
+                    .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(objectMapper.writeValueAsString(bookDto.getBook()))
+                    .retrieve()
+                    .bodyToMono(Book.class)
+                    .block();
+            categoryService.deleteBookCategory(bookId);
+            List<String> categoryNames = bookDto.getCategoryNames();
+            for (String categoryName : categoryNames) {
+                Category category1 = new Category();
+                category1.setCategoryName(categoryName);
+                categoryService.addCategory(category1);
+                BookCategory bookCategory = new BookCategory();
+                bookCategory.setBookId(bookId);
+                bookCategory.setCategoryName(categoryName);
+                categoryService.addBookCategory(bookCategory);
+            }
+            return "Book updated" ;
         } catch (Exception e) {
             throw new RuntimeException("Failed to update book details", e);
         }
