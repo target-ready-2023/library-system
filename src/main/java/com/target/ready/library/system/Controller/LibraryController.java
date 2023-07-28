@@ -92,18 +92,29 @@ public class LibraryController {
 
     @DeleteMapping("book/{bookId}")
     public String deleteBook(@PathVariable("bookId") int bookId) {
+        Book existingBook = librarySystemService.findByBookId(bookId);
+        if (existingBook == null) {
+            return "Book does not exist";
+        } else {
+            return librarySystemService.deleteBook(bookId);
+        }
 
-        return librarySystemService.deleteBook(bookId);
     }
 
-    @PutMapping("inventory/book_update/{id}")
-    public ResponseEntity<?> updateBookDetails(@PathVariable("id") int id, @RequestBody Book book) {
+    @PutMapping("inventory/book/update/{id}")
+    @Operation(
+            description = "Update book API",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public String updateBookDetails(@PathVariable("id") int id, @RequestBody BookDto bookDto) {
         Book existingBook = librarySystemService.findByBookId(id);
         if (existingBook == null) {
-            return new ResponseEntity<>("Book with id: " + id + ", does not exist in database", HttpStatus.NOT_FOUND);
+            return "Book does not exist";
         } else {
-            Book updatedBook = librarySystemService.updateBookDetails(id, book);
-            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+            return librarySystemService.updateBookDetails(id, bookDto);
         }
     }
 
