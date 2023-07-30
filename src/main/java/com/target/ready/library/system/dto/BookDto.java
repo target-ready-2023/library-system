@@ -1,6 +1,6 @@
-package com.target.ready.library.system.Dto;
+package com.target.ready.library.system.dto;
 
-import com.target.ready.library.system.Entity.Book;
+import com.target.ready.library.system.entity.Book;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

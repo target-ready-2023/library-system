@@ -1,14 +1,12 @@
-package com.target.ready.library.system.Controller;
+package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.target.ready.library.system.Entity.Book;
-import com.target.ready.library.system.Dto.BookDto;
-import com.target.ready.library.system.Service.LibrarySystemService;
+import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -23,7 +21,7 @@ public class LibraryController {
         this.librarySystemService = librarySystemService;
     }
 
-    @GetMapping("books_directory")
+    @GetMapping("/books_directory")
     @Operation(
             description = "Get all the books on the given range of pages (range given by the backend)",
             responses = { @ApiResponse(
@@ -45,7 +43,7 @@ public class LibraryController {
         }
     }
 
-    @PostMapping("inventory/books")
+    @PostMapping("/inventory/books")
     @Operation(
             description = "Addition of books and its details",
             responses = { @ApiResponse(
@@ -58,7 +56,7 @@ public class LibraryController {
         return librarySystemService.addBook(bookDto);
     }
 
-    @GetMapping("book/{bookId}")
+    @GetMapping("/book/{bookId}")
     @Operation(
             description = "Get book according to its id",
             responses = { @ApiResponse(
@@ -72,7 +70,7 @@ public class LibraryController {
 
 
 
-    @GetMapping("book/category/{categoryName}")
+    @GetMapping("/book/category/{categoryName}")
     public List<Book> findBookByCategoryName(@PathVariable String categoryName) {
         return librarySystemService.findBookByCategoryName(categoryName);
     }
@@ -101,7 +99,9 @@ public class LibraryController {
 
     }
 
-    @PutMapping("inventory/book/update/{id}")
+
+
+    @PutMapping("/inventory/book/update/{id}")
     @Operation(
             description = "Update book API",
             responses = { @ApiResponse(

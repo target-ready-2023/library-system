@@ -1,12 +1,14 @@
-package com.target.ready.library.system.Controller;
+package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.target.ready.library.system.Entity.Category;
-import com.target.ready.library.system.Service.CategoryService;
+import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +32,7 @@ public class CategoryController {
         return categoryService.addCategory(category);
     }
 
-    @GetMapping("/categories")
+    @GetMapping("categories")
     @Operation(
             description = "Addition of books and its details",
             responses = { @ApiResponse(
@@ -38,7 +40,8 @@ public class CategoryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public List<Category> getAllCategories(){
-        return categoryService.findAllCategories();
+    public ResponseEntity<List<Category>> getAllCategories(){
+        List<Category> categories = categoryService.findAllCategories();
+        return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 }
