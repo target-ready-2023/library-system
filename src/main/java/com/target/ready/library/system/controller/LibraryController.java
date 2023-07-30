@@ -74,6 +74,7 @@ public class LibraryController {
     public List<Book> findBookByCategoryName(@PathVariable String categoryName) {
         return librarySystemService.findBookByCategoryName(categoryName);
     }
+
     @GetMapping("books/{bookName}")
     @Operation(
             description = "Get book according to its name",

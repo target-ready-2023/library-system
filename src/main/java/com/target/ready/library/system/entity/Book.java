@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Book {
+
     @JsonProperty("book_id")
     @JsonAlias("bookId")
     private int bookId;
