@@ -71,4 +71,13 @@ public class CategoryService {
         }
     }
 
+    public List<BookCategory> findAllCategoryByBookId(int bookId){
+        try{
+            return bookCategoryRepository.findAllCategoryByBookId(bookId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

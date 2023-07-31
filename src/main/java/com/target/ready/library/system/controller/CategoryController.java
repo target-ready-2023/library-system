@@ -1,6 +1,7 @@
 package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,5 +44,16 @@ public class CategoryController {
     public ResponseEntity<List<Category>> getAllCategories(){
         List<Category> categories = categoryService.findAllCategories();
         return new ResponseEntity<>(categories, HttpStatus.OK);
+    }
+
+    @GetMapping("categories/{bookId}")
+    public ResponseEntity<List<BookCategory>> findAllCategoryByBookId(@PathVariable int bookId) {
+        List<BookCategory> categories = categoryService.findAllCategoryByBookId(bookId);
+
+        if (categories.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(categories);
     }
 }

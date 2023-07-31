@@ -1,7 +1,9 @@
 package com.target.ready.library.system.controller;
 
+import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.service.CategoryService;
+import com.target.ready.library.system.repository.BookCategoryImplementation;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -24,6 +26,9 @@ public class CategoryControllerTest {
     @InjectMocks
     CategoryController categoryController;
 
+    @Mock
+    BookCategoryImplementation BookCategoryRepository;
+
     List<Category> myCategories;
 
     @Test
@@ -34,6 +39,20 @@ public class CategoryControllerTest {
 
         when(categoryService.findAllCategories()).thenReturn(myCategories);
         ResponseEntity<List<Category>> response = categoryController.getAllCategories();
+
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(2,response.getBody().size());
+    }
+
+    @Test
+    public void findAllCategoriesByBookIdTest(){
+        List<BookCategory> bookCategories= new ArrayList<BookCategory>();
+        int bookId=5;
+        bookCategories.add(new BookCategory(1,bookId,"Horror"));
+        bookCategories.add(new BookCategory(2,bookId,"Adventure"));
+
+        when(categoryService.findAllCategoryByBookId(bookId)).thenReturn(bookCategories);
+        ResponseEntity<List<BookCategory>> response = categoryController.findAllCategoryByBookId(bookId);
 
         assertEquals(HttpStatus.OK,response.getStatusCode());
         assertEquals(2,response.getBody().size());

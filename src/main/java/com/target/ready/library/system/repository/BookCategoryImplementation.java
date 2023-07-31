@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Repository
 public class BookCategoryImplementation implements BookCategoryRepository{
 
@@ -47,5 +49,14 @@ public class BookCategoryImplementation implements BookCategoryRepository{
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Void.class);
+    }
+
+    @Override
+    public List<BookCategory> findAllCategoryByBookId(int bookId){
+        List<BookCategory> categories= webClient.get().uri(libraryBaseUrl2 + "categories/" + bookId).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntityList(BookCategory.class)
+                .block().getBody();
+        return  categories;
     }
 }
