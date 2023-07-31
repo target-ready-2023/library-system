@@ -36,14 +36,19 @@ public class CategoryImplementation implements CategoryRepository{
     }
 
     @Override
-    public List<Category> findAllCategories() {
-        return webClient.get()
-                .uri(libraryBaseUrl2 + "categories")
+    public List<Category> findAllCategories(int pageNumber, int pageSize) {
+        return WebClient.builder()
+                .baseUrl(libraryBaseUrl2)
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("categories/{pageNumber}/{pageSize}")
+                        .build(pageNumber, pageSize))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToFlux(Category.class)
-                .collectList()
-                .block();
+                .toEntityList(Category.class)
+                .block()
+                .getBody();
     }
 
     @Override

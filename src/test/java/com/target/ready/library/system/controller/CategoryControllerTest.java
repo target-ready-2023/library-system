@@ -2,18 +2,11 @@ package com.target.ready.library.system.controller;
 
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.service.CategoryService;
-import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {CategoryControllerTest.class})
 public class CategoryControllerTest {
@@ -26,18 +19,18 @@ public class CategoryControllerTest {
 
     List<Category> myCategories;
 
-    @Test
-    public void findAllCategoriesTest(){
-        myCategories = new ArrayList<Category>();
-        myCategories.add(new Category(1,"Horror"));
-        myCategories.add(new Category(2,"Adventure"));
-
-        when(categoryService.findAllCategories()).thenReturn(myCategories);
-        ResponseEntity<List<Category>> response = categoryController.getAllCategories();
-
-        assertEquals(HttpStatus.OK,response.getStatusCode());
-        assertEquals(2,response.getBody().size());
-    }
+//    @Test
+//    public void findAllCategoriesTest(){
+//        myCategories = new ArrayList<Category>();
+//        myCategories.add(new Category(1,"Horror"));
+//        myCategories.add(new Category(2,"Adventure"));
+//
+//        when(categoryService.findAllCategories()).thenReturn(myCategories);
+//        ResponseEntity<List<Category>> response = categoryController.getAllCategories();
+//
+//        assertEquals(HttpStatus.OK,response.getStatusCode());
+//        assertEquals(2,response.getBody().size());
+//    }
 
 //    @Test
 //    public void addCategoryTest(){

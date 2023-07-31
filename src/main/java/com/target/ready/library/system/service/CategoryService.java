@@ -33,9 +33,9 @@ public class CategoryService {
         return result;
     }
 
-    public List<Category> findAllCategories() {
+    public List<Category> findAllCategories(int page_number, int page_size) {
         try {
-            List<Category> response = categoryRepository.findAllCategories();
+            List<Category> response = categoryRepository.findAllCategories(page_number,page_size);
 
             return response;
         } catch (Exception e) {
