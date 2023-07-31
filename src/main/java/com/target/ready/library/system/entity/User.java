@@ -18,11 +18,10 @@ public class User {
     @JsonAlias("userId")
     private int userId;
 
+
     @JsonProperty("book_id")
     @JsonAlias("bookId")
     private int bookId;
 
-    @JsonProperty("quantity")
-    @JsonAlias("quantity")
-    private int quantity;
+
 }

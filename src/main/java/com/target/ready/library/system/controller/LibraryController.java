@@ -119,6 +119,15 @@ public class LibraryController {
         }
     }
 
+    @PostMapping("inventory/issued/book/{bookId}/{userId}")
+    public String bookIssued(@PathVariable int bookId,@PathVariable int userId){
+        return librarySystemService.booksIssued(bookId,userId);
+    }
+
+    @PostMapping("inventory/returned/book/{bookId}/{userId}")
+    public String bookReturned(@PathVariable int bookId,@PathVariable int userId){
+        return librarySystemService.bookReturned(bookId,userId);
+    }
 
 
 }

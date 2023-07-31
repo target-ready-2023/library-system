@@ -2,10 +2,10 @@ package com.target.ready.library.system.service;
 
 
 import com.target.ready.library.system.dto.BookDto;
-import com.target.ready.library.system.entity.Book;
-import com.target.ready.library.system.entity.BookCategory;
-import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.entity.*;
 import com.target.ready.library.system.repository.BookRepository;
+import com.target.ready.library.system.repository.InventoryRepository;
+import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +15,17 @@ import java.util.List;
 @Service
 
 public class LibrarySystemService {
-//    @Value("${library.baseUrl}")
-//    private String libraryBaseUrl;
+
     @Autowired
     CategoryService categoryService;
 
     private final BookRepository bookRepository;
+
+    @Autowired
+    InventoryRepository inventoryRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     public LibrarySystemService(BookRepository bookRepository) {
@@ -31,28 +36,6 @@ public class LibrarySystemService {
         return bookRepository.getAllBooks(pageNumber,pageSize);
     }
 
-    @Transactional
-    public String addBook(BookDto bookDto) {
-            Book book = bookRepository.addBook(bookDto);
-            int bookId = book.getBookId();
-            List<String> categoryNames = bookDto.getCategoryNames();
-            for (String eachCategoryName : categoryNames) {
-
-                Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
-                if (category == null) {
-                    Category category1 = new Category();
-                    category1.setCategoryName(eachCategoryName);
-                    categoryService.addCategory(category1);
-                }
-
-                BookCategory bookCategory = new BookCategory();
-                bookCategory.setBookId(bookId);
-                bookCategory.setCategoryName(eachCategoryName);
-                categoryService.addBookCategory(bookCategory);
-            }
-            return "Book Added Successfully";
-    }
-
 
     public Book findByBookId(int bookId) {
         Book book = bookRepository.findByBookId(bookId);
@@ -60,7 +43,35 @@ public class LibrarySystemService {
     }
 
 
-        public List<Book> findBookByCategoryName(String categoryName) {
+    @Transactional
+    public String addBook(BookDto bookDto) {
+        Book book = bookRepository.addBook(bookDto);
+        int bookId = book.getBookId();
+        int noOfCopies=bookDto.getNoOfCopies();
+        Inventory inventory=new Inventory();
+        inventory.setInvBookId(bookId);
+        inventory.setNoOfCopies(noOfCopies);
+        inventory.setNoOfBooksLeft(noOfCopies);
+        inventoryRepository.addInventory(inventory);
+        List<String> categoryNames = bookDto.getCategoryNames();
+        for (String eachCategoryName : categoryNames) {
+
+            Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
+            if (category == null) {
+                Category category1 = new Category();
+                category1.setCategoryName(eachCategoryName);
+                categoryService.addCategory(category1);
+            }
+
+            BookCategory bookCategory = new BookCategory();
+            bookCategory.setBookId(bookId);
+            bookCategory.setCategoryName(eachCategoryName);
+            categoryService.addBookCategory(bookCategory);
+        }
+        return "Book Added Successfully";
+    }
+
+    public List<Book> findBookByCategoryName(String categoryName) {
         List<Book> bookList= bookRepository.findBookByCategoryName(categoryName);
         return bookList;
     }
@@ -79,6 +90,8 @@ public class LibrarySystemService {
             throw new RuntimeException("Failed to delete book", e);
         }
     }
+
+
 
 
 
@@ -103,6 +116,32 @@ public class LibrarySystemService {
         }
     }
 
+    public String booksIssued(int bookId,int userId){
+
+       Inventory inventory= inventoryRepository.findByBookId(bookId);
+       inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft()-1);
+       inventoryRepository.addInventory(inventory);
+        User user=new User();
+        user.setBookId(bookId);
+        user.setUserId(userId);
+        userRepository.addUser(user);
+        return "Book issued";
+
+    }
+
+    public String bookReturned(int bookId,int userId){
+
+        List<Integer> bookIdList=userRepository.findBooksByUserId(userId);
+        for(Integer eachBookId:bookIdList){
+            if(eachBookId==bookId){
+                Inventory inventory= inventoryRepository.findByBookId(bookId);
+                inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft()+1);
+                inventoryRepository.addInventory(inventory);
+                userRepository.deleteBookByUserId(bookId,userId);
+            }
+        }
+        return "Book Returned Successfully";
+    }
 
 }
 

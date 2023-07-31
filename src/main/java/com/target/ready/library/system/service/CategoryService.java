@@ -12,8 +12,6 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-//    @Value("${library.baseUrl2}")
-//    private String libraryBaseUrl2;
 
     private final CategoryRepository categoryRepository;
     private final BookCategoryRepository bookCategoryRepository;
@@ -24,8 +22,6 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
         this.bookCategoryRepository = bookCategoryRepository;
     }
-
-
 
     public String addCategory(Category category) {
         categoryRepository.addCategory(category);
@@ -56,16 +52,7 @@ public class CategoryService {
 
     public Mono<Void> deleteBookCategory(int bookId) {
         try {
-//            BookCategory bookCategory = webclient.get().uri(libraryBaseUrl2 + "category/book/" + bookId)
-//                    .accept(MediaType.APPLICATION_JSON)
-//                    .retrieve()
-//                    .bodyToMono(BookCategory.class)
-//                    .block();
-//            if(bookCategory!=null) {
             return bookCategoryRepository.deleteBookCategory(bookId);
-//            return "Book Category deleted successfully!";
-//            }
-            //return "Book Category is empty";
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete", e);
         }
