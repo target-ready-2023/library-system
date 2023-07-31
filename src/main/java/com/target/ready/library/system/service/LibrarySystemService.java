@@ -121,10 +121,10 @@ public class LibrarySystemService {
        Inventory inventory= inventoryRepository.findByBookId(bookId);
        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft()-1);
        inventoryRepository.addInventory(inventory);
-        User user=new User();
-        user.setBookId(bookId);
-        user.setUserId(userId);
-        userRepository.addUser(user);
+        UserCatalog userCatalog =new UserCatalog();
+        userCatalog.setBookId(bookId);
+        userCatalog.setUserId(userId);
+        userRepository.addUserCatalog(userCatalog);
         return "Book issued";
 
     }

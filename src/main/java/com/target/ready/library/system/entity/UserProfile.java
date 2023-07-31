@@ -1,9 +1,6 @@
 package com.target.ready.library.system.entity;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,17 +8,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-public class User {
-
+public class UserProfile {
     @JsonProperty("user_id")
     @JsonAlias("userId")
     private int userId;
 
 
-    @JsonProperty("book_id")
-    @JsonAlias("bookId")
-    private int bookId;
-
-
+    @JsonProperty("user_name")
+    @JsonAlias("userName")
+    private String userName;
 }
