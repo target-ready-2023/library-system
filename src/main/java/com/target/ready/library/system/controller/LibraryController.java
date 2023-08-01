@@ -3,6 +3,7 @@ package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -127,7 +128,7 @@ public class LibraryController {
     }
 
     @PostMapping("inventory/returned/book/{bookId}/{userId}")
-    public String bookReturned(@PathVariable int bookId,@PathVariable int userId){
+    public Integer bookReturned(@PathVariable int bookId, @PathVariable int userId){
         return librarySystemService.bookReturned(bookId,userId);
     }
 
