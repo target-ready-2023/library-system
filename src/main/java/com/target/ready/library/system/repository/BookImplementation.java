@@ -3,6 +3,7 @@ package com.target.ready.library.system.repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -37,14 +38,7 @@ public class BookImplementation implements BookRepository{
                 .getBody();
     }
 
-//    @Override
-//    public List<Book> findByBookName(String bookName){
-//        return   webClient.get().uri("books/" + bookName).accept(MediaType.APPLICATION_JSON)
-//                .retrieve()
-//                .toEntityList(Book.class)
-//                .block()
-//                .getBody();
-//    }
+
 
     @Override
     public List<Book> findByBookName(String bookName) {
@@ -75,22 +69,7 @@ public class BookImplementation implements BookRepository{
     }
 
 
-//    @Override
-//    public Book addBook(BookDto bookDto) {
-//        Book book = null;
-//        try {
-//            book = webClient.post().uri("inventory/books")
-//
-//            .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
-//            .bodyValue(objectMapper.writeValueAsString(bookDto.getBook()))
-//            .retrieve()
-//            .bodyToMono(Book.class)
-//            .block();
-//            } catch (Exception e) {
-//                throw new RuntimeException("Failed to add book and category.", e);
-//            }
-//        return book;
-//        }
+
     @Override
     public Book addBook(BookDto bookDto) {
         try {
@@ -118,14 +97,7 @@ public class BookImplementation implements BookRepository{
                 .block();
     }
 
-//    @Override
-//    public Mono<Void> deleteBook(int bookId) {
-//        return webClient.delete()
-//                .uri("book/" + bookId)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .retrieve()
-//                .bodyToMono(Void.class);
-//    }
+
 
     @Override
     public void deleteBook(int bookId) {

@@ -10,5 +10,5 @@ public interface BookCategoryRepository {
 
     public void addBookCategory(BookCategory bookCategory);
     public Mono<Void> deleteBookCategory(int bookId);
-    public List<BookCategory> findAllCategoryByBookId(int bookId);
+    public List<BookCategory> findAllCategoriesByBookId(int bookId);
 }

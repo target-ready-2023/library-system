@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Inventory {
 
+    @Id
     @JsonProperty("inv_book_id")
     @JsonAlias("invBookId")
     private int invBookId;

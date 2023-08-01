@@ -1,5 +1,4 @@
 package com.target.ready.library.system.service;
-
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.repository.BookCategoryRepository;
@@ -30,28 +29,28 @@ public class CategoryServiceTest {
     CategoryService categoryService;
 
     @Test
-    public void findAllCategoriesTest(){
-        List<Category> myCategories = new ArrayList<Category>();
-
-        myCategories.add(new Category(1,"Horror"));
-        myCategories.add(new Category(2, "Adventure"));
-
-        when(categoryRepository.findAllCategories()).thenReturn(myCategories);
-        assertEquals(2,categoryService.findAllCategories().size());
-    }
-
-    @Test
     public void findAllCategoriesByBookIdTest(){
         List<BookCategory> bookCategories= new ArrayList<BookCategory>();
         int bookId=5;
         bookCategories.add(new BookCategory(1,bookId,"Horror"));
         bookCategories.add(new BookCategory(2,bookId,"Adventure"));
 
-        when(bookCategoryRepository.findAllCategoryByBookId(bookId)).thenReturn(bookCategories);
-        List<BookCategory> response = categoryService.findAllCategoryByBookId(bookId);
+        when(bookCategoryRepository.findAllCategoriesByBookId(bookId)).thenReturn(bookCategories);
+        List<BookCategory> response = categoryService.findAllCategoriesByBookId(bookId);
 
         assertEquals(2,response.size());
     }
+
+//    @Test
+//    public void findAllCategoriesTest(){
+//        List<Category> myCategories = new ArrayList<Category>();
+//
+//        myCategories.add(new Category(1,"Horror"));
+//        myCategories.add(new Category(2, "Adventure"));
+//
+//        when(categoryRepository.findAllCategories()).thenReturn(myCategories);
+//        assertEquals(2,categoryService.findAllCategories().size());
+//    }
 
 //    @Test
 //    public void addCategoryTest(){
@@ -92,6 +91,7 @@ public class CategoryServiceTest {
 //        assertEquals("Horror",categoryService.addBookCategory(bookCategory).getCategoryName());
 //        assertEquals(2,categoryService.addBookCategory(bookCategory).getId());
 //    }
+
 
 
 

@@ -13,4 +13,5 @@ import java.util.List;
 public class BookDto {
     private Book book;
     private List<String> categoryNames;
+    private int noOfCopies;
 }

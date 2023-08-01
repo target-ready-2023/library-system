@@ -52,7 +52,7 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     }
 
     @Override
-    public List<BookCategory> findAllCategoryByBookId(int bookId){
+    public List<BookCategory> findAllCategoriesByBookId(int bookId){
         List<BookCategory> categories= webClient.get().uri(libraryBaseUrl2 + "categories/" + bookId).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntityList(BookCategory.class)

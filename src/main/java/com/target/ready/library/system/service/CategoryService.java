@@ -12,8 +12,6 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-//    @Value("${library.baseUrl2}")
-//    private String libraryBaseUrl2;
 
     private final CategoryRepository categoryRepository;
     private final BookCategoryRepository bookCategoryRepository;
@@ -25,8 +23,6 @@ public class CategoryService {
         this.bookCategoryRepository = bookCategoryRepository;
     }
 
-
-
     public String addCategory(Category category) {
         categoryRepository.addCategory(category);
         return "Category added Successfully!";
@@ -37,9 +33,9 @@ public class CategoryService {
         return result;
     }
 
-    public List<Category> findAllCategories() {
+    public List<Category> findAllCategories(int page_number, int page_size) {
         try {
-            List<Category> response = categoryRepository.findAllCategories();
+            List<Category> response = categoryRepository.findAllCategories(page_number,page_size);
 
             return response;
         } catch (Exception e) {
@@ -56,24 +52,15 @@ public class CategoryService {
 
     public Mono<Void> deleteBookCategory(int bookId) {
         try {
-//            BookCategory bookCategory = webclient.get().uri(libraryBaseUrl2 + "category/book/" + bookId)
-//                    .accept(MediaType.APPLICATION_JSON)
-//                    .retrieve()
-//                    .bodyToMono(BookCategory.class)
-//                    .block();
-//            if(bookCategory!=null) {
             return bookCategoryRepository.deleteBookCategory(bookId);
-//            return "Book Category deleted successfully!";
-//            }
-            //return "Book Category is empty";
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete", e);
         }
     }
 
-    public List<BookCategory> findAllCategoryByBookId(int bookId){
+    public List<BookCategory> findAllCategoriesByBookId(int bookId){
         try{
-            return bookCategoryRepository.findAllCategoryByBookId(bookId);
+            return bookCategoryRepository.findAllCategoriesByBookId(bookId);
         }catch (Exception e){
             e.printStackTrace();
             return null;

@@ -7,6 +7,8 @@ import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -29,17 +31,17 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public List<Book> getAllBooks(@RequestParam(value = "pageNumber", defaultValue = "0", required = false) Integer pageNumber) {
+    public ResponseEntity<List<Book>> getAllBooks(@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
         List<Book> books;
         int pageSize = 5;
         try {
             if (pageNumber < 0) {
-                return Collections.emptyList();
+                return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
             }
             books = librarySystemService.getAllBooks(pageNumber, pageSize);
-            return books;
+            return new ResponseEntity<>(books, HttpStatus.OK);
         } catch (Exception e) {
-            return Collections.emptyList();
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
         }
     }
 
@@ -119,6 +121,15 @@ public class LibraryController {
         }
     }
 
+    @PostMapping("inventory/issued/book/{bookId}/{userId}")
+    public String bookIssued(@PathVariable int bookId,@PathVariable int userId){
+        return librarySystemService.booksIssued(bookId,userId);
+    }
+
+    @PostMapping("inventory/returned/book/{bookId}/{userId}")
+    public String bookReturned(@PathVariable int bookId,@PathVariable int userId){
+        return librarySystemService.bookReturned(bookId,userId);
+    }
 
 
 }

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,20 @@ public class CategoryController {
         return categoryService.addCategory(category);
     }
 
-    @GetMapping("categories")
+//    @GetMapping("categories")
+//    @Operation(
+//            description = "Addition of books and its details",
+//            responses = { @ApiResponse(
+//                    responseCode = "200",
+//                    content = @Content(
+//                            mediaType = "application/json"
+//                    ))})
+//    public ResponseEntity<List<Category>> getAllCategories(){
+//        List<Category> categories = categoryService.findAllCategories();
+//        return new ResponseEntity<>(categories, HttpStatus.OK);
+//    }
+
+    @GetMapping("/categories")
     @Operation(
             description = "Addition of books and its details",
             responses = { @ApiResponse(
@@ -41,14 +55,23 @@ public class CategoryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<List<Category>> getAllCategories(){
-        List<Category> categories = categoryService.findAllCategories();
-        return new ResponseEntity<>(categories, HttpStatus.OK);
+    public ResponseEntity<List<Category>> findAllCategories(@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
+        List<Category> categories;
+        int pageSize = 10;
+        try {
+            if (pageNumber < 0) {
+                return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+            }
+            categories = categoryService.findAllCategories(pageNumber, pageSize);
+            return new ResponseEntity<>(categories, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+        }
     }
 
     @GetMapping("categories/{bookId}")
-    public ResponseEntity<List<BookCategory>> findAllCategoryByBookId(@PathVariable int bookId) {
-        List<BookCategory> categories = categoryService.findAllCategoryByBookId(bookId);
+    public ResponseEntity<List<BookCategory>> findAllCategoriesByBookId(@PathVariable int bookId) {
+        List<BookCategory> categories = categoryService.findAllCategoriesByBookId(bookId);
 
         if (categories.isEmpty()) {
             return ResponseEntity.notFound().build();
