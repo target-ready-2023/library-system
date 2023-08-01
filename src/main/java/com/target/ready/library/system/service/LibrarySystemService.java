@@ -16,8 +16,7 @@ import java.util.List;
 
 public class LibrarySystemService {
 
-    @Autowired
-    CategoryService categoryService;
+    private final CategoryService categoryService;
 
     private final BookRepository bookRepository;
 
@@ -28,7 +27,8 @@ public class LibrarySystemService {
     UserRepository userRepository;
 
     @Autowired
-    public LibrarySystemService(BookRepository bookRepository) {
+    public LibrarySystemService(CategoryService categoryService, BookRepository bookRepository) {
+        this.categoryService = categoryService;
         this.bookRepository = bookRepository;
     }
 

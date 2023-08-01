@@ -47,4 +47,21 @@ public class LibraryControllerTest {
 
     }
 
+    @Test
+    public void deleteBookTest() {
+
+        Book book = new Book();
+        book.setBookId(2);
+        book.setBookName("Life of Suraj");
+        book.setBookDescription("Masterpiece");
+        book.setAuthorName("Suraj");
+        book.setPublicationYear(2024);
+
+        when(librarySystemService.findByBookId(2)).thenReturn(book);
+        when(librarySystemService.deleteBook(2)).thenReturn("Book deleted Successfully!");
+
+        String response = libraryController.deleteBook(book.getBookId());
+        assertEquals(response,"Book deleted Successfully!");
+    }
+
 }
