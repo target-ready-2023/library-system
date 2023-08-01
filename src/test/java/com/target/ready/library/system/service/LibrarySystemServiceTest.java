@@ -1,6 +1,7 @@
 package com.target.ready.library.system.service;
 
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.repository.BookCategoryRepository;
@@ -30,6 +31,8 @@ public class LibrarySystemServiceTest {
     UserRepository userRepository;
 
     @Mock
+    CategoryService categoryService;
+    @Mock
     BookCategoryRepository bookCategoryRepository;
 
     @InjectMocks
@@ -44,9 +47,9 @@ public class LibrarySystemServiceTest {
         bookRepository = mock(BookRepository.class);
         inventoryRepository = mock(InventoryRepository.class);
         userRepository = mock(UserRepository.class);
-
+        categoryService = mock(CategoryService.class);
         // Inject the mocked repositories into the librarySystemService
-        librarySystemService = new LibrarySystemService(bookRepository, inventoryRepository, userRepository);
+        librarySystemService = new LibrarySystemService(bookRepository, inventoryRepository, userRepository, categoryService);
     }
 
     @Test
@@ -115,5 +118,52 @@ public class LibrarySystemServiceTest {
 
     }
 
+    @Test
+    public void deleteBookTest() {
+        List<Book> books = new ArrayList<>();
+        List<BookCategory> categories = new ArrayList<>();
+
+        Book book1 = new Book();
+        book1.setBookId(1);
+        book1.setBookName("Life of Suraj 1");
+        book1.setBookDescription("Masterpiece");
+        book1.setAuthorName("Suraj");
+        book1.setPublicationYear(2024);
+        books.add(book1);
+
+        BookCategory category1= new BookCategory();
+        category1.setId(3);
+        category1.setBookId(1);
+        category1.setCategoryName("Thriller");
+        categories.add(category1);
+
+        Book book2 = new Book();
+        book2.setBookId(2);
+        book2.setBookName("Life of Suraj 2");
+        book2.setBookDescription("Masterpiece");
+        book2.setAuthorName("Suraj");
+        book2.setPublicationYear(2024);
+        books.add(book2);
+
+        BookCategory category2= new BookCategory();
+        category2.setId(4);
+        category2.setBookId(2);
+        category2.setCategoryName("Suspense");
+        categories.add(category2);
+
+        doAnswer((invocation) -> {
+            int id=invocation.getArgument(0);
+            books.removeIf(book->book.getBookId()==id);
+            return null;
+        }).when(bookRepository).deleteBook(1);
+
+        doAnswer((i) -> {
+            categories.removeIf(category -> category.getId() == 1);
+            return null;
+        }).when(categoryService).deleteBookCategory(1);
+
+        librarySystemService.deleteBook(1);
+        assertEquals(books.size(),1);
+    }
 
 }
