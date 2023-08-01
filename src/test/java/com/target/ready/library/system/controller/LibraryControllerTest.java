@@ -1,6 +1,10 @@
 package com.target.ready.library.system.controller;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.Inventory;
+import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.repository.BookImplementation;
+import com.target.ready.library.system.repository.InventoryImplementation;
+import com.target.ready.library.system.repository.UserImplementation;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import com.target.ready.library.system.service.LibrarySystemService;
@@ -28,6 +32,12 @@ public class LibraryControllerTest {
     @Mock
     BookImplementation bookRepository;
 
+    @Mock
+    InventoryImplementation inventoryRepository;
+
+    @Mock
+    UserImplementation userRepository;
+
     @Test
     public void testGetAllBooks() throws Exception{
         List<Book>  records = new ArrayList<Book>();
@@ -45,6 +55,31 @@ public class LibraryControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, response.getBody().size());
 
+    }
+    @Test
+    public void bookIssuedTest(){
+       UserCatalog user = new UserCatalog();
+       user.setBookId(1);
+       user.setUserId(2);
+
+       when(librarySystemService.booksIssued(user.getBookId(),user.getUserId())).thenReturn(String.valueOf(user));
+
+       String response = libraryController.bookIssued(user.getBookId(),user.getUserId());
+       ResponseEntity<String> responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
+       assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+       assertNotNull(response);
+    }
+
+    @Test
+    public void bookReturnedTest(){
+        UserCatalog user = new UserCatalog();
+        user.setBookId(1);
+        user.setUserId(2);
+
+        when(librarySystemService.bookReturned(user.getBookId(),user.getUserId())).thenReturn(user.getBookId(), user.getUserId());
+        libraryController.bookReturned(user.getBookId(),user.getUserId());
+        assertEquals(1, user.getBookId());
+        assertEquals(2, user.getUserId());
     }
 
 }

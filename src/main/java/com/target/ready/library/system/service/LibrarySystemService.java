@@ -21,16 +21,19 @@ public class LibrarySystemService {
 
     private final BookRepository bookRepository;
 
-    @Autowired
-    InventoryRepository inventoryRepository;
+
+    private final InventoryRepository inventoryRepository;
+
+
+    private final UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    public LibrarySystemService(BookRepository bookRepository) {
+    public LibrarySystemService(BookRepository bookRepository, InventoryRepository inventoryRepository, UserRepository userRepository){
         this.bookRepository = bookRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.userRepository = userRepository;
     }
+
 
     public List<Book> getAllBooks(int pageNumber, int pageSize) {
         return bookRepository.getAllBooks(pageNumber,pageSize);
@@ -92,9 +95,6 @@ public class LibrarySystemService {
     }
 
 
-
-
-
     @Transactional
     public String updateBookDetails(int bookId, BookDto bookDto) {
         try {
@@ -129,19 +129,22 @@ public class LibrarySystemService {
 
     }
 
-    public String bookReturned(int bookId,int userId){
-
+    public Integer bookReturned(int bookId,int userId){
+        Integer returnedBookId = 0;
         List<Integer> bookIdList=userRepository.findBooksByUserId(userId);
         for(Integer eachBookId:bookIdList){
             if(eachBookId==bookId){
                 Inventory inventory= inventoryRepository.findByBookId(bookId);
                 inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft()+1);
                 inventoryRepository.addInventory(inventory);
-                userRepository.deleteBookByUserId(bookId,userId);
+                returnedBookId = userRepository.deleteBookByUserId(bookId,userId);
             }
         }
-        return "Book Returned Successfully";
+        //return "Book Returned Successfully";
+        return returnedBookId;
     }
+
+
 
 }
 

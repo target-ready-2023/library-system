@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 public class UserCatalog {
 
+
     @JsonProperty("user_id")
     @JsonAlias("userId")
     private int userId;
