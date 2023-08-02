@@ -54,9 +54,9 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public String addBook(@RequestBody BookDto bookDto) throws JsonProcessingException {
+    public ResponseEntity<String> addBook(@RequestBody BookDto bookDto) throws JsonProcessingException {
 
-        return librarySystemService.addBook(bookDto);
+        return new ResponseEntity<>(librarySystemService.addBook(bookDto),HttpStatus.CREATED);
     }
 
     @GetMapping("/book/{bookId}")
@@ -67,15 +67,16 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public Book findByBookId(@PathVariable int bookId) {
-        return librarySystemService.findByBookId(bookId);
+    public ResponseEntity<Book> findByBookId(@PathVariable int bookId) {
+        return new ResponseEntity<>(librarySystemService.findByBookId(bookId),HttpStatus.OK);
     }
 
 
 
     @GetMapping("/book/category/{categoryName}")
-    public List<Book> findBookByCategoryName(@PathVariable String categoryName) {
-        return librarySystemService.findBookByCategoryName(categoryName);
+    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable String categoryName) {
+        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName)
+                ,HttpStatus.OK);
     }
 
     @GetMapping("books/{bookName}")
@@ -86,19 +87,19 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public List<Book> findByBookName(@PathVariable String bookName){
-        return librarySystemService.findByBookName(bookName);
+    public ResponseEntity<List<Book>> findByBookName(@PathVariable String bookName){
+        return new ResponseEntity<>(librarySystemService.findByBookName(bookName),HttpStatus.OK);
 
     }
 
 
     @DeleteMapping("book/{bookId}")
-    public String deleteBook(@PathVariable("bookId") int bookId) {
+    public ResponseEntity<String> deleteBook(@PathVariable("bookId") int bookId) {
         Book existingBook = librarySystemService.findByBookId(bookId);
         if (existingBook == null) {
-            return "Book does not exist";
+            return new ResponseEntity<>("Book does not exist",HttpStatus.ACCEPTED);
         } else {
-            return librarySystemService.deleteBook(bookId);
+            return new ResponseEntity<>(librarySystemService.deleteBook(bookId),HttpStatus.ACCEPTED);
         }
 
     }
@@ -113,28 +114,28 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public String updateBookDetails(@PathVariable("id") int id, @RequestBody BookDto bookDto) {
+    public ResponseEntity<String> updateBookDetails(@PathVariable("id") int id, @RequestBody BookDto bookDto) {
         Book existingBook = librarySystemService.findByBookId(id);
         if (existingBook == null) {
-            return "Book does not exist";
+            return new ResponseEntity<>("Book does not exist",HttpStatus.OK);
         } else {
-            return librarySystemService.updateBookDetails(id, bookDto);
+            return new ResponseEntity<>(librarySystemService.updateBookDetails(id, bookDto),HttpStatus.OK);
         }
     }
 
     @PostMapping("inventory/issued/book/{bookId}/{userId}")
-    public String bookIssued(@PathVariable int bookId,@PathVariable int userId){
-        return librarySystemService.booksIssued(bookId,userId);
+    public ResponseEntity<String> bookIssued(@PathVariable int bookId,@PathVariable int userId){
+        return new ResponseEntity<>(librarySystemService.booksIssued(bookId,userId),HttpStatus.CREATED);
     }
 
     @PostMapping("inventory/returned/book/{bookId}/{userId}")
-    public Integer bookReturned(@PathVariable int bookId, @PathVariable int userId){
-        return librarySystemService.bookReturned(bookId,userId);
+    public ResponseEntity<Integer> bookReturned(@PathVariable int bookId, @PathVariable int userId){
+        return new ResponseEntity<>(librarySystemService.bookReturned(bookId,userId),HttpStatus.CREATED);
     }
 
     @GetMapping("book/no_of_copies/{bookId}")
-    public Integer getNoOfCopiesByBookId(@PathVariable Integer bookId){
-        return librarySystemService.getNoOfCopiesByBookId(bookId);
+    public ResponseEntity<Integer> getNoOfCopiesByBookId(@PathVariable Integer bookId){
+        return new ResponseEntity<>(librarySystemService.getNoOfCopiesByBookId(bookId),HttpStatus.OK);
     }
 
 
