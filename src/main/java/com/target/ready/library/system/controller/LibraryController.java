@@ -132,6 +132,11 @@ public class LibraryController {
         return librarySystemService.bookReturned(bookId,userId);
     }
 
+    @GetMapping("book/no_of_copies/{bookId}")
+    public Integer getNoOfCopiesByBookId(@PathVariable Integer bookId){
+        return librarySystemService.getNoOfCopiesByBookId(bookId);
+    }
+
 
 }
 
