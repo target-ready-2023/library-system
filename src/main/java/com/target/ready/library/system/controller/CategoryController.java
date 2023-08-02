@@ -29,8 +29,8 @@ public class CategoryController {
             content = @Content(
                     mediaType = "application/json"
             ))})
-    public String addCategory(@RequestBody Category category) throws JsonProcessingException {
-        return categoryService.addCategory(category);
+    public ResponseEntity<String> addCategory(@RequestBody Category category) throws JsonProcessingException {
+        return new ResponseEntity<>(categoryService.addCategory(category),HttpStatus.OK);
     }
 
 //    @GetMapping("categories")

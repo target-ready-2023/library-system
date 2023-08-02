@@ -53,9 +53,9 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public String addBook(@RequestBody BookDto bookDto) throws JsonProcessingException {
+    public ResponseEntity<String> addBook(@RequestBody BookDto bookDto) throws JsonProcessingException {
 
-        return librarySystemService.addBook(bookDto);
+        return new ResponseEntity<>(librarySystemService.addBook(bookDto), HttpStatus.OK);
     }
 
     @GetMapping("/book/{bookId}")
@@ -73,8 +73,8 @@ public class LibraryController {
 
 
     @GetMapping("/book/category/{categoryName}")
-    public List<Book> findBookByCategoryName(@PathVariable String categoryName) {
-        return librarySystemService.findBookByCategoryName(categoryName);
+    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable String categoryName) {
+        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName),HttpStatus.OK);
     }
 
     @GetMapping("books/{bookName}")
@@ -85,19 +85,20 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public List<Book> findByBookName(@PathVariable String bookName){
-        return librarySystemService.findByBookName(bookName);
+    public ResponseEntity<List<Book>> findByBookName(@PathVariable String bookName){
+        List<Book> books = librarySystemService.findByBookName(bookName);
+        return new ResponseEntity<>(books,HttpStatus.OK);
 
     }
 
 
     @DeleteMapping("book/{bookId}")
-    public String deleteBook(@PathVariable("bookId") int bookId) {
+    public ResponseEntity<String> deleteBook(@PathVariable("bookId") int bookId) {
         Book existingBook = librarySystemService.findByBookId(bookId);
         if (existingBook == null) {
-            return "Book does not exist";
+            return new ResponseEntity<>("Book does not exist", HttpStatus.OK);
         } else {
-            return librarySystemService.deleteBook(bookId);
+            return new ResponseEntity<>(librarySystemService.deleteBook(bookId), HttpStatus.OK);
         }
 
     }
@@ -112,23 +113,23 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public String updateBookDetails(@PathVariable("id") int id, @RequestBody BookDto bookDto) {
+    public ResponseEntity<String> updateBookDetails(@PathVariable("id") int id, @RequestBody BookDto bookDto) {
         Book existingBook = librarySystemService.findByBookId(id);
         if (existingBook == null) {
-            return "Book does not exist";
+            return new ResponseEntity<>("Book does not exist", HttpStatus.OK);
         } else {
-            return librarySystemService.updateBookDetails(id, bookDto);
+            return new ResponseEntity<>(librarySystemService.updateBookDetails(id, bookDto) ,HttpStatus.OK);
         }
     }
 
     @PostMapping("inventory/issued/book/{bookId}/{userId}")
-    public String bookIssued(@PathVariable int bookId,@PathVariable int userId){
-        return librarySystemService.booksIssued(bookId,userId);
+    public ResponseEntity<String> bookIssued(@PathVariable int bookId,@PathVariable int userId){
+        return new ResponseEntity<>(librarySystemService.booksIssued(bookId,userId), HttpStatus.OK);
     }
 
     @PostMapping("inventory/returned/book/{bookId}/{userId}")
-    public String bookReturned(@PathVariable int bookId,@PathVariable int userId){
-        return librarySystemService.bookReturned(bookId,userId);
+    public ResponseEntity<String> bookReturned(@PathVariable int bookId,@PathVariable int userId){
+        return new ResponseEntity<>(librarySystemService.bookReturned(bookId,userId),HttpStatus.OK);
     }
 
 
