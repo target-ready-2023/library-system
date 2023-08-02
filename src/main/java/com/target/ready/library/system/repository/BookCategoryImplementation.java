@@ -43,12 +43,12 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     }
 
     @Override
-    public Mono<Void> deleteBookCategory(int bookId) {
+    public String deleteBookCategory(int bookId) {
         return webClient.delete()
                 .uri(libraryBaseUrl2 + "inventory/delete/bookCategory/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(Void.class);
+                .bodyToMono(String.class).block();
     }
 
     @Override

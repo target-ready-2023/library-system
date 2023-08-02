@@ -50,7 +50,7 @@ public class CategoryService {
         return "Category added to the book successfully";
     }
 
-    public Mono<Void> deleteBookCategory(int bookId) {
+    public String deleteBookCategory(int bookId) {
         try {
             return bookCategoryRepository.deleteBookCategory(bookId);
         } catch (Exception e) {
