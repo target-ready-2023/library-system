@@ -63,10 +63,8 @@ public class LibraryControllerTest {
        user.setUserId(2);
 
        when(librarySystemService.booksIssued(user.getBookId(),user.getUserId())).thenReturn(String.valueOf(user));
-
-       String response = libraryController.bookIssued(user.getBookId(),user.getUserId());
-       ResponseEntity<String> responseEntity = new ResponseEntity<String>(response,HttpStatus.OK);
-       assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+       ResponseEntity<String> response = libraryController.bookIssued(user.getBookId(),user.getUserId());
+       assertEquals(HttpStatus.CREATED, response.getStatusCode());
        assertNotNull(response);
     }
 
@@ -80,6 +78,25 @@ public class LibraryControllerTest {
         libraryController.bookReturned(user.getBookId(),user.getUserId());
         assertEquals(1, user.getBookId());
         assertEquals(2, user.getUserId());
+    }
+
+    @Test
+    public void findByBookNameTest(){
+        List<Book> books = new ArrayList<>();
+        Book book1=new Book(1,
+                "The Hound of Death",
+                "A young Englishman visiting Cornwall finds himself delving into the legend of a Belgian nun who is living as a refugee in the village."
+                ,"Agatha Christie",1933);
+        books.add(book1);
+        Book book2=new Book(2,
+                "The Adventure of Dancing Men",
+                "The little dancing men are at the heart of a mystery which seems to be driving his young wife Elsie Patrick to distraction."
+                ,"Sir Arthur Conan Doyle",1903);
+        books.add(book2);
+        when(librarySystemService.findByBookName("The Hound of Death")).thenReturn(books);
+        ResponseEntity<List<Book>> response = libraryController.findByBookName(book1.getBookName());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(books, response.getBody());
     }
 
 }
