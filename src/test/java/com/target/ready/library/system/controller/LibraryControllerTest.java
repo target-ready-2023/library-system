@@ -1,5 +1,6 @@
 package com.target.ready.library.system.controller;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.repository.BookImplementation;
@@ -78,6 +79,51 @@ public class LibraryControllerTest {
         libraryController.bookReturned(user.getBookId(),user.getUserId());
         assertEquals(1, user.getBookId());
         assertEquals(2, user.getUserId());
+    }
+
+    @Test
+    public void findByBookIdTest() {
+        Book book = new Book();
+        book.setBookId(1);
+        book.setBookName("Five Point someone");
+        book.setAuthorName("Chetan Bhagat");
+        book.setBookDescription("Semi-autobiographical");
+        book.setPublicationYear(2004);
+
+        when(librarySystemService.findByBookId(book.getBookId())).thenReturn(book);
+        Book response = libraryController.findByBookId(book.getBookId()).getBody();
+        assertEquals(1, response.getBookId());
+    }
+
+    public void findBookByCategoryNameTest() {
+        List<Book> books = new ArrayList<>();
+        List<BookCategory> bookCategories = new ArrayList<>();
+        List<Book> returnBooks = new ArrayList<>();
+        Book book1 = new Book(1,
+                "Harry Potter and the Philosopher's Stone",
+                "Harry Potter, a young wizard who discovers his magical heritage on his eleventh birthday, when he receives a letter of acceptance to Hogwarts School of Witchcraft and Wizardry."
+                , "J. K. Rowling", 1997);
+        books.add(book1);
+        BookCategory bookCategory1 = new BookCategory();
+        bookCategory1.setCategoryName("Fiction");
+        bookCategory1.setBookId(1);
+        bookCategory1.setId(1);
+        bookCategories.add(bookCategory1);
+
+        Book book2 = new Book(2,
+                "The Immortals of Meluha",
+                "follows the story of a man named Shiva, who lives in the Tibetan region – Mount Kailash."
+                , "Amish Tripathi", 2010);
+        books.add(book2);
+        BookCategory bookCategory2 = new BookCategory();
+        bookCategory2.setCategoryName("Sci-Fi");
+        bookCategory2.setBookId(2);
+        bookCategory2.setId(2);
+        bookCategories.add(bookCategory2);
+
+        when(librarySystemService.findBookByCategoryName("Sci-Fi")).thenReturn(returnBooks);
+        ResponseEntity<List<Book>> response = libraryController.findBookByCategoryName(bookCategory1.getCategoryName());
+        assertEquals(response.getBody(), returnBooks);
     }
 
     @Test
