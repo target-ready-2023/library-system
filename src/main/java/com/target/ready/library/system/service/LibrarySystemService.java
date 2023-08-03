@@ -101,10 +101,14 @@ public class LibrarySystemService {
             bookRepository.updateBookDetails(bookId, bookDto);
             categoryService.deleteBookCategory(bookId);
             List<String> categoryNames = bookDto.getCategoryNames();
+
             for (String categoryName : categoryNames) {
-                Category category1 = new Category();
-                category1.setCategoryName(categoryName);
-                categoryService.addCategory(category1);
+                Category category = categoryService.findCategoryBycategoryName(categoryName);
+                if (category == null) {
+                    Category category1 = new Category();
+                    category1.setCategoryName(categoryName);
+                    categoryService.addCategory(category1);
+                }
                 BookCategory bookCategory = new BookCategory();
                 bookCategory.setBookId(bookId);
                 bookCategory.setCategoryName(categoryName);
