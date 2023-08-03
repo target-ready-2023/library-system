@@ -99,4 +99,22 @@ public class LibraryControllerTest {
         assertEquals(books, response.getBody());
     }
 
+    @Test
+    public void deleteBookTest() {
+
+        Book book = new Book();
+        book.setBookId(2);
+        book.setBookName("Day of the Jackal");
+        book.setBookDescription("Masterpiece");
+        book.setAuthorName("Frederick Forsyth");
+        book.setPublicationYear(1981);
+
+        when(librarySystemService.findByBookId(2)).thenReturn(book);
+        when(librarySystemService.deleteBook(2)).thenReturn("Book deleted Successfully!");
+
+        ResponseEntity<String> response = libraryController.deleteBook(book.getBookId());
+        assertEquals(response.getStatusCode(),HttpStatus.ACCEPTED);
+        assertEquals(response.getBody(),"Book deleted Successfully!");
+    }
+
 }
