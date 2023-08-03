@@ -71,9 +71,14 @@ public class LibraryController {
         return new ResponseEntity<>(librarySystemService.findByBookId(bookId),HttpStatus.OK);
     }
 
-
-
     @GetMapping("/book/category/{categoryName}")
+    @Operation(
+            description = "Get book according to its category",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
     public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable String categoryName) {
         return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName)
                 ,HttpStatus.OK);
