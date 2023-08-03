@@ -1,6 +1,7 @@
 package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,26 +30,15 @@ public class CategoryController {
             content = @Content(
                     mediaType = "application/json"
             ))})
-    public String addCategory(@RequestBody Category category) throws JsonProcessingException {
-        return categoryService.addCategory(category);
+    public ResponseEntity<String> addCategory(@RequestBody Category category) throws JsonProcessingException {
+        return new ResponseEntity<>(categoryService.addCategory(category),HttpStatus.CREATED);
     }
 
-//    @GetMapping("categories")
-//    @Operation(
-//            description = "Addition of books and its details",
-//            responses = { @ApiResponse(
-//                    responseCode = "200",
-//                    content = @Content(
-//                            mediaType = "application/json"
-//                    ))})
-//    public ResponseEntity<List<Category>> getAllCategories(){
-//        List<Category> categories = categoryService.findAllCategories();
-//        return new ResponseEntity<>(categories, HttpStatus.OK);
-//    }
+
 
     @GetMapping("/categories")
     @Operation(
-            description = "Addition of books and its details",
+            description = "Getting all the categories present in the database",
             responses = { @ApiResponse(
                     responseCode = "200",
                     content = @Content(
@@ -66,5 +56,23 @@ public class CategoryController {
         } catch (Exception e) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
         }
+    }
+
+    @GetMapping("categories/{book_id}")
+    @Operation(
+            description = "Finding all the categories of the given book",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<List<BookCategory>> findAllCategoriesByBookId(@PathVariable("book_id") int bookId) {
+        List<BookCategory> categories = categoryService.findAllCategoriesByBookId(bookId);
+
+        if (categories.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(categories);
     }
 }

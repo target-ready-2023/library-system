@@ -35,12 +35,12 @@ public class UserImplementation implements UserRepository{
                 .block();
     }
     @Override
-    public void deleteBookByUserId(int bookId,int userId) {
-        webClient.delete()
+    public Integer deleteBookByUserId(int bookId,int userId) {
+        return webClient.delete()
                 .uri(libraryBaseUrl3 + "user/books/"+userId+"/"+bookId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(Void.class)
+                .bodyToMono(Integer.class)
                 .block();
     }
 

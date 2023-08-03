@@ -46,9 +46,9 @@ public class BookImplementation implements BookRepository{
                 .uri(libraryBaseUrl + "books/" + bookName)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToFlux(Book.class)
-                .collectList()
-                .block();
+                .toEntityList(Book.class)
+                .block()
+                .getBody();
     }
 
 
