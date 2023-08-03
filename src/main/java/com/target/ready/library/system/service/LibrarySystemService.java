@@ -151,7 +151,7 @@ public class LibrarySystemService {
 
     public Integer getNoOfCopiesByBookId(Integer bookId) {
         Inventory inventory=inventoryRepository.findByBookId(bookId);
-        Integer noOfCopies=inventory.getNoOfCopies();
+        Integer noOfCopies=inventory.getNoOfBooksLeft();
         return noOfCopies;
     }
 }

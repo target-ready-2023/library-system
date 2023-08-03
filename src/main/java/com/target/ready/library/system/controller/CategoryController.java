@@ -34,22 +34,11 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.addCategory(category),HttpStatus.CREATED);
     }
 
-//    @GetMapping("categories")
-//    @Operation(
-//            description = "Addition of books and its details",
-//            responses = { @ApiResponse(
-//                    responseCode = "200",
-//                    content = @Content(
-//                            mediaType = "application/json"
-//                    ))})
-//    public ResponseEntity<List<Category>> getAllCategories(){
-//        List<Category> categories = categoryService.findAllCategories();
-//        return new ResponseEntity<>(categories, HttpStatus.OK);
-//    }
+
 
     @GetMapping("/categories")
     @Operation(
-            description = "Addition of books and its details",
+            description = "Getting all the categories present in the database",
             responses = { @ApiResponse(
                     responseCode = "200",
                     content = @Content(
@@ -69,8 +58,15 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("categories/{bookId}")
-    public ResponseEntity<List<BookCategory>> findAllCategoriesByBookId(@PathVariable int bookId) {
+    @GetMapping("categories/{book_id}")
+    @Operation(
+            description = "Finding all the categories of the given book",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<List<BookCategory>> findAllCategoriesByBookId(@PathVariable("book_id") int bookId) {
         List<BookCategory> categories = categoryService.findAllCategoriesByBookId(bookId);
 
         if (categories.isEmpty()) {

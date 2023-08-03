@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @PostMapping("/user")
+    @PostMapping("/student")
     public ResponseEntity<String> addUser(@RequestBody UserProfile userProfile){
         return new ResponseEntity<>(userService.addUser(userProfile), HttpStatus.CREATED);
     }
