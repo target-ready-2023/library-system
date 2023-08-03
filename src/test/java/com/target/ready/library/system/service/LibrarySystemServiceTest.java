@@ -32,6 +32,9 @@ public class LibrarySystemServiceTest {
     UserRepository userRepository;
 
     @Mock
+    CategoryService categoryService;
+
+    @Mock
     BookCategoryRepository bookCategoryRepository;
 
     @InjectMocks
@@ -48,7 +51,7 @@ public class LibrarySystemServiceTest {
         userRepository = mock(UserRepository.class);
 
         // Inject the mocked repositories into the librarySystemService
-        librarySystemService = new LibrarySystemService(bookRepository, inventoryRepository, userRepository);
+        librarySystemService = new LibrarySystemService(bookRepository, inventoryRepository, userRepository, categoryService);
     }
 
     @Test
@@ -182,6 +185,54 @@ public class LibrarySystemServiceTest {
         when(bookRepository.findByBookName("The Hound of Death")).thenReturn(books);
         List<Book> result = librarySystemService.findByBookName(book1.getBookName());
         assertEquals(books, result);
+    }
+
+    @Test
+    public void deleteBookTest() {
+        List<Book> books = new ArrayList<>();
+        List<BookCategory> categories = new ArrayList<>();
+
+        Book book1 = new Book();
+        book1.setBookId(1);
+        book1.setBookName("Day of the Jackal");
+        book1.setBookDescription("Masterpiece");
+        book1.setAuthorName("Frederick Forsyth");
+        book1.setPublicationYear(1981);
+        books.add(book1);
+
+        BookCategory category1= new BookCategory();
+        category1.setId(3);
+        category1.setBookId(1);
+        category1.setCategoryName("Thriller");
+        categories.add(category1);
+
+        Book book2 = new Book();
+        book2.setBookId(2);
+        book2.setBookName("Angels and Demons");
+        book2.setBookDescription("Masterpiece");
+        book2.setAuthorName("Dan Brown");
+        book2.setPublicationYear(2007);
+        books.add(book2);
+
+        BookCategory category2= new BookCategory();
+        category2.setId(4);
+        category2.setBookId(2);
+        category2.setCategoryName("Suspense");
+        categories.add(category2);
+
+        doAnswer((invocation) -> {
+            int id=invocation.getArgument(0);
+            books.removeIf(book->book.getBookId()==id);
+            return null;
+        }).when(bookRepository).deleteBook(1);
+
+        doAnswer((i) -> {
+            categories.removeIf(category -> category.getId() == 1);
+            return null;
+        }).when(categoryService).deleteBookCategory(1);
+
+        librarySystemService.deleteBook(1);
+        assertEquals(books.size(),1);
     }
 
 }
