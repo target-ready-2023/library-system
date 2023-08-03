@@ -1,6 +1,7 @@
 package com.target.ready.library.system.service;
 
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.repository.BookCategoryRepository;
@@ -90,30 +91,43 @@ public class LibrarySystemServiceTest {
     @Test
     public void bookReturnedTest(){
         UserCatalog user1 = new UserCatalog();
-       user1.setBookId(1);
-       user1.setUserId(1);
+        user1.setBookId(1);
+        user1.setUserId(1);
 
-       UserCatalog user2 = new UserCatalog();
-       user2.setBookId(2);
-         user2.setUserId(1);
+        UserCatalog user2 = new UserCatalog();
+        user2.setBookId(2);
+        user2.setUserId(1);
 
-       List<Integer> users = new ArrayList<>();
-         users.add(user1.getBookId());
-            users.add(user2.getBookId());
+        List<Integer> users = new ArrayList<>();
+        users.add(user1.getBookId());
+        users.add(user2.getBookId());
 
-       when(userRepository.findBooksByUserId(1)).thenReturn(users);
+        when(userRepository.findBooksByUserId(1)).thenReturn(users);
 
-       Inventory inventory = new Inventory();
-         inventory.setInvBookId(1);
-            inventory.setNoOfBooksLeft(5);
-                inventory.setNoOfCopies(5);
-                when(inventoryRepository.findByBookId(1)).thenReturn(inventory);
-    when(inventoryRepository.addInventory(inventory)).thenReturn(inventory);
-    when(userRepository.deleteBookByUserId(1,1)).thenReturn(1);
-    Integer response = librarySystemService.bookReturned(1,1);
-    assertEquals(1, response);
-
+        Inventory inventory = new Inventory();
+        inventory.setInvBookId(1);
+        inventory.setNoOfBooksLeft(5);
+        inventory.setNoOfCopies(5);
+        when(inventoryRepository.findByBookId(1)).thenReturn(inventory);
+        when(inventoryRepository.addInventory(inventory)).thenReturn(inventory);
+        when(userRepository.deleteBookByUserId(1,1)).thenReturn(1);
+        Integer response = librarySystemService.bookReturned(1,1);
+        assertEquals(1, response);
     }
 
+    @Test
+    public void findByBookIdTest(){
+        Book book = new Book();
+        book.setBookId(1);
+        book.setBookName("Five Point someone");
+        book.setAuthorName("Chetan Bhagat");
+        book.setBookDescription("Semi-autobiographical");
+        book.setPublicationYear(2004);
+
+        when(bookRepository.findByBookId(1)).thenReturn(book);
+        Book response = librarySystemService.findByBookId(1);
+        assertEquals(book, response);
+
+    }
 
 }
