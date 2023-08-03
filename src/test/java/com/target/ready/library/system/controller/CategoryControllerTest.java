@@ -25,11 +25,12 @@ public class CategoryControllerTest {
 //        myCategories.add(new Category(1,"Horror"));
 //        myCategories.add(new Category(2,"Adventure"));
 //
-//        when(categoryService.findAllCategories()).thenReturn(myCategories);
-//        ResponseEntity<List<Category>> response = categoryController.getAllCategories();
+//        when(categoryService.findAllCategories(0,5)).thenReturn(myCategories);
+//        ResponseEntity<List<Category>> response = categoryController.findAllCategories(0);
+//        System.out.println(response);
 //
 //        assertEquals(HttpStatus.OK,response.getStatusCode());
-//        assertEquals(2,response.getBody().size());
+//        assertEquals(2,response.size());
 //    }
 
 //    @Test

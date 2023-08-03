@@ -1,10 +1,18 @@
 package com.target.ready.library.system.service;
 
+import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.CategoryRepository;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {CategoryServiceTest.class})
 public class CategoryServiceTest {
@@ -18,16 +26,7 @@ public class CategoryServiceTest {
     @InjectMocks
     CategoryService categoryService;
 
-//    @Test
-//    public void findAllCategoriesTest(){
-//        List<Category> myCategories = new ArrayList<Category>();
-//
-//        myCategories.add(new Category(1,"Horror"));
-//        myCategories.add(new Category(2, "Adventure"));
-//
-//        when(categoryRepository.findAllCategories()).thenReturn(myCategories);
-//        assertEquals(2,categoryService.findAllCategories().size());
-//    }
+
 
 //    @Test
 //    public void addCategoryTest(){

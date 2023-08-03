@@ -33,7 +33,7 @@ public class LibraryController {
                     ))})
     public ResponseEntity<List<Book>> getAllBooks(@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
         List<Book> books;
-        int pageSize = 5;
+        int pageSize = 15;
         try {
             if (pageNumber < 0) {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
