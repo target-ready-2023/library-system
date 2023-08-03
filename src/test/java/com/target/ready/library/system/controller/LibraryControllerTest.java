@@ -82,6 +82,19 @@ public class LibraryControllerTest {
     }
 
     @Test
+    public void findByBookIdTest() {
+        Book book = new Book();
+        book.setBookId(1);
+        book.setBookName("Five Point someone");
+        book.setAuthorName("Chetan Bhagat");
+        book.setBookDescription("Semi-autobiographical");
+        book.setPublicationYear(2004);
+
+        when(librarySystemService.findByBookId(book.getBookId())).thenReturn(book);
+        Book response = libraryController.findByBookId(book.getBookId()).getBody();
+        assertEquals(1, response.getBookId());
+    }
+
     public void findBookByCategoryNameTest() {
         List<Book> books = new ArrayList<>();
         List<BookCategory> bookCategories = new ArrayList<>();
