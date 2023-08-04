@@ -17,21 +17,24 @@ import java.util.List;
 
 public class LibrarySystemService {
 
-    @Autowired
-    CategoryService categoryService;
+    private final CategoryService categoryService;
 
     private final BookRepository bookRepository;
 
-    @Autowired
-    InventoryRepository inventoryRepository;
+
+    private final InventoryRepository inventoryRepository;
+
+
+    private final UserRepository userRepository;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    public LibrarySystemService(BookRepository bookRepository) {
+    public LibrarySystemService(BookRepository bookRepository, InventoryRepository inventoryRepository, UserRepository userRepository, CategoryService categoryService){
         this.bookRepository = bookRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.userRepository = userRepository;
+        this.categoryService = categoryService;
     }
+
 
     public List<Book> getAllBooks(int pageNumber, int pageSize) {
         return bookRepository.getAllBooks(pageNumber,pageSize);
@@ -93,19 +96,20 @@ public class LibrarySystemService {
     }
 
 
-
-
-
     @Transactional
     public String updateBookDetails(int bookId, BookDto bookDto) {
         try {
             bookRepository.updateBookDetails(bookId, bookDto);
             categoryService.deleteBookCategory(bookId);
             List<String> categoryNames = bookDto.getCategoryNames();
+
             for (String categoryName : categoryNames) {
-                Category category1 = new Category();
-                category1.setCategoryName(categoryName);
-                categoryService.addCategory(category1);
+                Category category = categoryService.findCategoryBycategoryName(categoryName);
+                if (category == null) {
+                    Category category1 = new Category();
+                    category1.setCategoryName(categoryName);
+                    categoryService.addCategory(category1);
+                }
                 BookCategory bookCategory = new BookCategory();
                 bookCategory.setBookId(bookId);
                 bookCategory.setCategoryName(categoryName);
@@ -130,20 +134,27 @@ public class LibrarySystemService {
 
     }
 
-    public String bookReturned(int bookId,int userId){
-
+    public Integer bookReturned(int bookId,int userId){
+        Integer returnedBookId = 0;
         List<Integer> bookIdList=userRepository.findBooksByUserId(userId);
         for(Integer eachBookId:bookIdList){
             if(eachBookId==bookId){
                 Inventory inventory= inventoryRepository.findByBookId(bookId);
                 inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft()+1);
                 inventoryRepository.addInventory(inventory);
-                userRepository.deleteBookByUserId(bookId,userId);
+                returnedBookId = userRepository.deleteBookByUserId(bookId,userId);
             }
         }
-        return "Book Returned Successfully";
+        //return "Book Returned Successfully";
+        return returnedBookId;
     }
 
+
+    public Integer getNoOfCopiesByBookId(Integer bookId) {
+        Inventory inventory=inventoryRepository.findByBookId(bookId);
+        Integer noOfCopies=inventory.getNoOfBooksLeft();
+        return noOfCopies;
+    }
 }
 
 

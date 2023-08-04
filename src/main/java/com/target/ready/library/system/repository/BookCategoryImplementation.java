@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Repository
 public class BookCategoryImplementation implements BookCategoryRepository{
 
@@ -41,11 +43,20 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     }
 
     @Override
-    public Mono<Void> deleteBookCategory(int bookId) {
+    public String deleteBookCategory(int bookId) {
         return webClient.delete()
                 .uri(libraryBaseUrl2 + "inventory/delete/bookCategory/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(Void.class);
+                .bodyToMono(String.class).block();
+    }
+
+    @Override
+    public List<BookCategory> findAllCategoriesByBookId(int bookId){
+        List<BookCategory> categories= webClient.get().uri(libraryBaseUrl2 + "categories/" + bookId).accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .toEntityList(BookCategory.class)
+                .block().getBody();
+        return  categories;
     }
 }
