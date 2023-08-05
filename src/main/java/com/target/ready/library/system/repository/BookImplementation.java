@@ -1,5 +1,6 @@
 package com.target.ready.library.system.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
@@ -7,6 +8,7 @@ import com.target.ready.library.system.entity.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -72,6 +74,7 @@ public class BookImplementation implements BookRepository{
 
     @Override
     public Book addBook(BookDto bookDto) {
+
         try {
             return webClient.post()
                     .uri(libraryBaseUrl + "inventory/books")
@@ -84,6 +87,7 @@ public class BookImplementation implements BookRepository{
         } catch (Exception e) {
             throw new RuntimeException("Failed to add book and category.", e);
         }
+
     }
 
 
