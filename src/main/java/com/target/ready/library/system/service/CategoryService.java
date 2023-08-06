@@ -1,7 +1,9 @@
 package com.target.ready.library.system.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,12 @@ public class CategoryService {
         this.bookCategoryRepository = bookCategoryRepository;
     }
 
-    public String addCategory(Category category) {
+    public String addCategory(Category category) throws JsonProcessingException {
         categoryRepository.addCategory(category);
         return "Category added Successfully!";
     }
 
-    public Category findCategoryBycategoryName(String categoryName) {
+    public Category findCategoryBycategoryName(String categoryName) throws ResourceNotFoundException {
         Category result = categoryRepository.findCategoryBycategoryName(categoryName);
         return result;
     }
@@ -58,13 +60,10 @@ public class CategoryService {
         }
     }
 
-    public List<BookCategory> findAllCategoriesByBookId(int bookId){
-        try{
+    public List<BookCategory> findAllCategoriesByBookId(int bookId) throws ResourceNotFoundException{
+
             return bookCategoryRepository.findAllCategoriesByBookId(bookId);
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+
     }
 
 }
