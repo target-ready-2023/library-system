@@ -57,7 +57,7 @@ public class CategoryControllerTest {
 //        System.out.println(response);
 //
 //        assertEquals(HttpStatus.OK,response.getStatusCode());
-//        assertEquals(2,response.size());
+//        assertEquals(2,response.getBody().size());
 //    }
 
 

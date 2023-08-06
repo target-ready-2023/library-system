@@ -3,7 +3,6 @@ package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
-import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,7 +33,7 @@ public class LibraryController {
                     ))})
     public ResponseEntity<List<Book>> getAllBooks(@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
         List<Book> books;
-        int pageSize = 15;
+        int pageSize = 5;
         try {
             if (pageNumber < 0) {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
