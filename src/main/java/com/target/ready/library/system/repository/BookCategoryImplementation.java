@@ -1,7 +1,10 @@
 package com.target.ready.library.system.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
+import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -54,9 +57,17 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     @Override
     public List<BookCategory> findAllCategoriesByBookId(int bookId){
         List<BookCategory> categories= webClient.get().uri(libraryBaseUrl2 + "categories/" + bookId).accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .toEntityList(BookCategory.class)
-                .block().getBody();
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404 ) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+                    } else {
+                        return response.bodyToFlux(BookCategory.class).collectList();
+                    }
+                })
+                .block();
+
         return  categories;
     }
 }
