@@ -179,6 +179,7 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
+
     public ResponseEntity<Integer> getNoOfCopiesByBookId(@PathVariable("book_id") Integer bookId){
         return new ResponseEntity<>(librarySystemService.getNoOfCopiesByBookId(bookId),HttpStatus.OK);
     }
