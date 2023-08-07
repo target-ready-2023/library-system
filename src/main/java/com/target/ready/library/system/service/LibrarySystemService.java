@@ -1,12 +1,16 @@
 package com.target.ready.library.system.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.*;
+import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
 import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,31 +52,42 @@ public class LibrarySystemService {
 
 
     @Transactional
-    public String addBook(BookDto bookDto) {
-        Book book = bookRepository.addBook(bookDto);
-        int bookId = book.getBookId();
-        int noOfCopies=bookDto.getNoOfCopies();
-        Inventory inventory=new Inventory();
-        inventory.setInvBookId(bookId);
-        inventory.setNoOfCopies(noOfCopies);
-        inventory.setNoOfBooksLeft(noOfCopies);
-        inventoryRepository.addInventory(inventory);
-        List<String> categoryNames = bookDto.getCategoryNames();
-        for (String eachCategoryName : categoryNames) {
+    public String addBook(BookDto bookDto) throws ClientErrorException, JsonProcessingException {
 
-            Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
-            if (category == null) {
-                Category category1 = new Category();
-                category1.setCategoryName(eachCategoryName);
-                categoryService.addCategory(category1);
+
+            Book book = bookRepository.addBook(bookDto);
+
+            int bookId = book.getBookId();
+            int noOfCopies = bookDto.getNoOfCopies();
+            Inventory inventory = new Inventory();
+            inventory.setInvBookId(bookId);
+            inventory.setNoOfCopies(noOfCopies);
+            inventory.setNoOfBooksLeft(noOfCopies);
+            inventoryRepository.addInventory(inventory);
+            List<String> categoryNames = bookDto.getCategoryNames();
+            for (String eachCategoryName : categoryNames) {
+                try {
+                    Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
+                }catch(ResourceNotFoundException ex){
+
+                        Category category1 = new Category();
+                        category1.setCategoryName(eachCategoryName);
+                        categoryService.addCategory(category1);
+                    }
+
+
+                BookCategory bookCategory = new BookCategory();
+                bookCategory.setBookId(bookId);
+                bookCategory.setCategoryName(eachCategoryName);
+                categoryService.addBookCategory(bookCategory);
             }
+            return "Book Added Successfully";
 
-            BookCategory bookCategory = new BookCategory();
-            bookCategory.setBookId(bookId);
-            bookCategory.setCategoryName(eachCategoryName);
-            categoryService.addBookCategory(bookCategory);
-        }
-        return "Book Added Successfully";
+
+
+
+
+
     }
 
     public List<Book> findBookByCategoryName(String categoryName) {
