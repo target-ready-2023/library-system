@@ -3,6 +3,7 @@ package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.service.LibrarySystemService;
@@ -83,6 +84,7 @@ public class LibraryController {
         return new ResponseEntity<>(librarySystemService.findByBookId(bookId),HttpStatus.OK);
     }
 
+
     @GetMapping("/book/category/{category_name}")
     @Operation(
             description = "Get book according to its category",
@@ -92,9 +94,14 @@ public class LibraryController {
                             mediaType = "application/json"
                     ))})
     public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName) {
-        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName)
-                ,HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName),HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+        }
     }
+
 
     @GetMapping("books/{book_name}")
     @Operation(
@@ -147,7 +154,8 @@ public class LibraryController {
         }
     }
 
-    @PostMapping("inventory/issue/book/{book_id}/{student_id}")
+
+    @PostMapping("inventory/issue/book")
     @Operation(
             description = "Issue book to the student",
             responses = { @ApiResponse(
@@ -155,11 +163,11 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> bookIssued(@PathVariable("book_id") int bookId,@PathVariable("student_id") int userId){
-        return new ResponseEntity<>(librarySystemService.booksIssued(bookId,userId),HttpStatus.CREATED);
+    public ResponseEntity<String> bookIssued(@RequestBody UserCatalog userCatalog){
+        return new ResponseEntity<>(librarySystemService.booksIssued(userCatalog.getBookId(), userCatalog.getUserId()),HttpStatus.CREATED);
     }
 
-    @PostMapping("inventory/return/book/{book_id}/{student_id}")
+    @PostMapping("inventory/return/book")
     @Operation(
             description = "Book returned by the student",
             responses = { @ApiResponse(
@@ -167,8 +175,8 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<Integer> bookReturned(@PathVariable("book_id") int bookId, @PathVariable("student_id") int userId){
-        return new ResponseEntity<>(librarySystemService.bookReturned(bookId,userId),HttpStatus.CREATED);
+    public ResponseEntity<Integer> bookReturned(@RequestBody UserCatalog userCatalog){
+        return new ResponseEntity<>(librarySystemService.bookReturned(userCatalog.getBookId(), userCatalog.getUserId()),HttpStatus.CREATED);
     }
 
     @GetMapping("book/no_of_copies/{book_id}")
