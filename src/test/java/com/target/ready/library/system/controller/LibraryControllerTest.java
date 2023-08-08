@@ -95,6 +95,7 @@ public class LibraryControllerTest {
         assertEquals(1, response.getBookId());
     }
 
+    @Test
     public void findBookByCategoryNameTest() {
         List<Book> books = new ArrayList<>();
         List<BookCategory> bookCategories = new ArrayList<>();
@@ -121,8 +122,8 @@ public class LibraryControllerTest {
         bookCategory2.setId(2);
         bookCategories.add(bookCategory2);
 
-        when(librarySystemService.findBookByCategoryName("Sci-Fi")).thenReturn(returnBooks);
-        ResponseEntity<List<Book>> response = libraryController.findBookByCategoryName(bookCategory1.getCategoryName());
+        when(librarySystemService.findBookByCategoryName("Sci-Fi",0,5)).thenReturn(returnBooks);
+        ResponseEntity<List<Book>> response = libraryController.findBookByCategoryName(bookCategory1.getCategoryName(),0);
         assertEquals(response.getBody(), returnBooks);
     }
 

@@ -14,6 +14,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -42,6 +43,10 @@ public class LibrarySystemService {
 
     public List<Book> getAllBooks(int pageNumber, int pageSize) {
         return bookRepository.getAllBooks(pageNumber,pageSize);
+    }
+
+    public Mono<Long> getTotalBookCount() {
+        return bookRepository.totalBooks();
     }
 
 
@@ -83,15 +88,10 @@ public class LibrarySystemService {
             }
             return "Book Added Successfully";
 
-
-
-
-
-
     }
 
-    public List<Book> findBookByCategoryName(String categoryName) {
-        List<Book> bookList= bookRepository.findBookByCategoryName(categoryName);
+    public List<Book> findBookByCategoryName(String categoryName,int pageNumber,int pageSize) {
+        List<Book> bookList= bookRepository.findBookByCategoryName(categoryName,pageNumber,pageSize);
         return bookList;
     }
 

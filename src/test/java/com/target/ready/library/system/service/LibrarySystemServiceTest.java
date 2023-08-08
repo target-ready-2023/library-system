@@ -68,7 +68,7 @@ public class LibrarySystemServiceTest {
 
         when(bookRepository.getAllBooks(0,5)).thenReturn(records);
         List<Book> response=librarySystemService.getAllBooks(0,5);
-        assertEquals(2, response.size());
+        assertEquals(records.size(), response.size());
     }
 
     @Test
@@ -162,10 +162,13 @@ public class LibrarySystemServiceTest {
         bookCategory2.setId(2);
         bookCategories.add(bookCategory2);
 
-        when(bookRepository.findBookByCategoryName("Sci-Fi")).thenReturn(returnBooks);
-        List<Book> response = librarySystemService.findBookByCategoryName(bookCategory1.getCategoryName());
+        when(bookRepository.findBookByCategoryName("Sci-Fi",0,5)).thenReturn(returnBooks);
+        List<Book> response = librarySystemService.findBookByCategoryName(bookCategory1.getCategoryName(),0,5);
         assertEquals(response, returnBooks);
     }
+
+
+
 
     @Test
     public void findByBookNameTest() {
