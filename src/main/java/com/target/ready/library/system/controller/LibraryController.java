@@ -124,6 +124,23 @@ public class LibraryController {
        }
     }
 
+    @GetMapping("/books/category/total_count/{categoryName}")
+    @Operation(
+            description = "Get number of books according to its category",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Mono<Long>> getTotalBookCategoryCount(@PathVariable String categoryName) {
+        try {
+            Mono<Long> totalCount = librarySystemService.getTotalBookCategoryCount(categoryName);
+            return new ResponseEntity<>(totalCount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("books/{book_name}")
     @Operation(
             description = "Get book according to its name",

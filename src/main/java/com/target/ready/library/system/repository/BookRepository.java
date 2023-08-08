@@ -19,5 +19,6 @@ public interface BookRepository {
     public void deleteBook(int bookId);
     public Book updateBookDetails(int bookId, BookDto bookDto);
     public Mono<Long> totalBooks();
+    public Mono<Long> countBooksByCategoryName(String categoryName);
 
 }

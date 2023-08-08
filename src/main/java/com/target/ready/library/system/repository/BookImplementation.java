@@ -54,6 +54,15 @@ public class BookImplementation implements BookRepository{
                 .getBody();
     }
 
+    @Override
+    public Mono<Long> countBooksByCategoryName(String categoryName){
+        return webClient
+                .get()
+                .uri(libraryBaseUrl + "books/category/total_count/"+ categoryName)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Long.class);
+    }
 
     @Override
     public List<Book> findByBookName(String bookName) {

@@ -6,6 +6,7 @@ import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.*;
 import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
+import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
 import com.target.ready.library.system.repository.UserRepository;
@@ -26,9 +27,7 @@ public class LibrarySystemService {
 
     private final BookRepository bookRepository;
 
-
     private final InventoryRepository inventoryRepository;
-
 
     private final UserRepository userRepository;
 
@@ -93,6 +92,10 @@ public class LibrarySystemService {
     public List<Book> findBookByCategoryName(String categoryName,int pageNumber,int pageSize) {
         List<Book> bookList= bookRepository.findBookByCategoryName(categoryName,pageNumber,pageSize);
         return bookList;
+    }
+
+    public Mono<Long> getTotalBookCategoryCount(String categoryName) {
+        return bookRepository.countBooksByCategoryName(categoryName);
     }
 
     public List<Book> findByBookName(String bookName){
