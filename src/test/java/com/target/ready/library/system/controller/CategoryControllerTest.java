@@ -53,7 +53,7 @@ public class CategoryControllerTest {
 //        myCategories.add(new Category(2,"Adventure"));
 //
 //        when(categoryService.findAllCategories()).thenReturn(myCategories);
-//        ResponseEntity<List<Category>> response = categoryController.getAllCategories();
+//        ResponseEntity<List<Category>> response = categoryController.findAllCategories();
 //
 //        assertEquals(HttpStatus.OK,response.getStatusCode());
 //        assertEquals(2,response.getBody().size());
