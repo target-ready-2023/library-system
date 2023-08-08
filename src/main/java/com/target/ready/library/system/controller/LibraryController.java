@@ -46,7 +46,6 @@ public class LibraryController {
             if (pageNumber < 0) {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
             }
-            System.out.println("directory is hit");
             books = librarySystemService.getAllBooks(pageNumber, pageSize);
             return new ResponseEntity<>(books, HttpStatus.OK);
         } catch (Exception e) {
