@@ -1,11 +1,15 @@
 package com.target.ready.library.system.controller;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
+import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.repository.BookImplementation;
 import com.target.ready.library.system.repository.InventoryImplementation;
 import com.target.ready.library.system.repository.UserImplementation;
+import jakarta.validation.Valid;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import com.target.ready.library.system.service.LibrarySystemService;
@@ -21,6 +25,8 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @SpringBootTest(classes = {LibraryControllerTest.class})
 public class LibraryControllerTest {
@@ -161,6 +167,17 @@ public class LibraryControllerTest {
         ResponseEntity<String> response = libraryController.deleteBook(book.getBookId());
         assertEquals(response.getStatusCode(),HttpStatus.ACCEPTED);
         assertEquals(response.getBody(),"Book deleted Successfully!");
+    }
+
+
+
+    @Test
+    public void addBookTest() throws JsonProcessingException {
+        when(librarySystemService.addBook(new BookDto())).thenReturn("Book Added Successfully");
+        BindingResult bindingResult=null;
+        ResponseEntity<String> response=libraryController.addBook(new BookDto(),bindingResult);
+        assertEquals("Book Added Successfully",response.getBody());
+
     }
 
 }

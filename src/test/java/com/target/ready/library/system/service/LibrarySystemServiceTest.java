@@ -1,9 +1,10 @@
 package com.target.ready.library.system.service;
 
-import com.target.ready.library.system.entity.Book;
-import com.target.ready.library.system.entity.BookCategory;
-import com.target.ready.library.system.entity.Inventory;
-import com.target.ready.library.system.entity.UserCatalog;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.entity.*;
+import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
@@ -235,4 +236,35 @@ public class LibrarySystemServiceTest {
         assertEquals(books.size(),1);
     }
 
+
+    @Test
+    public void addBookTest() throws JsonProcessingException,ResourceNotFoundException {
+        Book book = new Book();
+        book.setBookId(1);
+        book.setBookName("Five Point someone");
+        book.setAuthorName("Chetan Bhagat");
+        book.setBookDescription("Semi-autobiographical");
+        book.setPublicationYear(2004);
+
+        BookDto bookDto=new BookDto();
+        bookDto.setBook(book);
+        List<String> categoryNames=new ArrayList<>();
+        categoryNames.add("Fiction");
+        categoryNames.add("Horror");
+        bookDto.setCategoryNames(categoryNames);
+        bookDto.setNoOfCopies(5);
+        when(bookRepository.addBook(bookDto)).thenReturn(book);
+        Inventory inventory=new Inventory();
+        inventory.setInvBookId(book.getBookId());
+        inventory.setNoOfCopies(bookDto.getNoOfCopies());
+        inventory.setNoOfBooksLeft(bookDto.getNoOfCopies());
+        when(inventoryRepository.addInventory(inventory)).thenReturn(inventory);
+        when(categoryService.findCategoryBycategoryName("Fiction")).thenThrow(new ResourceNotFoundException("Category Not found"));
+        when(categoryService.addCategory(new Category())).thenReturn("Category Added Successfully");
+        when(categoryService.addBookCategory(new BookCategory())).thenReturn("Category added to the book successfully");
+        String response=librarySystemService.addBook(bookDto);
+        assertEquals("Book Added Successfully",response);
+
+
+    }
 }
