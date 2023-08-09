@@ -2,7 +2,6 @@ package com.target.ready.library.system.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
@@ -62,9 +61,12 @@ public class CategoryController {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
             }
             categories = categoryService.findAllCategories(pageNumber, pageSize);
+            if(categories.isEmpty()){
+                throw new ResourceNotFoundException("No categories available currently!");
+            }
             return new ResponseEntity<>(categories, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>("Categories are not present in the database", HttpStatus.OK);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
