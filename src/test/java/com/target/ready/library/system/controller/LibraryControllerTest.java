@@ -70,7 +70,7 @@ public class LibraryControllerTest {
        user.setUserId(2);
 
        when(librarySystemService.booksIssued(user.getBookId(),user.getUserId())).thenReturn(String.valueOf(user));
-       ResponseEntity<String> response = libraryController.bookIssued(user.getBookId(),user.getUserId());
+       ResponseEntity<String> response = libraryController.bookIssued(user);
        assertEquals(HttpStatus.CREATED, response.getStatusCode());
        assertNotNull(response);
     }
@@ -82,7 +82,7 @@ public class LibraryControllerTest {
         user.setUserId(2);
 
         when(librarySystemService.bookReturned(user.getBookId(),user.getUserId())).thenReturn(user.getBookId(), user.getUserId());
-        libraryController.bookReturned(user.getBookId(),user.getUserId());
+        libraryController.bookReturned(user);
         assertEquals(1, user.getBookId());
         assertEquals(2, user.getUserId());
     }
