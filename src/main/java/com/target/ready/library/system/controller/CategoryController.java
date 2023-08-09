@@ -2,10 +2,7 @@ package com.target.ready.library.system.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
-import com.target.ready.library.system.exceptions.ClientErrorException;
-import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,11 +30,9 @@ public class CategoryController {
             content = @Content(
                     mediaType = "application/json"
             ))})
-    public ResponseEntity<String> addCategory(@RequestBody Category category)  {
+    public ResponseEntity<?> addCategory(@RequestBody Category category)  {
         try {
             return new ResponseEntity<>(categoryService.addCategory(category),HttpStatus.CREATED);
-        }catch (ClientErrorException ex){
-            return new ResponseEntity<>(ex.getMessage(),HttpStatus.CONFLICT);
         }
         catch (JsonProcessingException e) {
             return new ResponseEntity<>("An error occurred while processing the request",HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,14 +72,9 @@ public class CategoryController {
                             mediaType = "application/json"
                     ))})
     public ResponseEntity<?> findAllCategoriesByBookId(@PathVariable("book_id") int bookId) {
-        try {
+
             return new ResponseEntity<>(categoryService.findAllCategoriesByBookId(bookId),HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-        }
-        catch (Exception e){
-            return new ResponseEntity<>("An error occurred while processing the request",HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
 
 
     }
@@ -98,12 +88,8 @@ public class CategoryController {
                             mediaType = "application/json"
                     ))})
     public ResponseEntity<?> findCategoryByCategoryName(@PathVariable("category_name") String categoryName){
-        try {
+
             return new ResponseEntity<>(categoryService.findCategoryBycategoryName(categoryName),HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>("Category not found with the given name",HttpStatus.NOT_FOUND);
-        }catch (Exception e){
-            return new ResponseEntity<>("An error occurred while processing the request",HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
     }
 }

@@ -1,13 +1,18 @@
 package com.target.ready.library.system.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.entity.UserProfile;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 @Repository
@@ -45,15 +50,27 @@ public class UserImplementation implements UserRepository{
     }
 
     @Override
-    public UserCatalog addUserCatalog(UserCatalog userCatalog) {
+    public UserCatalog addUserCatalog(UserCatalog userCatalog) throws ResourceAlreadyExistsException,ResourceNotFoundException{
         try {
             return webClient.post()
                     .uri(libraryBaseUrl3 + "user/catalog")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(userCatalog))
-                    .retrieve()
-                    .bodyToMono(UserCatalog.class)
+                    .exchange()
+                    .flatMap(response -> {
+                        if (response.statusCode().isError() && response.statusCode().value() == 409 ) {
+                            return response.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new ResourceAlreadyExistsException(errorBody)));
+
+                        } else if (response.statusCode().isError()&&response.statusCode().value()==404) {
+                            return response.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                        } else {
+                            return response.bodyToMono(UserCatalog.class);
+                        }
+                    })
                     .block();
         } catch (Exception e) {
             throw new RuntimeException("User with Issuedbook not added", e);
@@ -61,18 +78,24 @@ public class UserImplementation implements UserRepository{
     }
 
     @Override
-    public UserProfile addUser(UserProfile userProfile) {
-        try {
+    public UserProfile addUser(UserProfile userProfile) throws JsonProcessingException ,ResourceAlreadyExistsException{
+
             return webClient.post()
                     .uri(libraryBaseUrl3 + "user")
                     .accept(MediaType.APPLICATION_JSON)
                     .contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(userProfile))
-                    .retrieve()
-                    .bodyToMono(UserProfile.class)
+                    .exchange()
+                    .flatMap(response -> {
+                        if (response.statusCode().isError() && response.statusCode().value() == 409 ) {
+                            return response.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new ResourceAlreadyExistsException(errorBody)));
+
+                        } else {
+                            return response.bodyToMono(UserProfile.class);
+                        }
+                    })
                     .block();
-        } catch (Exception e) {
-            throw new RuntimeException("User with Issuedbook not added", e);
-        }
+
     }
 }

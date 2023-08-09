@@ -2,9 +2,8 @@ package com.target.ready.library.system.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.Category;
-import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,17 +62,17 @@ public class CategoryImplementation implements CategoryRepository{
     }
 
     @Override
-    public void addCategory(Category category) throws ClientErrorException,JsonProcessingException{
+    public Category addCategory(Category category) throws ResourceAlreadyExistsException,JsonProcessingException{
 
-            webClient.post().uri(libraryBaseUrl2 + "inventory/category")
+            return webClient.post().uri(libraryBaseUrl2 + "inventory/category")
 
                     .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(category))
                     .exchange()
                     .flatMap(response -> {
-                        if (response.statusCode().isError() && response.statusCode().value() == 500 ) {
+                        if (response.statusCode().isError() && response.statusCode().value() == 409 ) {
                             return response.bodyToMono(String.class)
-                                    .flatMap(errorBody -> Mono.error(new ClientErrorException("Client Error: " + errorBody)));
+                                    .flatMap(errorBody -> Mono.error(new ResourceAlreadyExistsException(errorBody)));
                         } else {
                             return response.bodyToMono(Category.class);
                         }
