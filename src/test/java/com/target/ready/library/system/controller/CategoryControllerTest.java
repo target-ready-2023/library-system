@@ -2,8 +2,8 @@ package com.target.ready.library.system.controller;
 
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
-import com.target.ready.library.system.service.CategoryService;
 import com.target.ready.library.system.repository.BookCategoryImplementation;
+import com.target.ready.library.system.service.CategoryService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {CategoryControllerTest.class})
@@ -46,18 +47,28 @@ public class CategoryControllerTest {
 //        assertEquals(2,response.getBody().size());
     }
 
-//    @Test
-//    public void findAllCategoriesTest(){
-//        myCategories = new ArrayList<Category>();
-//        myCategories.add(new Category(1,"Horror"));
-//        myCategories.add(new Category(2,"Adventure"));
-//
-//        when(categoryService.findAllCategories()).thenReturn(myCategories);
-//        ResponseEntity<List<Category>> response = categoryController.findAllCategories();
-//
-//        assertEquals(HttpStatus.OK,response.getStatusCode());
-//        assertEquals(2,response.getBody().size());
-//    }
+
+    @Test
+    public void findAllCategoriesTest() {
+        myCategories = new ArrayList<>();
+        myCategories.add(new Category(1, "Horror"));
+        myCategories.add(new Category(2, "Thriller"));
+
+        // Mocking behavior of the categoryService for valid page number (0)
+        when(categoryService.findAllCategories(0, 10)).thenReturn(myCategories);
+
+        // Calling the controller method with a valid page number (0)
+        ResponseEntity<?> mockCategories = categoryController.findAllCategories(0);
+
+        // Assertions
+        assertNotNull(mockCategories);
+        assertEquals(HttpStatus.OK, mockCategories.getStatusCode());
+
+        List<Category> categoriesSize = (List<Category>) mockCategories.getBody();
+        assertEquals(2, categoriesSize.size());
+    }
+
+
 
 
 

@@ -3,6 +3,7 @@ package com.target.ready.library.system.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.CategoryRepository;
@@ -25,9 +26,9 @@ public class CategoryService {
         this.bookCategoryRepository = bookCategoryRepository;
     }
 
-    public String addCategory(Category category) throws JsonProcessingException {
-        categoryRepository.addCategory(category);
-        return "Category added Successfully!";
+    public Category addCategory(Category category) throws ResourceAlreadyExistsException,JsonProcessingException {
+        return categoryRepository.addCategory(category);
+
     }
 
     public Category findCategoryBycategoryName(String categoryName) throws ResourceNotFoundException {
@@ -47,9 +48,9 @@ public class CategoryService {
     }
 
 
-    public  String addBookCategory(BookCategory bookCategory) {
-        bookCategoryRepository.addBookCategory(bookCategory);
-        return "Category added to the book successfully";
+    public  BookCategory addBookCategory(BookCategory bookCategory) throws JsonProcessingException,ResourceAlreadyExistsException {
+       return bookCategoryRepository.addBookCategory(bookCategory);
+
     }
 
     public String deleteBookCategory(int bookId) {

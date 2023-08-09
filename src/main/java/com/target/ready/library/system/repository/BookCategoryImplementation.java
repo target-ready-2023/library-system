@@ -1,9 +1,9 @@
 package com.target.ready.library.system.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
-import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,18 +31,23 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     }
 
     @Override
-    public void addBookCategory(BookCategory bookCategory){
-        try {
-            webClient.post().uri(libraryBaseUrl2 + "inventory/book/category")
+    public BookCategory addBookCategory(BookCategory bookCategory) throws JsonProcessingException,ResourceAlreadyExistsException {
+
+            return webClient.post().uri(libraryBaseUrl2 + "inventory/book/category")
 
                     .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
                     .bodyValue(objectMapper.writeValueAsString(bookCategory))
-                    .retrieve()
-                    .bodyToMono(BookCategory.class)
+                    .exchange()
+                    .flatMap(response -> {
+                        if (response.statusCode().isError() && response.statusCode().value() == 409 ) {
+                            return response.bodyToMono(String.class)
+                                    .flatMap(errorBody -> Mono.error(new ResourceAlreadyExistsException(errorBody)));
+                        } else {
+                            return response.bodyToMono(BookCategory.class);
+                        }
+                    })
                     .block();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to add", e);
-        }
+
     }
 
     @Override
@@ -55,7 +60,7 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     }
 
     @Override
-    public List<BookCategory> findAllCategoriesByBookId(int bookId){
+    public List<BookCategory> findAllCategoriesByBookId(int bookId) throws ResourceNotFoundException{
         List<BookCategory> categories= webClient.get().uri(libraryBaseUrl2 + "categories/" + bookId).accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .flatMap(response -> {

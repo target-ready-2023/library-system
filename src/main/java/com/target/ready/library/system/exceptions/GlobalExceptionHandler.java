@@ -26,4 +26,16 @@ public class GlobalExceptionHandler {
         }
        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> ResourceExistsException(ResourceAlreadyExistsException ex){
+        ExceptionResponse exceptionResponse=new ExceptionResponse(ex.getMessage(),HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(exceptionResponse,HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> ResourceNotFound(ResourceNotFoundException ex){
+        ExceptionResponse exceptionResponse=new ExceptionResponse(ex.getMessage(),HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(exceptionResponse,HttpStatus.NOT_FOUND);
+    }
 }

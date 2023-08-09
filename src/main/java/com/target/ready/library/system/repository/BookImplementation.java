@@ -5,16 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 
-import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -34,17 +30,35 @@ public class BookImplementation implements BookRepository{
         this.webClient = webClient;
     }
 
+//    @Override
+//    public List<Book> findBookByCategoryName(String categoryName) {
+//        return   webClient.get()
+//                .uri(libraryBaseUrl + "book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
+//                .retrieve()
+//                .toEntityList(Book.class)
+//                .block()
+//                .getBody();
+//    }
+
     @Override
-    public List<Book> findBookByCategoryName(String categoryName) {
+    public List<Book> findBookByCategoryName(String categoryName,int pageNumber,int pageSize) {
         return   webClient.get()
-                .uri(libraryBaseUrl + "book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
+                .uri(libraryBaseUrl + "book/category/"+categoryName+"/"+pageNumber+"/"+pageSize).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntityList(Book.class)
                 .block()
                 .getBody();
     }
 
-
+    @Override
+    public Mono<Long> countBooksByCategoryName(String categoryName){
+        return webClient
+                .get()
+                .uri(libraryBaseUrl + "books/category/total_count/"+ categoryName)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Long.class);
+    }
 
     @Override
     public List<Book> findByBookName(String bookName) {
@@ -74,9 +88,17 @@ public class BookImplementation implements BookRepository{
                 .getBody();
     }
 
+    @Override
+    public Mono<Long> totalBooks() {
+        return webClient
+                .get()
+                .uri(libraryBaseUrl + "books_directory/total_count")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Long.class);
+    }
 
-
-    public Book addBook(BookDto bookDto) throws ClientErrorException,JsonProcessingException{
+    public Book addBook(BookDto bookDto) throws ResourceAlreadyExistsException,JsonProcessingException{
             return webClient.post()
                     .uri(libraryBaseUrl + "inventory/books")
                     .accept(MediaType.APPLICATION_JSON)
@@ -86,7 +108,8 @@ public class BookImplementation implements BookRepository{
                     .flatMap(response -> {
                         if (response.statusCode().isError() && response.statusCode().value() == 409 ) {
                             return response.bodyToMono(String.class)
-                                    .flatMap(errorBody -> Mono.error(new ClientErrorException("Client Error: " + errorBody)));
+                                    .flatMap(errorBody -> Mono.error(new ResourceAlreadyExistsException(errorBody)));
+
                         } else {
                             return response.bodyToMono(Book.class);
                         }
@@ -94,7 +117,6 @@ public class BookImplementation implements BookRepository{
                     .block();
 
     }
-
 
 
 

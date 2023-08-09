@@ -1,7 +1,9 @@
 package com.target.ready.library.system.service;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.entity.UserProfile;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.CategoryRepository;
 import com.target.ready.library.system.repository.UserRepository;
@@ -15,8 +17,7 @@ import java.util.List;
 public class UserService {
     @Autowired
     UserRepository userRepository;
-    public String addUser(UserProfile userProfile){
-        userRepository.addUser(userProfile);
-        return "User Added Successfully";
-    }
+    public UserProfile addUser(UserProfile userProfile) throws JsonProcessingException, ResourceAlreadyExistsException {
+        return userRepository.addUser(userProfile);}
+
 }
