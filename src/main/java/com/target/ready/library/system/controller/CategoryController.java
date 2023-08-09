@@ -3,6 +3,7 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,12 +58,9 @@ public class CategoryController {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
             }
             categories = categoryService.findAllCategories(pageNumber, pageSize);
-            if(categories.isEmpty()){
-                throw new ResourceNotFoundException("No categories available currently!");
-            }
             return new ResponseEntity<>(categories, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>("No category available currently!", HttpStatus.NOT_FOUND);
         }
     }
 
