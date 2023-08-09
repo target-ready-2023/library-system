@@ -13,7 +13,6 @@ import org.springframework.validation.annotation.Validated;
 @OpenAPIDefinition(info = @Info(title = "Library Management System API", version = "1.0", description = "Dream School Foundation Digital Library"))
 public class LibrarySystemApplication {
 
-
 	public static void main(String[] args) {
 		SpringApplication.run(LibrarySystemApplication.class, args);
 
