@@ -1,4 +1,5 @@
 package com.target.ready.library.system.service;
+
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.repository.BookCategoryRepository;
@@ -7,8 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +27,7 @@ public class CategoryServiceTest {
     @InjectMocks
     CategoryService categoryService;
 
+
     @Test
     public void findAllCategoriesByBookIdTest(){
         List<BookCategory> bookCategories= new ArrayList<BookCategory>();
@@ -41,16 +41,17 @@ public class CategoryServiceTest {
         assertEquals(2,response.size());
     }
 
-//    @Test
-//    public void findAllCategoriesTest(){
-//        List<Category> myCategories = new ArrayList<Category>();
-//
-//        myCategories.add(new Category(1,"Horror"));
-//        myCategories.add(new Category(2, "Adventure"));
-//
-//        when(categoryRepository.findAllCategories()).thenReturn(myCategories);
-//        assertEquals(2,categoryService.findAllCategories().size());
-//    }
+    @Test
+    public void findAllCategoriesTest(){
+        List<Category> myCategories = new ArrayList<Category>();
+
+        myCategories.add(new Category(1,"Horror"));
+        myCategories.add(new Category(2, "Adventure"));
+
+        when(categoryRepository.findAllCategories(0,10)).thenReturn(myCategories);
+        assertEquals(2,categoryService.findAllCategories(0,10).size());
+    }
+
 
 //    @Test
 //    public void addCategoryTest(){
