@@ -56,7 +56,7 @@ public class CategoryService {
         try {
             return bookCategoryRepository.deleteBookCategory(bookId);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete", e);
+            throw new RuntimeException("Failed to delete book category", e);
         }
     }
 

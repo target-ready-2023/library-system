@@ -5,6 +5,7 @@ import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,13 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @Validated
@@ -119,13 +120,21 @@ public class LibraryController {
                             mediaType = "application/json"
                     ))})
     public ResponseEntity<String> deleteBook(@PathVariable("book_id") int bookId) {
-        Book existingBook = librarySystemService.findByBookId(bookId);
-        if (existingBook == null) {
-            return new ResponseEntity<>("Book does not exist",HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(librarySystemService.deleteBook(bookId),HttpStatus.ACCEPTED);
+        try {
+            Book existingBook = librarySystemService.findByBookId(bookId);
+            if (existingBook == null) {
+                throw new ResourceNotFoundException("Book not found");
+            } else {
+                librarySystemService.deleteBook(bookId);
+                return new ResponseEntity<>("Book deleted successfully", HttpStatus.ACCEPTED);
+            }
+        } catch (ResourceNotFoundException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
+        } catch (ClientErrorException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
+        } catch (Exception ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred", ex);
         }
-
     }
 
     @PutMapping("/inventory/book/update/{book_id}")

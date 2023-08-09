@@ -105,6 +105,10 @@ public class LibrarySystemService {
             bookRepository.deleteBook(bookId);
             categoryService.deleteBookCategory(bookId);
             return "Book deleted Successfully!";
+        }catch (ResourceNotFoundException ex) {
+            throw ex;
+        } catch (ClientErrorException ex) {
+            throw ex;
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete book", e);
         }
