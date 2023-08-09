@@ -6,12 +6,14 @@ import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.*;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
+import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
 import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +26,7 @@ public class LibrarySystemService {
 
     private final BookRepository bookRepository;
 
-
     private final InventoryRepository inventoryRepository;
-
 
     private final UserRepository userRepository;
 
@@ -41,6 +41,10 @@ public class LibrarySystemService {
 
     public List<Book> getAllBooks(int pageNumber, int pageSize) {
         return bookRepository.getAllBooks(pageNumber,pageSize);
+    }
+
+    public Mono<Long> getTotalBookCount() {
+        return bookRepository.totalBooks();
     }
 
 
@@ -89,16 +93,15 @@ public class LibrarySystemService {
             bookDto.setNoOfCopies(inventory1.getNoOfBooksLeft());
             return bookDto;
 
-
-
-
-
-
     }
 
-    public List<Book> findBookByCategoryName(String categoryName) {
-        List<Book> bookList= bookRepository.findBookByCategoryName(categoryName);
+    public List<Book> findBookByCategoryName(String categoryName,int pageNumber,int pageSize) {
+        List<Book> bookList= bookRepository.findBookByCategoryName(categoryName,pageNumber,pageSize);
         return bookList;
+    }
+
+    public Mono<Long> getTotalBookCategoryCount(String categoryName) {
+        return bookRepository.countBooksByCategoryName(categoryName);
     }
 
     public List<Book> findByBookName(String bookName){

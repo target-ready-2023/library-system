@@ -30,17 +30,35 @@ public class BookImplementation implements BookRepository{
         this.webClient = webClient;
     }
 
+//    @Override
+//    public List<Book> findBookByCategoryName(String categoryName) {
+//        return   webClient.get()
+//                .uri(libraryBaseUrl + "book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
+//                .retrieve()
+//                .toEntityList(Book.class)
+//                .block()
+//                .getBody();
+//    }
+
     @Override
-    public List<Book> findBookByCategoryName(String categoryName) {
+    public List<Book> findBookByCategoryName(String categoryName,int pageNumber,int pageSize) {
         return   webClient.get()
-                .uri(libraryBaseUrl + "book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
+                .uri(libraryBaseUrl + "book/category/"+categoryName+"/"+pageNumber+"/"+pageSize).accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .toEntityList(Book.class)
                 .block()
                 .getBody();
     }
 
-
+    @Override
+    public Mono<Long> countBooksByCategoryName(String categoryName){
+        return webClient
+                .get()
+                .uri(libraryBaseUrl + "books/category/total_count/"+ categoryName)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Long.class);
+    }
 
     @Override
     public List<Book> findByBookName(String bookName) {
@@ -70,7 +88,15 @@ public class BookImplementation implements BookRepository{
                 .getBody();
     }
 
-
+    @Override
+    public Mono<Long> totalBooks() {
+        return webClient
+                .get()
+                .uri(libraryBaseUrl + "books_directory/total_count")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(Long.class);
+    }
 
     public Book addBook(BookDto bookDto) throws ResourceAlreadyExistsException,JsonProcessingException{
             return webClient.post()
@@ -91,7 +117,6 @@ public class BookImplementation implements BookRepository{
                     .block();
 
     }
-
 
 
 

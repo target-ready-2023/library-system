@@ -15,8 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
+import reactor.core.publisher.Mono;
+
 import java.util.Collections;
 import java.util.List;
+
+import java.util.stream.Collectors;
 
 @RestController
 @Validated
@@ -47,6 +51,23 @@ public class LibraryController {
             return new ResponseEntity<>(books, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("books_directory/total_count")
+    @Operation(
+            description = "Get all the books count",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Mono<Long>> getTotalBookCount() {
+        try {
+            Mono<Long> totalCount = librarySystemService.getTotalBookCount();
+            return new ResponseEntity<>(totalCount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -86,9 +107,35 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName) {
-        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName)
-                ,HttpStatus.OK);
+    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName,@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
+        int pageSize=5;
+       try{
+           if(pageNumber<0)
+               return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+
+           return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName,pageNumber,pageSize)
+                   ,HttpStatus.OK);
+       }catch(Exception ex){
+
+           return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+       }
+    }
+
+    @GetMapping("/books/category/total_count/{categoryName}")
+    @Operation(
+            description = "Get number of books according to its category",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Mono<Long>> getTotalBookCategoryCount(@PathVariable String categoryName) {
+        try {
+            Mono<Long> totalCount = librarySystemService.getTotalBookCategoryCount(categoryName);
+            return new ResponseEntity<>(totalCount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("books/{book_name}")
