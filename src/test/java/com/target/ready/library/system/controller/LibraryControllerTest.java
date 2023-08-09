@@ -3,30 +3,25 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
-import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
-import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.repository.BookImplementation;
 import com.target.ready.library.system.repository.InventoryImplementation;
 import com.target.ready.library.system.repository.UserImplementation;
-import jakarta.validation.Valid;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import com.target.ready.library.system.service.LibrarySystemService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @SpringBootTest(classes = {LibraryControllerTest.class})
 public class LibraryControllerTest {
@@ -173,9 +168,9 @@ public class LibraryControllerTest {
 
     @Test
     public void addBookTest() throws JsonProcessingException {
-        when(librarySystemService.addBook(new BookDto())).thenReturn("Book Added Successfully");
+        when(librarySystemService.addBook(new BookDto())).thenReturn(new BookDto());
         BindingResult bindingResult=null;
-        ResponseEntity<String> response=libraryController.addBook(new BookDto(),bindingResult);
+        ResponseEntity<?> response=libraryController.addBook(new BookDto(),bindingResult);
         assertEquals("Book Added Successfully",response.getBody());
 
     }

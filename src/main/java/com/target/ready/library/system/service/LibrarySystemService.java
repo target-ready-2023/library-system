@@ -4,17 +4,16 @@ package com.target.ready.library.system.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.*;
-import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
 import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -52,7 +51,7 @@ public class LibrarySystemService {
 
 
     @Transactional
-    public String addBook(BookDto bookDto) throws ClientErrorException, JsonProcessingException {
+    public BookDto addBook(BookDto bookDto) throws ResourceAlreadyExistsException, JsonProcessingException {
 
 
             Book book = bookRepository.addBook(bookDto);
@@ -63,17 +62,20 @@ public class LibrarySystemService {
             inventory.setInvBookId(bookId);
             inventory.setNoOfCopies(noOfCopies);
             inventory.setNoOfBooksLeft(noOfCopies);
-            inventoryRepository.addInventory(inventory);
+            Inventory inventory1=inventoryRepository.addInventory(inventory);
             List<String> categoryNames = bookDto.getCategoryNames();
+            List<String> savedCategoryNames=new ArrayList<>();
             for (String eachCategoryName : categoryNames) {
                 try {
+                    savedCategoryNames.add(eachCategoryName);
                     Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
                 }catch(ResourceNotFoundException ex){
 
                         Category category1 = new Category();
                         category1.setCategoryName(eachCategoryName);
                         categoryService.addCategory(category1);
-                    }
+
+                }
 
 
                 BookCategory bookCategory = new BookCategory();
@@ -81,7 +83,11 @@ public class LibrarySystemService {
                 bookCategory.setCategoryName(eachCategoryName);
                 categoryService.addBookCategory(bookCategory);
             }
-            return "Book Added Successfully";
+            BookDto savedBookDto=new BookDto();
+            bookDto.setBook(book);
+            bookDto.setCategoryNames(savedCategoryNames);
+            bookDto.setNoOfCopies(inventory1.getNoOfBooksLeft());
+            return bookDto;
 
 
 
@@ -136,7 +142,7 @@ public class LibrarySystemService {
         }
     }
 
-    public String booksIssued(int bookId,int userId){
+    public String booksIssued(int bookId,int userId) throws ResourceNotFoundException,ResourceAlreadyExistsException{
 
        Inventory inventory= inventoryRepository.findByBookId(bookId);
        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft()-1);
@@ -165,10 +171,14 @@ public class LibrarySystemService {
     }
 
 
-    public Integer getNoOfCopiesByBookId(Integer bookId) {
+    public Integer getNoOfCopiesByBookId(Integer bookId) throws ResourceNotFoundException{
         Inventory inventory=inventoryRepository.findByBookId(bookId);
         Integer noOfCopies=inventory.getNoOfBooksLeft();
         return noOfCopies;
+    }
+
+    public Inventory findByBookId(Integer bookId) throws ResourceNotFoundException{
+        return inventoryRepository.findByBookId(bookId);
     }
 }
 

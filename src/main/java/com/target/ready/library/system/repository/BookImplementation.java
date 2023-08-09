@@ -5,16 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 
-import com.target.ready.library.system.exceptions.ClientErrorException;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -76,7 +72,7 @@ public class BookImplementation implements BookRepository{
 
 
 
-    public Book addBook(BookDto bookDto) throws ClientErrorException,JsonProcessingException{
+    public Book addBook(BookDto bookDto) throws ResourceAlreadyExistsException,JsonProcessingException{
             return webClient.post()
                     .uri(libraryBaseUrl + "inventory/books")
                     .accept(MediaType.APPLICATION_JSON)
@@ -86,7 +82,8 @@ public class BookImplementation implements BookRepository{
                     .flatMap(response -> {
                         if (response.statusCode().isError() && response.statusCode().value() == 409 ) {
                             return response.bodyToMono(String.class)
-                                    .flatMap(errorBody -> Mono.error(new ClientErrorException("Client Error: " + errorBody)));
+                                    .flatMap(errorBody -> Mono.error(new ResourceAlreadyExistsException(errorBody)));
+
                         } else {
                             return response.bodyToMono(Book.class);
                         }

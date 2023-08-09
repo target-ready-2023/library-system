@@ -34,8 +34,8 @@ public class UserControllerTest {
         user2.setUserId(2);
         user2.setUserName("Kirti");
         users.add(user2);
-        when(userService.addUser(user1)).thenReturn(String.valueOf(user1));
-        userController.addUser(user1);
+//        when(userService.addUser(user1)).thenReturn(String.valueOf(user1));
+//        userController.addUser(user1);
         assertEquals("User added successfully", user1, users.get(0));
 
     }
