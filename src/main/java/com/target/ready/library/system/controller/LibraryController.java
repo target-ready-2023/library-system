@@ -3,8 +3,8 @@ package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
-import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,12 +12,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
+import reactor.core.publisher.Mono;
+
 import java.util.Collections;
 import java.util.List;
+
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,6 +54,23 @@ public class LibraryController {
         }
     }
 
+    @GetMapping("books_directory/total_count")
+    @Operation(
+            description = "Get all the books count",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Mono<Long>> getTotalBookCount() {
+        try {
+            Mono<Long> totalCount = librarySystemService.getTotalBookCount();
+            return new ResponseEntity<>(totalCount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("/inventory/books")
     @Operation(
             description = "Addition of books and its details",
@@ -60,13 +79,10 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> addBook(@Valid @RequestBody BookDto bookDto,BindingResult bindingResult) {
+    public ResponseEntity<?> addBook(@Valid @RequestBody BookDto bookDto,BindingResult bindingResult) {
         try {
             return new ResponseEntity<>(librarySystemService.addBook(bookDto), HttpStatus.CREATED);
-        } catch (ClientErrorException clientError) {
-            return new ResponseEntity<>(clientError.getMessage(), HttpStatus.CONFLICT); // Customize status code and response body as needed
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             return new ResponseEntity<>("An error occurred while processing your request.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -91,9 +107,35 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName) {
-        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName)
-                ,HttpStatus.OK);
+    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName,@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
+        int pageSize=5;
+       try{
+           if(pageNumber<0)
+               return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+
+           return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName,pageNumber,pageSize)
+                   ,HttpStatus.OK);
+       }catch(Exception ex){
+
+           return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+       }
+    }
+
+    @GetMapping("/books/category/total_count/{categoryName}")
+    @Operation(
+            description = "Get number of books according to its category",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Mono<Long>> getTotalBookCategoryCount(@PathVariable String categoryName) {
+        try {
+            Mono<Long> totalCount = librarySystemService.getTotalBookCategoryCount(categoryName);
+            return new ResponseEntity<>(totalCount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("books/{book_name}")
@@ -128,8 +170,6 @@ public class LibraryController {
 
     }
 
-
-
     @PutMapping("/inventory/book/update/{book_id}")
     @Operation(
             description = "Update book details",
@@ -147,7 +187,7 @@ public class LibraryController {
         }
     }
 
-    @PostMapping("inventory/issue/book/{book_id}/{student_id}")
+    @PostMapping("inventory/issue/book")
     @Operation(
             description = "Issue book to the student",
             responses = { @ApiResponse(
@@ -155,11 +195,13 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> bookIssued(@PathVariable("book_id") int bookId,@PathVariable("student_id") int userId){
-        return new ResponseEntity<>(librarySystemService.booksIssued(bookId,userId),HttpStatus.CREATED);
+    public ResponseEntity<String> bookIssued(@Valid @RequestBody UserCatalog userCatalog){
+        return new ResponseEntity<>(librarySystemService.booksIssued(userCatalog.getBookId(), userCatalog.getUserId())
+                ,HttpStatus.CREATED);
     }
 
-    @PostMapping("inventory/return/book/{book_id}/{student_id}")
+
+    @PostMapping("inventory/return/book")
     @Operation(
             description = "Book returned by the student",
             responses = { @ApiResponse(
@@ -167,9 +209,11 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<Integer> bookReturned(@PathVariable("book_id") int bookId, @PathVariable("student_id") int userId){
-        return new ResponseEntity<>(librarySystemService.bookReturned(bookId,userId),HttpStatus.CREATED);
+    public ResponseEntity<Integer> bookReturned(@Valid @RequestBody UserCatalog userCatalog){
+        return new ResponseEntity<>(librarySystemService.bookReturned(userCatalog.getBookId(), userCatalog.getUserId())
+                ,HttpStatus.CREATED);
     }
+
 
     @GetMapping("book/no_of_copies/{book_id}")
     @Operation(
@@ -179,8 +223,21 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
+
     public ResponseEntity<Integer> getNoOfCopiesByBookId(@PathVariable("book_id") Integer bookId){
         return new ResponseEntity<>(librarySystemService.getNoOfCopiesByBookId(bookId),HttpStatus.OK);
+    }
+
+    @GetMapping("inventory/book/{book_id}")
+    @Operation(
+            description = "No of copies available of the  given book",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Inventory> findByBookId(@PathVariable("book_id") Integer bookId){
+        return new ResponseEntity<>(librarySystemService.findByBookId(bookId),HttpStatus.OK);
     }
 
 

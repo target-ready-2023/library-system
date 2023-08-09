@@ -1,9 +1,9 @@
 package com.target.ready.library.system.service;
 
-import com.target.ready.library.system.entity.Book;
-import com.target.ready.library.system.entity.BookCategory;
-import com.target.ready.library.system.entity.Inventory;
-import com.target.ready.library.system.entity.UserCatalog;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.entity.*;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
@@ -16,8 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Test;
+
+
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
+
 
 import java.util.*;
 
@@ -68,9 +72,25 @@ public class LibrarySystemServiceTest {
 
         when(bookRepository.getAllBooks(0,5)).thenReturn(records);
         List<Book> response=librarySystemService.getAllBooks(0,5);
-        assertEquals(2, response.size());
+        assertEquals(records.size(), response.size());
     }
 
+    @Test
+    public void getTotalBookCountTest() {
+        List<Book> records = new ArrayList<Book>();
+        records.add(new Book(1,
+                "Five Point someone",
+                "Semi-autobiographical"
+                ,"Chetan Bhagat",2004));
+        records.add(new Book(2,
+                "The Silent Patient",
+                "The dangers of unresolved or improperly treated mental illness","Alex Michaelides",2019)
+        );
+        Mono<Long> repoCount=Mono.just(0L);
+        when(bookRepository.totalBooks()).thenReturn(repoCount);
+        Mono<Long> serviceCount=librarySystemService.getTotalBookCount();
+        assertEquals(repoCount,serviceCount);
+    }
     @Test
     public void booksIssuedTest(){
         int bookId=1;
@@ -162,10 +182,30 @@ public class LibrarySystemServiceTest {
         bookCategory2.setId(2);
         bookCategories.add(bookCategory2);
 
-        when(bookRepository.findBookByCategoryName("Sci-Fi")).thenReturn(returnBooks);
-        List<Book> response = librarySystemService.findBookByCategoryName(bookCategory1.getCategoryName());
+        when(bookRepository.findBookByCategoryName("Sci-Fi",0,5)).thenReturn(returnBooks);
+        List<Book> response = librarySystemService.findBookByCategoryName(bookCategory1.getCategoryName(),0,5);
         assertEquals(response, returnBooks);
     }
+
+    @Test
+    public void getTotalBookCategoryCountTest() {
+        List<BookCategory> bookCategories = new ArrayList<BookCategory>();
+
+        bookCategories.add(new BookCategory(1,1,"fiction"));
+        bookCategories.add(new BookCategory(2,2,"fiction"));
+
+        BookCategory bookCategory2 = new BookCategory();
+        bookCategory2.setCategoryName("Sci-fi");
+        bookCategory2.setBookId(2);
+        bookCategory2.setId(2);
+        bookCategories.add(bookCategory2);
+
+        Mono<Long> repoCount=Mono.just(0L);
+        when(bookRepository.countBooksByCategoryName("fiction")).thenReturn(repoCount);
+        Mono<Long> serviceCount=librarySystemService.getTotalBookCategoryCount("fiction");
+        assertEquals(repoCount,serviceCount);
+    }
+
 
     @Test
     public void findByBookNameTest() {
@@ -235,4 +275,35 @@ public class LibrarySystemServiceTest {
         assertEquals(books.size(),1);
     }
 
+
+    @Test
+    public void addBookTest() throws JsonProcessingException,ResourceNotFoundException {
+        Book book = new Book();
+        book.setBookId(1);
+        book.setBookName("Five Point someone");
+        book.setAuthorName("Chetan Bhagat");
+        book.setBookDescription("Semi-autobiographical");
+        book.setPublicationYear(2004);
+
+        BookDto bookDto=new BookDto();
+        bookDto.setBook(book);
+        List<String> categoryNames=new ArrayList<>();
+        categoryNames.add("Fiction");
+        categoryNames.add("Horror");
+        bookDto.setCategoryNames(categoryNames);
+        bookDto.setNoOfCopies(5);
+        when(bookRepository.addBook(bookDto)).thenReturn(book);
+        Inventory inventory=new Inventory();
+        inventory.setInvBookId(book.getBookId());
+        inventory.setNoOfCopies(bookDto.getNoOfCopies());
+        inventory.setNoOfBooksLeft(bookDto.getNoOfCopies());
+        when(inventoryRepository.addInventory(inventory)).thenReturn(inventory);
+        when(categoryService.findCategoryBycategoryName("Fiction")).thenThrow(new ResourceNotFoundException("Category Not found"));
+//        when(categoryService.addCategory(new Category())).thenReturn("Category Added Successfully");
+//        when(categoryService.addBookCategory(new BookCategory())).thenReturn("Category added to the book successfully");
+//        String response=librarySystemService.addBook(bookDto);
+//        assertEquals("Book Added Successfully",response);
+
+
+    }
 }

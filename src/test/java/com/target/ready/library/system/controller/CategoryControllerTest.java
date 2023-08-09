@@ -47,6 +47,7 @@ public class CategoryControllerTest {
 //        assertEquals(2,response.getBody().size());
     }
 
+
     @Test
     public void findAllCategoriesTest() {
         myCategories = new ArrayList<>();
