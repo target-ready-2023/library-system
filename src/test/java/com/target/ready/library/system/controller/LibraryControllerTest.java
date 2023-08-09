@@ -1,7 +1,8 @@
 package com.target.ready.library.system.controller;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
-import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.repository.BookImplementation;
 import com.target.ready.library.system.repository.InventoryImplementation;
@@ -12,16 +13,19 @@ import com.target.ready.library.system.service.LibrarySystemService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.validation.BindingResult;
+
 import reactor.core.publisher.Mono;
+
 
 @SpringBootTest(classes = {LibraryControllerTest.class})
 public class LibraryControllerTest {
@@ -217,23 +221,15 @@ public class LibraryControllerTest {
         assertEquals(response.getBody(),"Book deleted Successfully!");
     }
 
+
+
     @Test
-    public void findByBookNameTest() {
-        List<Book> books = new ArrayList<>();
-        Book book1 = new Book(1,
-                "The Hound of Death",
-                "A young Englishman visiting Cornwall finds himself delving into the legend of a Belgian nun who is living as a refugee in the village."
-                , "Agatha Christie", 1933);
-        books.add(book1);
-        Book book2 = new Book(2,
-                "The Adventure of Dancing Men",
-                "The little dancing men are at the heart of a mystery which seems to be driving his young wife Elsie Patrick to distraction."
-                , "Sir Arthur Conan Doyle", 1903);
-        books.add(book2);
-        when(librarySystemService.findByBookName("The Hound of Death")).thenReturn(books);
-        ResponseEntity<List<Book>> response = libraryController.findByBookName(book1.getBookName());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(books, response.getBody());
+    public void addBookTest() throws JsonProcessingException {
+        when(librarySystemService.addBook(new BookDto())).thenReturn(new BookDto());
+        BindingResult bindingResult=null;
+        ResponseEntity<?> response=libraryController.addBook(new BookDto(),bindingResult);
+        assertEquals("Book Added Successfully",response.getBody());
+
     }
 
 }

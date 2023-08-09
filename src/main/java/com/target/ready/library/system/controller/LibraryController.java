@@ -3,8 +3,8 @@ package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
-import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
@@ -20,7 +19,9 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
+
 import java.util.stream.Collectors;
+
 @RestController
 @Validated
 @RequestMapping("library_system/v1")
@@ -78,13 +79,10 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> addBook(@Valid @RequestBody BookDto bookDto,BindingResult bindingResult) {
+    public ResponseEntity<?> addBook(@Valid @RequestBody BookDto bookDto,BindingResult bindingResult) {
         try {
             return new ResponseEntity<>(librarySystemService.addBook(bookDto), HttpStatus.CREATED);
-        } catch (ClientErrorException clientError) {
-            return new ResponseEntity<>(clientError.getMessage(), HttpStatus.CONFLICT); // Customize status code and response body as needed
-        }
-        catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             return new ResponseEntity<>("An error occurred while processing your request.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -228,6 +226,18 @@ public class LibraryController {
 
     public ResponseEntity<Integer> getNoOfCopiesByBookId(@PathVariable("book_id") Integer bookId){
         return new ResponseEntity<>(librarySystemService.getNoOfCopiesByBookId(bookId),HttpStatus.OK);
+    }
+
+    @GetMapping("inventory/book/{book_id}")
+    @Operation(
+            description = "No of copies available of the  given book",
+            responses = { @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Inventory> findByBookId(@PathVariable("book_id") Integer bookId){
+        return new ResponseEntity<>(librarySystemService.findByBookId(bookId),HttpStatus.OK);
     }
 
 
