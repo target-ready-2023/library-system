@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 @SpringBootTest(classes = {LibraryControllerTest.class})
 public class LibraryControllerTest {
@@ -56,6 +57,24 @@ public class LibraryControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, response.getBody().size());
 
+    }
+
+    @Test
+    public void getTotalBookCountTest() {
+        List<Book> records = new ArrayList<Book>();
+        records.add(new Book(1,
+                "Five Point someone",
+                "Semi-autobiographical"
+                ,"Chetan Bhagat",2004));
+        records.add(new Book(2,
+                "The Silent Patient",
+                "The dangers of unresolved or improperly treated mental illness","Alex Michaelides",2019)
+        );
+        Mono<Long> serviceResult=Mono.just(0L);
+        when(librarySystemService.getTotalBookCount()).thenReturn(serviceResult);
+        ResponseEntity<Mono<Long>> categoryResult=libraryController.getTotalBookCount();
+        assertEquals(HttpStatus.OK, categoryResult.getStatusCode());
+        assertEquals(serviceResult,categoryResult.getBody());
     }
     @Test
     public void bookIssuedTest(){
@@ -95,6 +114,7 @@ public class LibraryControllerTest {
         assertEquals(1, response.getBookId());
     }
 
+    @Test
     public void findBookByCategoryNameTest() {
         List<Book> books = new ArrayList<>();
         List<BookCategory> bookCategories = new ArrayList<>();
@@ -121,9 +141,43 @@ public class LibraryControllerTest {
         bookCategory2.setId(2);
         bookCategories.add(bookCategory2);
 
-        when(librarySystemService.findBookByCategoryName("Sci-Fi")).thenReturn(returnBooks);
-        ResponseEntity<List<Book>> response = libraryController.findBookByCategoryName(bookCategory1.getCategoryName());
+        when(librarySystemService.findBookByCategoryName("Sci-Fi",0,5)).thenReturn(returnBooks);
+        ResponseEntity<List<Book>> response = libraryController.findBookByCategoryName(bookCategory1.getCategoryName(),0);
         assertEquals(response.getBody(), returnBooks);
+    }
+
+    @Test
+    public void getTotalBookCategoryCountTest() {
+        List<Book> books = new ArrayList<>();
+        List<BookCategory> bookCategories = new ArrayList<>();
+        List<Book> returnBooks = new ArrayList<>();
+        Book book1 = new Book(1,
+                "Harry Potter and the Philosopher's Stone",
+                "Harry Potter, a young wizard who discovers his magical heritage on his eleventh birthday, when he receives a letter of acceptance to Hogwarts School of Witchcraft and Wizardry."
+                , "J. K. Rowling", 1997);
+        books.add(book1);
+        BookCategory bookCategory1 = new BookCategory();
+        bookCategory1.setCategoryName("Fiction");
+        bookCategory1.setBookId(1);
+        bookCategory1.setId(1);
+        bookCategories.add(bookCategory1);
+
+        Book book2 = new Book(2,
+                "The Immortals of Meluha",
+                "follows the story of a man named Shiva, who lives in the Tibetan region – Mount Kailash."
+                , "Amish Tripathi", 2010);
+        books.add(book2);
+        BookCategory bookCategory2 = new BookCategory();
+        bookCategory2.setCategoryName("Sci-Fi");
+        bookCategory2.setBookId(2);
+        bookCategory2.setId(2);
+        bookCategories.add(bookCategory2);
+
+        Mono<Long> totalCount=Mono.just(0L);
+        when(librarySystemService.getTotalBookCategoryCount("Sci-Fi")).thenReturn(totalCount);
+        ResponseEntity<Mono<Long>> categoryCount=libraryController.getTotalBookCategoryCount("Sci-Fi");
+        assertEquals(HttpStatus.OK, categoryCount.getStatusCode());
+        assertEquals(totalCount,categoryCount.getBody());
     }
 
     @Test
