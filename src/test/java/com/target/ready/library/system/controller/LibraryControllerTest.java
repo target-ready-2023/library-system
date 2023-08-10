@@ -36,9 +36,6 @@ public class LibraryControllerTest {
     @Mock
     LibrarySystemService librarySystemService;
 
-    @Mock
-    CategoryService categoryService;
-
     @InjectMocks
     LibraryController libraryController;
 

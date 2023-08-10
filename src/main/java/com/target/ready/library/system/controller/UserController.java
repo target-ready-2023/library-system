@@ -29,9 +29,14 @@ public class UserController {
     }
 
 
-    @DeleteMapping("delete/user/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable int userId) {
-        return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.ACCEPTED);
+    @DeleteMapping("delete/user/{user_id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("user_id") int userId) {
+        String message = userService.deleteUser(userId);
+        if(message.equals("User has books checked out. Cannot delete")){
+            return new ResponseEntity<>("user cannot be deleted, as user has isuued a book",HttpStatus.CONFLICT);
+        }else {
+            return new ResponseEntity<>("User deleted sucessfully!!",HttpStatus.ACCEPTED);
+        }
 
     }
 
