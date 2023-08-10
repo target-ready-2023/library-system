@@ -147,7 +147,11 @@ public class LibraryController {
                             mediaType = "application/json"
                     ))})
     public ResponseEntity<List<Book>> findByBookName(@PathVariable("book_name") String bookName){
-        return new ResponseEntity<>(librarySystemService.findByBookName(bookName),HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(librarySystemService.findByBookName(bookName), HttpStatus.OK);
+        }catch (Exception e) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+        }
 
     }
 
