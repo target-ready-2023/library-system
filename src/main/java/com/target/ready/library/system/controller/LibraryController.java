@@ -5,13 +5,13 @@ import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
-import com.target.ready.library.system.exceptions.ClientErrorException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -173,12 +173,10 @@ public class LibraryController {
                 librarySystemService.deleteBook(bookId);
                 return new ResponseEntity<>("Book deleted successfully", HttpStatus.ACCEPTED);
             }
-        } catch (ResourceNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
-        } catch (ClientErrorException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
-        } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An error occurred", ex);
+        } catch (DataAccessException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+        } catch (RuntimeException ex){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Failed to Delete Book");
         }
     }
 

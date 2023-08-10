@@ -8,6 +8,9 @@ import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException
 
 
 import java.util.List;
+
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
+import org.springframework.dao.DataAccessException;
 import reactor.core.publisher.Mono;
 
 
@@ -21,7 +24,7 @@ public interface BookRepository {
     public Book findByBookId(int bookId);
     //    public void deleteBook(int bookId);
 //    public Book updateBookDetails(int bookId, BookDto bookDto);
-    public void deleteBook(int bookId);
+    public void deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException;
     public Book updateBookDetails(int bookId, BookDto bookDto);
     public Mono<Long> totalBooks();
     public Mono<Long> countBooksByCategoryName(String categoryName);
