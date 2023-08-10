@@ -17,4 +17,8 @@ public class UserProfile {
     @JsonProperty("user_name")
     @JsonAlias("userName")
     private String userName;
+
+    @JsonProperty("user_role")
+    @JsonAlias("userRole")
+    private String userRole;
 }

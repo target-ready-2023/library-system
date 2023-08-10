@@ -1,15 +1,12 @@
 package com.target.ready.library.system.service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.target.ready.library.system.entity.BookCategory;
-import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
-import com.target.ready.library.system.repository.BookCategoryRepository;
-import com.target.ready.library.system.repository.CategoryRepository;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -19,5 +16,9 @@ public class UserService {
     UserRepository userRepository;
     public UserProfile addUser(UserProfile userProfile) throws JsonProcessingException, ResourceAlreadyExistsException {
         return userRepository.addUser(userProfile);}
+
+    public List<UserProfile> getAllUsers() throws ResourceNotFoundException{
+        return userRepository.getAllUsers();
+    }
 
 }
