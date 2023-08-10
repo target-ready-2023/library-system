@@ -45,4 +45,16 @@ public class UserServiceTest {
 //        userService.addUser(user1);
         assertEquals("User added successfully", user1, users.get(0));
     }
+
+
+    @Test
+    public void deleteUserTest(){
+        UserProfile user = new UserProfile();
+        user.setUserId(1);
+        user.setUserName("Rohit");
+        when(userRepository.deleteUser(user.getUserId())).thenReturn("User deleted successfully");
+        String response = userService.deleteUser(user.getUserId());
+        assertEquals("User deleted successfully", response, "User deleted successfully");
+
+    }
 }

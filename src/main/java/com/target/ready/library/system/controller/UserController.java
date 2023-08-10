@@ -2,6 +2,9 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.UserProfile;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
+import com.target.ready.library.system.service.LibrarySystemService;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +20,21 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/student")
-    public ResponseEntity<UserProfile> addUser(@RequestBody UserProfile userProfile)  {
+    public ResponseEntity<UserProfile> addUser(@RequestBody UserProfile userProfile) {
         try {
             return new ResponseEntity<>(userService.addUser(userProfile), HttpStatus.CREATED);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
+
+
+    @DeleteMapping("delete/user/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable int userId) {
+        return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.ACCEPTED);
+
+    }
+
     @GetMapping("users")
     public ResponseEntity<?> getAllUsers(){
         try {

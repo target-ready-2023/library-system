@@ -15,5 +15,10 @@ public interface UserRepository {
 
     public UserCatalog addUserCatalog(UserCatalog userCatalog) throws ResourceAlreadyExistsException, ResourceNotFoundException;
     public UserProfile addUser(UserProfile userProfile) throws JsonProcessingException, ResourceAlreadyExistsException;
+
+    public UserProfile findByUserId(int userId);
+
+    String deleteUser(int userId);
+
     public List<UserProfile> getAllUsers() throws ResourceNotFoundException;
 }

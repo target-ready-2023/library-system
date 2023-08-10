@@ -99,6 +99,26 @@ public class UserImplementation implements UserRepository{
     }
 
     @Override
+    public UserProfile findByUserId(int userId) {
+        return webClient.get().uri(libraryBaseUrl3 + "user/"+userId)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(UserProfile.class)
+                .block();
+    }
+
+
+    @Override
+    public String deleteUser(int userId) {
+        return webClient.delete()
+                .uri(libraryBaseUrl3 + "delete/user/"+userId)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+
     public List<UserProfile> getAllUsers() {
         return   webClient.get().uri(libraryBaseUrl3 + "users")
                 .accept(MediaType.APPLICATION_JSON)
