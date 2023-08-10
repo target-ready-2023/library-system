@@ -57,7 +57,7 @@ public class LibrarySystemService {
     @Transactional
     public BookDto addBook(BookDto bookDto) throws ResourceAlreadyExistsException, JsonProcessingException {
 
-
+            String lowercaseCategoryName;
             Book book = bookRepository.addBook(bookDto);
 
             int bookId = book.getBookId();
@@ -70,13 +70,17 @@ public class LibrarySystemService {
             List<String> categoryNames = bookDto.getCategoryNames();
             List<String> savedCategoryNames=new ArrayList<>();
             for (String eachCategoryName : categoryNames) {
+                lowercaseCategoryName = eachCategoryName.trim().toLowerCase(); // Convert to lowercase
                 try {
-                    savedCategoryNames.add(eachCategoryName);
-                    Category category = categoryService.findCategoryBycategoryName(eachCategoryName);
+
+                    savedCategoryNames.add(lowercaseCategoryName);
+                    Category category = categoryService.findCategoryBycategoryName(
+                            lowercaseCategoryName
+                    );
                 }catch(ResourceNotFoundException ex){
 
                         Category category1 = new Category();
-                        category1.setCategoryName(eachCategoryName);
+                        category1.setCategoryName(lowercaseCategoryName);
                         categoryService.addCategory(category1);
 
                 }
@@ -84,7 +88,7 @@ public class LibrarySystemService {
 
                 BookCategory bookCategory = new BookCategory();
                 bookCategory.setBookId(bookId);
-                bookCategory.setCategoryName(eachCategoryName);
+                bookCategory.setCategoryName(lowercaseCategoryName);
                 categoryService.addBookCategory(bookCategory);
             }
             BookDto savedBookDto=new BookDto();
@@ -122,21 +126,23 @@ public class LibrarySystemService {
 
     @Transactional
     public String updateBookDetails(int bookId, BookDto bookDto) {
+        String lowerCategoryName;
         try {
             bookRepository.updateBookDetails(bookId, bookDto);
             categoryService.deleteBookCategory(bookId);
             List<String> categoryNames = bookDto.getCategoryNames();
 
             for (String categoryName : categoryNames) {
-                Category category = categoryService.findCategoryBycategoryName(categoryName);
+                lowerCategoryName = categoryName.trim().toLowerCase();
+                Category category = categoryService.findCategoryBycategoryName(lowerCategoryName);
                 if (category == null) {
                     Category category1 = new Category();
-                    category1.setCategoryName(categoryName);
+                    category1.setCategoryName(lowerCategoryName);
                     categoryService.addCategory(category1);
                 }
                 BookCategory bookCategory = new BookCategory();
                 bookCategory.setBookId(bookId);
-                bookCategory.setCategoryName(categoryName);
+                bookCategory.setCategoryName(lowerCategoryName);
                 categoryService.addBookCategory(bookCategory);
             }
             return "Book updated" ;
