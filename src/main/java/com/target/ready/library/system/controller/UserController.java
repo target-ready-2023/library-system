@@ -35,7 +35,7 @@ public class UserController {
         if(message.equals("User has books checked out. Cannot delete")){
             return new ResponseEntity<>("user cannot be deleted, as user has isuued a book",HttpStatus.CONFLICT);
         }else {
-            return new ResponseEntity<>("User deleted sucessfully!!",HttpStatus.ACCEPTED);
+            return new ResponseEntity<>("User deleted successfully!!",HttpStatus.ACCEPTED);
         }
 
     }
