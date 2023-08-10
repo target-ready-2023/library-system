@@ -46,9 +46,9 @@ public class UserControllerTest {
         UserProfile user = new UserProfile();
         user.setUserId(1);
         user.setUserName("Rohit");
-        when(userService.deleteUser(user.getUserId())).thenReturn("User deleted successfully");
+        when(userService.deleteUser(user.getUserId())).thenReturn("User deleted successfully!!");
         ResponseEntity<String> response = userController.deleteUser(user.getUserId());
-        assertEquals("User deleted successfully", response.getBody(), "User deleted successfully");
+        assertEquals("User deleted successfully!!", response.getBody(), "User deleted successfully!!");
 
     }
 }
