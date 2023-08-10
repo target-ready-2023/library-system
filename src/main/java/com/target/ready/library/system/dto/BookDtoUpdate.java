@@ -11,16 +11,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
 import java.util.List;
-
-
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookDto {
+public class BookDtoUpdate {
     @Valid
     private Book book;
     @JsonProperty("category_names")
@@ -28,10 +24,4 @@ public class BookDto {
     @Valid
     @NotEmpty(message = "Atleast one category should be there")
     private List<@NotBlank(message = "Category name cannot be an empty string")String> categoryNames;
-    @JsonProperty("no_of_copies")
-    @JsonAlias("noOfCopies")
-    @Valid
-    @NotNull(message = "Enter no of copies of the book present")
-    @Min(value=1,message = "Enter the value greater than zero for no of copies of the book")
-    private int noOfCopies;
 }
