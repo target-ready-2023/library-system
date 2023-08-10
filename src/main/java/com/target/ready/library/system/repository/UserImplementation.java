@@ -2,7 +2,6 @@ package com.target.ready.library.system.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
@@ -97,5 +96,15 @@ public class UserImplementation implements UserRepository{
                     })
                     .block();
 
+    }
+
+    @Override
+    public List<UserProfile> getAllUsers() {
+        return   webClient.get().uri(libraryBaseUrl3 + "users")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToFlux(UserProfile.class)
+                .collectList()
+                .block();
     }
 }
