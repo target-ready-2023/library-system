@@ -32,7 +32,7 @@ public class CategoryService {
     }
 
     public Category findCategoryBycategoryName(String categoryName) throws ResourceNotFoundException {
-        Category result = categoryRepository.findCategoryBycategoryName(categoryName);
+        Category result = categoryRepository.findCategoryBycategoryName(categoryName.toLowerCase());
         return result;
     }
 
