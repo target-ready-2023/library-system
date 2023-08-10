@@ -5,6 +5,7 @@ import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.LibrarySystemService;
 import com.target.ready.library.system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,11 +27,18 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/student")
-    public ResponseEntity<UserProfile> addUser(@RequestBody UserProfile userProfile)  {
+    public ResponseEntity<UserProfile> addUser(@RequestBody UserProfile userProfile) {
         try {
             return new ResponseEntity<>(userService.addUser(userProfile), HttpStatus.CREATED);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
+
+    @DeleteMapping("delete/user/{userId}")
+    public ResponseEntity<String> deleteUser(@PathVariable int userId) {
+        return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.ACCEPTED);
+
+    }
+
 }

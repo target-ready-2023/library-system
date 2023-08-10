@@ -2,7 +2,6 @@ package com.target.ready.library.system.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
@@ -98,4 +97,26 @@ public class UserImplementation implements UserRepository{
                     .block();
 
     }
+
+    @Override
+    public UserProfile findByUserId(int userId) {
+        return webClient.get().uri(libraryBaseUrl3 + "user/"+userId)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(UserProfile.class)
+                .block();
+    }
+
+
+    @Override
+    public String deleteUser(int userId) {
+        return webClient.delete()
+                .uri(libraryBaseUrl3 + "delete/user/"+userId)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+    }
+
+
 }

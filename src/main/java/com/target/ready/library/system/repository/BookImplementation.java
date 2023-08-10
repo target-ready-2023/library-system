@@ -119,7 +119,6 @@ public class BookImplementation implements BookRepository{
     }
 
 
-
     @Override
     public Book findByBookId(int bookId) {
         return webClient.get()
@@ -129,7 +128,6 @@ public class BookImplementation implements BookRepository{
                 .bodyToMono(Book.class)
                 .block();
     }
-
 
 
     @Override

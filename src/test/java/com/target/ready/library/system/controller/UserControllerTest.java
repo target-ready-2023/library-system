@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,17 @@ public class UserControllerTest {
 //        when(userService.addUser(user1)).thenReturn(String.valueOf(user1));
 //        userController.addUser(user1);
         assertEquals("User added successfully", user1, users.get(0));
+
+    }
+
+    @Test
+    public void deleteUserTest(){
+        UserProfile user = new UserProfile();
+        user.setUserId(1);
+        user.setUserName("Rohit");
+        when(userService.deleteUser(user.getUserId())).thenReturn("User deleted successfully");
+        ResponseEntity<String> response = userController.deleteUser(user.getUserId());
+        assertEquals("User deleted successfully", response.getBody(), "User deleted successfully");
 
     }
 }
