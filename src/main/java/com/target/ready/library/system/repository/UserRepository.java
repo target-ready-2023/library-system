@@ -20,4 +20,5 @@ public interface UserRepository {
 
     String deleteUser(int userId);
 
+    public List<UserProfile> getAllUsers() throws ResourceNotFoundException;
 }

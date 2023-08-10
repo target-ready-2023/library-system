@@ -3,10 +3,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
+import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookImplementation;
 import com.target.ready.library.system.repository.InventoryImplementation;
 import com.target.ready.library.system.repository.UserImplementation;
+import com.target.ready.library.system.service.CategoryService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import com.target.ready.library.system.service.LibrarySystemService;
@@ -31,6 +35,9 @@ import reactor.core.publisher.Mono;
 public class LibraryControllerTest {
     @Mock
     LibrarySystemService librarySystemService;
+
+    @Mock
+    CategoryService categoryService;
 
     @InjectMocks
     LibraryController libraryController;
@@ -221,15 +228,17 @@ public class LibraryControllerTest {
         assertEquals(response.getBody(),"Book deleted Successfully!");
     }
 
-
-
     @Test
     public void addBookTest() throws JsonProcessingException {
         when(librarySystemService.addBook(new BookDto())).thenReturn(new BookDto());
         BindingResult bindingResult=null;
         ResponseEntity<?> response=libraryController.addBook(new BookDto(),bindingResult);
-        assertEquals("Book Added Successfully",response.getBody());
-
+        assertEquals(new BookDto(),response.getBody());
     }
 
+
 }
+
+
+
+

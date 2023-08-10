@@ -119,4 +119,12 @@ public class UserImplementation implements UserRepository{
     }
 
 
+    public List<UserProfile> getAllUsers() {
+        return   webClient.get().uri(libraryBaseUrl3 + "users")
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve()
+                .bodyToFlux(UserProfile.class)
+                .collectList()
+                .block();
+    }
 }
