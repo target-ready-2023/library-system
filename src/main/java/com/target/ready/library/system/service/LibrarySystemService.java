@@ -100,12 +100,12 @@ public class LibrarySystemService {
     }
 
     public List<Book> findBookByCategoryName(String categoryName,int pageNumber,int pageSize) {
-        List<Book> bookList= bookRepository.findBookByCategoryName(categoryName,pageNumber,pageSize);
+        List<Book> bookList= bookRepository.findBookByCategoryName(categoryName.toLowerCase(),pageNumber,pageSize);
         return bookList;
     }
 
     public Mono<Long> getTotalBookCategoryCount(String categoryName) {
-        return bookRepository.countBooksByCategoryName(categoryName);
+        return bookRepository.countBooksByCategoryName(categoryName.toLowerCase());
     }
 
     public List<Book> findByBookName(String bookName){
