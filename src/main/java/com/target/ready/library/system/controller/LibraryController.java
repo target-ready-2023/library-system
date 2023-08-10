@@ -2,6 +2,7 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.dto.BookDtoUpdate;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
@@ -19,8 +20,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
-
-import java.util.stream.Collectors;
 
 @RestController
 @Validated
@@ -186,12 +185,17 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> updateBookDetails(@PathVariable("book_id") int id, @RequestBody BookDto bookDto) {
-        Book existingBook = librarySystemService.findByBookId(id);
-        if (existingBook == null) {
-            return new ResponseEntity<>("Book does not exist",HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(librarySystemService.updateBookDetails(id, bookDto),HttpStatus.OK);
+    public ResponseEntity<?> updateBookDetails(@PathVariable("book_id") int id, @RequestBody @Valid BookDtoUpdate bookDtoUpdate, BindingResult bindingResult) {
+        try {
+            Book existingBook = librarySystemService.findByBookId(id);
+            if (existingBook == null) {
+                return new ResponseEntity<>("Book does not exist", HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>(librarySystemService.updateBookDetails(id, bookDtoUpdate), HttpStatus.OK);
+            }
+        }
+        catch (JsonProcessingException je){
+            return new ResponseEntity<>("An error occurred while processing your request",HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
