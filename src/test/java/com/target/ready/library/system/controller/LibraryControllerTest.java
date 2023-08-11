@@ -2,6 +2,7 @@ package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.dto.IssueDto;
+import com.target.ready.library.system.dto.BookDtoUpdate;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Inventory;
@@ -19,9 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.springframework.http.HttpStatus;
@@ -36,9 +36,6 @@ import reactor.core.publisher.Mono;
 public class LibraryControllerTest {
     @Mock
     LibrarySystemService librarySystemService;
-
-    @Mock
-    CategoryService categoryService;
 
     @InjectMocks
     LibraryController libraryController;
@@ -235,6 +232,28 @@ public class LibraryControllerTest {
         BindingResult bindingResult=null;
         ResponseEntity<?> response=libraryController.addBook(new BookDto(),bindingResult);
         assertEquals(new BookDto(),response.getBody());
+    }
+
+    @Test
+    void updateBookDetailsTest() throws JsonProcessingException {
+        int bookId = 1;
+        BookDtoUpdate bookDtoUpdate = new BookDtoUpdate();
+        Book bookToUpdate = new Book();
+        bookToUpdate.setBookId(1);
+        bookToUpdate.setBookName("Think and grow rich");
+        bookToUpdate.setBookDescription("A book guide on how to think to make money");
+        bookToUpdate.setAuthorName("Napoleon Hill");
+        bookToUpdate.setPublicationYear(1934);
+        bookDtoUpdate.setBook(bookToUpdate);
+        when(librarySystemService.findByBookId(bookId)).thenReturn(bookToUpdate);
+        when(librarySystemService.updateBookDetails(bookId, bookDtoUpdate)).thenReturn(bookDtoUpdate);
+        ResponseEntity<?> response = libraryController.updateBookDetails(bookId, bookDtoUpdate,null);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody() instanceof BookDtoUpdate);
+        BookDtoUpdate responseBody = (BookDtoUpdate) response.getBody();
+        assertEquals(bookToUpdate.getBookName(), responseBody.getBook().getBookName());
+        assertEquals(bookToUpdate.getAuthorName(), responseBody.getBook().getAuthorName());
     }
 
 

@@ -2,7 +2,9 @@ package com.target.ready.library.system.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.dto.BookDtoUpdate;
 import com.target.ready.library.system.entity.*;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.BookRepository;
@@ -12,9 +14,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.Test;
 
 
@@ -59,19 +63,19 @@ public class LibrarySystemServiceTest {
     }
 
     @Test
-    public void findAllBooksTest(){
+    public void findAllBooksTest() {
         List<Book> records = new ArrayList<Book>();
         records.add(new Book(1,
                 "Five Point someone",
                 "Semi-autobiographical"
-                ,"Chetan Bhagat",2004));
+                , "Chetan Bhagat", 2004));
         records.add(new Book(2,
                 "The Silent Patient",
-                "The dangers of unresolved or improperly treated mental illness","Alex Michaelides",2019)
+                "The dangers of unresolved or improperly treated mental illness", "Alex Michaelides", 2019)
         );
 
-        when(bookRepository.getAllBooks(0,5)).thenReturn(records);
-        List<Book> response=librarySystemService.getAllBooks(0,5);
+        when(bookRepository.getAllBooks(0, 5)).thenReturn(records);
+        List<Book> response = librarySystemService.getAllBooks(0, 5);
         assertEquals(records.size(), response.size());
     }
 
@@ -81,27 +85,28 @@ public class LibrarySystemServiceTest {
         records.add(new Book(1,
                 "Five Point someone",
                 "Semi-autobiographical"
-                ,"Chetan Bhagat",2004));
+                , "Chetan Bhagat", 2004));
         records.add(new Book(2,
                 "The Silent Patient",
-                "The dangers of unresolved or improperly treated mental illness","Alex Michaelides",2019)
+                "The dangers of unresolved or improperly treated mental illness", "Alex Michaelides", 2019)
         );
-        Mono<Long> repoCount=Mono.just(0L);
+        Mono<Long> repoCount = Mono.just(0L);
         when(bookRepository.totalBooks()).thenReturn(repoCount);
-        Mono<Long> serviceCount=librarySystemService.getTotalBookCount();
-        assertEquals(repoCount,serviceCount);
+        Mono<Long> serviceCount = librarySystemService.getTotalBookCount();
+        assertEquals(repoCount, serviceCount);
     }
+
     @Test
-    public void booksIssuedTest(){
-        int bookId=1;
+    public void booksIssuedTest() {
+        int bookId = 1;
         int userId = 1;
 
-        Inventory inventory= new Inventory();
+        Inventory inventory = new Inventory();
         inventory.setInvBookId(1);
         inventory.setNoOfBooksLeft(5);
         inventory.setNoOfCopies(5);
         when(inventoryRepository.findByBookId(inventory.getInvBookId())).thenReturn(inventory);
-        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft()-1);
+        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
 
         UserCatalog user = new UserCatalog();
         user.setBookId(1);
@@ -113,7 +118,7 @@ public class LibrarySystemServiceTest {
     }
 
     @Test
-    public void bookReturnedTest(){
+    public void bookReturnedTest() {
         UserCatalog user1 = new UserCatalog();
         user1.setBookId(1);
         user1.setUserId(1);
@@ -134,13 +139,13 @@ public class LibrarySystemServiceTest {
         inventory.setNoOfCopies(5);
         when(inventoryRepository.findByBookId(1)).thenReturn(inventory);
         when(inventoryRepository.addInventory(inventory)).thenReturn(inventory);
-        when(userRepository.deleteBookByUserId(1,1)).thenReturn(1);
-        Integer response = librarySystemService.bookReturned(1,1);
+        when(userRepository.deleteBookByUserId(1, 1)).thenReturn(1);
+        Integer response = librarySystemService.bookReturned(1, 1);
         assertEquals(1, response);
     }
 
     @Test
-    public void findByBookIdTest(){
+    public void findByBookIdTest() {
         Book book = new Book();
         book.setBookId(1);
         book.setBookName("Five Point someone");
@@ -182,8 +187,8 @@ public class LibrarySystemServiceTest {
         bookCategory2.setId(2);
         bookCategories.add(bookCategory2);
 
-        when(bookRepository.findBookByCategoryName("Sci-Fi",0,5)).thenReturn(returnBooks);
-        List<Book> response = librarySystemService.findBookByCategoryName(bookCategory1.getCategoryName(),0,5);
+        when(bookRepository.findBookByCategoryName("Sci-Fi", 0, 5)).thenReturn(returnBooks);
+        List<Book> response = librarySystemService.findBookByCategoryName(bookCategory1.getCategoryName(), 0, 5);
         assertEquals(response, returnBooks);
     }
 
@@ -191,8 +196,8 @@ public class LibrarySystemServiceTest {
     public void getTotalBookCategoryCountTest() {
         List<BookCategory> bookCategories = new ArrayList<BookCategory>();
 
-        bookCategories.add(new BookCategory(1,1,"fiction"));
-        bookCategories.add(new BookCategory(2,2,"fiction"));
+        bookCategories.add(new BookCategory(1, 1, "fiction"));
+        bookCategories.add(new BookCategory(2, 2, "fiction"));
 
         BookCategory bookCategory2 = new BookCategory();
         bookCategory2.setCategoryName("Sci-fi");
@@ -200,10 +205,10 @@ public class LibrarySystemServiceTest {
         bookCategory2.setId(2);
         bookCategories.add(bookCategory2);
 
-        Mono<Long> repoCount=Mono.just(0L);
+        Mono<Long> repoCount = Mono.just(0L);
         when(bookRepository.countBooksByCategoryName("fiction")).thenReturn(repoCount);
-        Mono<Long> serviceCount=librarySystemService.getTotalBookCategoryCount("fiction");
-        assertEquals(repoCount,serviceCount);
+        Mono<Long> serviceCount = librarySystemService.getTotalBookCategoryCount("fiction");
+        assertEquals(repoCount, serviceCount);
     }
 
 
@@ -240,7 +245,7 @@ public class LibrarySystemServiceTest {
         book1.setPublicationYear(1981);
         books.add(book1);
 
-        BookCategory category1= new BookCategory();
+        BookCategory category1 = new BookCategory();
         category1.setId(3);
         category1.setBookId(1);
         category1.setCategoryName("Thriller");
@@ -254,15 +259,15 @@ public class LibrarySystemServiceTest {
         book2.setPublicationYear(2007);
         books.add(book2);
 
-        BookCategory category2= new BookCategory();
+        BookCategory category2 = new BookCategory();
         category2.setId(4);
         category2.setBookId(2);
         category2.setCategoryName("Suspense");
         categories.add(category2);
 
         doAnswer((invocation) -> {
-            int id=invocation.getArgument(0);
-            books.removeIf(book->book.getBookId()==id);
+            int id = invocation.getArgument(0);
+            books.removeIf(book -> book.getBookId() == id);
             return null;
         }).when(bookRepository).deleteBook(1);
 
@@ -272,12 +277,12 @@ public class LibrarySystemServiceTest {
         }).when(categoryService).deleteBookCategory(1);
 
         librarySystemService.deleteBook(1);
-        assertEquals(books.size(),1);
+        assertEquals(books.size(), 1);
     }
 
 
     @Test
-    public void addBookTest() throws JsonProcessingException,ResourceNotFoundException {
+    public void addBookTest() throws JsonProcessingException, ResourceNotFoundException {
         Book book = new Book();
         book.setBookId(1);
         book.setBookName("Five Point someone");
@@ -285,15 +290,15 @@ public class LibrarySystemServiceTest {
         book.setBookDescription("Semi-autobiographical");
         book.setPublicationYear(2004);
 
-        BookDto bookDto=new BookDto();
+        BookDto bookDto = new BookDto();
         bookDto.setBook(book);
-        List<String> categoryNames=new ArrayList<>();
+        List<String> categoryNames = new ArrayList<>();
         categoryNames.add("Fiction");
         categoryNames.add("Horror");
         bookDto.setCategoryNames(categoryNames);
         bookDto.setNoOfCopies(5);
         when(bookRepository.addBook(bookDto)).thenReturn(book);
-        Inventory inventory=new Inventory();
+        Inventory inventory = new Inventory();
         inventory.setInvBookId(book.getBookId());
         inventory.setNoOfCopies(bookDto.getNoOfCopies());
         inventory.setNoOfBooksLeft(bookDto.getNoOfCopies());
@@ -303,7 +308,37 @@ public class LibrarySystemServiceTest {
 //        when(categoryService.addBookCategory(new BookCategory())).thenReturn("Category added to the book successfully");
 //        String response=librarySystemService.addBook(bookDto);
 //        assertEquals("Book Added Successfully",response);
-
-
     }
+
+    @Test
+    void updateBookDetailsTest() throws JsonProcessingException, ResourceAlreadyExistsException, ResourceNotFoundException {
+        int bookId = 1;
+        BookDtoUpdate bookDtoUpdate = new BookDtoUpdate();
+        Book book = new Book();
+        book.setBookId(1);
+        book.setBookName("Think and grow rich");
+        book.setBookDescription("A book guide on how to think to make money");
+        book.setAuthorName("Napoleon Hill");
+        book.setPublicationYear(1934);
+        bookDtoUpdate.setBook(book);
+        List<String> categoryNames = Arrays.asList("Fiction", "Mystery");
+        bookDtoUpdate.setCategoryNames(categoryNames);
+
+        when(bookRepository.updateBookDetails(eq(bookId), eq(bookDtoUpdate))).thenReturn(bookDtoUpdate.getBook());
+        when(categoryService.findCategoryBycategoryName("fiction"))
+                .thenReturn(new Category());
+        when(categoryService.findCategoryBycategoryName("mystery"))
+                .thenThrow(new ResourceNotFoundException("Category not found"))
+                .thenReturn(new Category());
+        BookDtoUpdate result = librarySystemService.updateBookDetails(bookId, bookDtoUpdate);
+        assertNotNull(result);
+        assertEquals(bookDtoUpdate.getBook(), result.getBook());
+        assertEquals(bookDtoUpdate.getCategoryNames(), categoryNames);
+        assertTrue(result.getCategoryNames().contains("fiction"));
+        assertTrue(result.getCategoryNames().contains("mystery"));
+        verify(categoryService, times(1)).deleteBookCategory(bookId);
+        verify(categoryService, times(categoryNames.size())).addBookCategory(any());
+        verify(categoryService, times(1)).addCategory(any());
+    }
+
 }

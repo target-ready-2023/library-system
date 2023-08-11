@@ -22,7 +22,7 @@ public class UserService {
     public String deleteUser(int userId) {
 
         if(userRepository.findBooksByUserId(userId).size()>0){
-            return "User has books checked out. Cannot delete";
+            return "User has books checked out. Cannot delete user";
         }
             return userRepository.deleteUser(userId);
     }
