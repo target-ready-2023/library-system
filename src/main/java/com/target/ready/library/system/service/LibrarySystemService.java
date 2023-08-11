@@ -99,7 +99,7 @@ public class LibrarySystemService {
 
     }
 
-    public List<Book> findBookByCategoryName(String categoryName, int pageNumber, int pageSize) {
+    public List<Book> findBookByCategoryName(String categoryName, int pageNumber, int pageSize) throws ResourceNotFoundException {
         List<Book> bookList = bookRepository.findBookByCategoryName(categoryName.toLowerCase(), pageNumber, pageSize);
         return bookList;
     }

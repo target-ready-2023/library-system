@@ -7,6 +7,7 @@ import com.target.ready.library.system.dto.BookDtoUpdate;
 import com.target.ready.library.system.entity.Book;
 
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -42,13 +43,20 @@ public class BookImplementation implements BookRepository {
 //    }
 
     @Override
-    public List<Book> findBookByCategoryName(String categoryName, int pageNumber, int pageSize) {
+    public List<Book> findBookByCategoryName(String categoryName, int pageNumber, int pageSize) throws ResourceNotFoundException {
         return webClient.get()
                 .uri(libraryBaseUrl + "book/category/" + categoryName + "/" + pageNumber + "/" + pageSize).accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .toEntityList(Book.class)
-                .block()
-                .getBody();
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToFlux(Book.class).collectList();
+                    }
+                })
+                .block();
     }
 
     @Override
