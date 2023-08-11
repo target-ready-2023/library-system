@@ -1,6 +1,7 @@
 package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.dto.IssueDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Inventory;
@@ -101,14 +102,14 @@ public class LibraryControllerTest {
 
     @Test
     public void bookReturnedTest(){
-        UserCatalog user = new UserCatalog();
+        IssueDto user = new IssueDto();
         user.setBookId(1);
-        user.setUserId(2);
+        user.setStudentId(2);
 
-        when(librarySystemService.bookReturned(user.getBookId(),user.getUserId())).thenReturn(user.getBookId(), user.getUserId());
+        when(librarySystemService.bookReturned(user.getBookId(),user.getStudentId())).thenReturn(user.getBookId(), user.getStudentId());
         libraryController.bookReturned(user);
         assertEquals(1, user.getBookId());
-        assertEquals(2, user.getUserId());
+        assertEquals(2, user.getStudentId());
     }
 
     @Test

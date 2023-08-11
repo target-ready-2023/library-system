@@ -2,6 +2,7 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.dto.IssueDto;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
@@ -23,8 +24,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
-
-import java.util.stream.Collectors;
 
 @RestController
 @Validated
@@ -181,8 +180,6 @@ public class LibraryController {
                 librarySystemService.deleteBook(bookId);
                 return new ResponseEntity<>("Book deleted successfully", HttpStatus.ACCEPTED);
             }
-        } catch (DataAccessException ex) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
         } catch (RuntimeException ex){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Failed to Delete Book");
         }
@@ -213,8 +210,8 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> bookIssued(@Valid @RequestBody UserCatalog userCatalog){
-        return new ResponseEntity<>(librarySystemService.booksIssued(userCatalog.getBookId(), userCatalog.getUserId())
+    public ResponseEntity<String> bookIssued(@RequestBody UserCatalog issueDto){
+        return new ResponseEntity<>(librarySystemService.booksIssued(issueDto.getBookId(), issueDto.getUserId())
                 ,HttpStatus.CREATED);
     }
 
@@ -227,8 +224,8 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<Integer> bookReturned(@Valid @RequestBody UserCatalog userCatalog){
-        return new ResponseEntity<>(librarySystemService.bookReturned(userCatalog.getBookId(), userCatalog.getUserId())
+    public ResponseEntity<Integer> bookReturned(@RequestBody IssueDto issueDto){
+        return new ResponseEntity<>(librarySystemService.bookReturned(issueDto.getBookId(), issueDto.getStudentId())
                 ,HttpStatus.CREATED);
     }
 

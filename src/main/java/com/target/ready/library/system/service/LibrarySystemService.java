@@ -118,7 +118,7 @@ public class LibrarySystemService {
             bookRepository.deleteBook(bookId);
             categoryService.deleteBookCategory(bookId);
             return "Book deleted Successfully!";
-        } catch(Exception ex){
+        } catch(DataAccessException ex){
             throw ex;
         }
     }

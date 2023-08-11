@@ -39,7 +39,8 @@ public class GlobalExceptionHandler {
         ExceptionResponse exceptionResponse=new ExceptionResponse(ex.getMessage(),HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(exceptionResponse,HttpStatus.NOT_FOUND);
     }
-    public ResponseEntity<ExceptionResponse> handleDataAccessException(DataAccessException ex) {
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ExceptionResponse> DataAccessException(DataAccessException ex) {
         ExceptionResponse exceptionResponse = new ExceptionResponse("Database access error", HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
