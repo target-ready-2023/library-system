@@ -2,10 +2,13 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
+import com.target.ready.library.system.dto.IssueDto;
 import com.target.ready.library.system.dto.BookDtoUpdate;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.Inventory;
 import com.target.ready.library.system.entity.UserCatalog;
+import com.target.ready.library.system.exceptions.DataAccessException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.LibrarySystemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.server.ResponseStatusException;
+
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -162,13 +167,17 @@ public class LibraryController {
                             mediaType = "application/json"
                     ))})
     public ResponseEntity<String> deleteBook(@PathVariable("book_id") int bookId) {
-        Book existingBook = librarySystemService.findByBookId(bookId);
-        if (existingBook == null) {
-            return new ResponseEntity<>("Book does not exist",HttpStatus.ACCEPTED);
-        } else {
-            return new ResponseEntity<>(librarySystemService.deleteBook(bookId),HttpStatus.ACCEPTED);
+        try {
+            Book existingBook = librarySystemService.findByBookId(bookId);
+            if (existingBook == null) {
+                throw new ResourceNotFoundException("Book not found");
+            } else {
+                librarySystemService.deleteBook(bookId);
+                return new ResponseEntity<>("Book deleted successfully", HttpStatus.ACCEPTED);
+            }
+        } catch (DataAccessException ex){
+            return new ResponseEntity<>("'Couldn't access database", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @PutMapping("/inventory/book/update/{book_id}")
@@ -201,9 +210,8 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> bookIssued(@Valid @RequestBody UserCatalog userCatalog){
-        return new ResponseEntity<>(librarySystemService.booksIssued(userCatalog.getBookId(), userCatalog.getUserId())
-                ,HttpStatus.CREATED);
+    public ResponseEntity<String> bookIssued(@RequestBody IssueDto issueDto){
+        return new ResponseEntity<>(librarySystemService.booksIssued(issueDto.getBookId(), issueDto.getStudentId()),HttpStatus.CREATED);
     }
 
 
@@ -215,8 +223,8 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<Integer> bookReturned(@Valid @RequestBody UserCatalog userCatalog){
-        return new ResponseEntity<>(librarySystemService.bookReturned(userCatalog.getBookId(), userCatalog.getUserId())
+    public ResponseEntity<Integer> bookReturned(@RequestBody IssueDto issueDto){
+        return new ResponseEntity<>(librarySystemService.bookReturned(issueDto.getBookId(), issueDto.getStudentId())
                 ,HttpStatus.CREATED);
     }
 

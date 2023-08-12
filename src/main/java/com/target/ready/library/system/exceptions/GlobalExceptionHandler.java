@@ -1,6 +1,7 @@
 package com.target.ready.library.system.exceptions;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,5 +38,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> ResourceNotFound(ResourceNotFoundException ex){
         ExceptionResponse exceptionResponse=new ExceptionResponse(ex.getMessage(),HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(exceptionResponse,HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ExceptionResponse> DataAccessException(DataAccessException ex) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse("Database access error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

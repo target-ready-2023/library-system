@@ -3,6 +3,7 @@ package com.target.ready.library.system.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.exceptions.DataAccessException;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
@@ -56,8 +57,10 @@ public class CategoryService {
     public String deleteBookCategory(int bookId) {
         try {
             return bookCategoryRepository.deleteBookCategory(bookId);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete", e);
+        } catch (DataAccessException e) {
+            throw e;
+        } catch (ResourceNotFoundException e) {
+            throw e;
         }
     }
 

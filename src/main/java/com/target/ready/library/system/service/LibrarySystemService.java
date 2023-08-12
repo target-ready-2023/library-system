@@ -11,6 +11,7 @@ import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
 import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
@@ -113,13 +114,17 @@ public class LibrarySystemService {
         return books;
     }
 
-    public String deleteBook(int bookId) {
+    public String deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException{
         try {
             bookRepository.deleteBook(bookId);
             categoryService.deleteBookCategory(bookId);
             return "Book deleted Successfully!";
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete book", e);
+        } catch (DataAccessException ex)
+        {
+            throw ex;
+        }
+        catch(ResourceNotFoundException ex){
+            throw ex;
         }
     }
 

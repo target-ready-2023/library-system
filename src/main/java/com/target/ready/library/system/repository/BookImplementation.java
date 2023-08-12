@@ -10,6 +10,7 @@ import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Repository
-public class BookImplementation implements BookRepository {
+public abstract class BookImplementation implements BookRepository {
 
     private final WebClient webClient;
     @Value("${library.baseUrl}")
@@ -140,12 +141,19 @@ public class BookImplementation implements BookRepository {
 
 
     @Override
-    public void deleteBook(int bookId) {
+    public void deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException {
         webClient.delete()
                 .uri(libraryBaseUrl + "book/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Void.class)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 409) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+                    } else {
+                        return response.bodyToMono(Book.class);
+                    }
+                })
                 .block();
     }
 
