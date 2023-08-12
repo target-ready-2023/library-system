@@ -117,16 +117,10 @@ public class LibraryController {
                     ))})
     public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName,@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
         int pageSize=5;
-       try{
-           if(pageNumber<0)
-               return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
-
-           return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName,pageNumber,pageSize)
+        if(pageNumber<0)
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName,pageNumber,pageSize)
                    ,HttpStatus.OK);
-       }catch(Exception ex){
-
-           return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
-       }
     }
 
     @GetMapping("/books/category/total_count/{categoryName}")
