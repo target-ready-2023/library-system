@@ -87,11 +87,11 @@ public class LibraryControllerTest {
     }
     @Test
     public void bookIssuedTest(){
-       UserCatalog user = new UserCatalog();
+       IssueDto user = new IssueDto();
        user.setBookId(1);
-       user.setUserId(2);
+       user.setStudentId(2);
 
-       when(librarySystemService.booksIssued(user.getBookId(),user.getUserId())).thenReturn(String.valueOf(user));
+       when(librarySystemService.booksIssued(user.getBookId(),user.getStudentId())).thenReturn(String.valueOf(user));
        ResponseEntity<String> response = libraryController.bookIssued(user);
        assertEquals(HttpStatus.CREATED, response.getStatusCode());
        assertNotNull(response);

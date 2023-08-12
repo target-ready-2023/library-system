@@ -210,9 +210,8 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> bookIssued(@RequestBody UserCatalog issueDto){
-        return new ResponseEntity<>(librarySystemService.booksIssued(issueDto.getBookId(), issueDto.getUserId())
-                ,HttpStatus.CREATED);
+    public ResponseEntity<String> bookIssued(@RequestBody IssueDto issueDto){
+        return new ResponseEntity<>(librarySystemService.booksIssued(issueDto.getBookId(), issueDto.getStudentId()),HttpStatus.CREATED);
     }
 
 
