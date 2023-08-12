@@ -2,7 +2,9 @@ package com.target.ready.library.system.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.BookCategory;
+import com.target.ready.library.system.exceptions.DataAccessException;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,12 +53,21 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     }
 
     @Override
-    public String deleteBookCategory(int bookId) {
-        return webClient.delete()
+    public String deleteBookCategory(int bookId) throws DataAccessException, ResourceNotFoundException {
+        String resp = webClient.delete()
                 .uri(libraryBaseUrl2 + "inventory/delete/bookCategory/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(String.class).block();
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 409) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+                    } else {
+                        return response.bodyToMono(String.class);
+                    }
+                })
+                .block();
+        return resp;
     }
 
     @Override

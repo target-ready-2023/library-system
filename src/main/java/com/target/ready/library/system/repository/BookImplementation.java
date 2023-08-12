@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Repository
-public class BookImplementation implements BookRepository {
+public abstract class BookImplementation implements BookRepository {
 
     private final WebClient webClient;
     @Value("${library.baseUrl}")
@@ -138,8 +138,15 @@ public class BookImplementation implements BookRepository {
         webClient.delete()
                 .uri(libraryBaseUrl + "book/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Void.class)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 409) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+                    } else {
+                        return response.bodyToMono(Book.class);
+                    }
+                })
                 .block();
     }
 
