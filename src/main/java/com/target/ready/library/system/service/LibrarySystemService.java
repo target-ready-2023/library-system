@@ -158,20 +158,25 @@ public class LibrarySystemService {
 
     public String booksIssued(int bookId, int userId) throws ResourceNotFoundException, ResourceAlreadyExistsException {
 
-        Inventory inventory = inventoryRepository.findByBookId(bookId);
-        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
-        inventoryRepository.addInventory(inventory);
         UserCatalog userCatalog = new UserCatalog();
         userCatalog.setBookId(bookId);
         userCatalog.setUserId(userId);
         userRepository.addUserCatalog(userCatalog);
+        Inventory inventory = inventoryRepository.findByBookId(bookId);
+        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
+        inventoryRepository.addInventory(inventory);
         return "Book issued";
 
     }
 
+
+
     public Integer bookReturned(int bookId, int userId) {
         Integer returnedBookId = 0;
         List<Integer> bookIdList = userRepository.findBooksByUserId(userId);
+        if(bookIdList.isEmpty()){
+            throw new ResourceNotFoundException("This book was not issued by the user!");
+        }
         for (Integer eachBookId : bookIdList) {
             if (eachBookId == bookId) {
                 Inventory inventory = inventoryRepository.findByBookId(bookId);
@@ -179,6 +184,9 @@ public class LibrarySystemService {
                 inventoryRepository.addInventory(inventory);
                 returnedBookId = userRepository.deleteBookByUserId(bookId, userId);
             }
+        }
+        if(returnedBookId == 0){
+            throw new ResourceNotFoundException("The book was already returned by the user!");
         }
         //return "Book Returned Successfully";
         return returnedBookId;
