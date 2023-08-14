@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Repository
-public abstract class BookImplementation implements BookRepository {
+public class BookImplementation implements BookRepository {
 
     private final WebClient webClient;
     @Value("${library.baseUrl}")

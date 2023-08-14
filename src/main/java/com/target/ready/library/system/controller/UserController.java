@@ -2,9 +2,6 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.UserProfile;
-import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
-import com.target.ready.library.system.exceptions.ResourceNotFoundException;
-import com.target.ready.library.system.service.LibrarySystemService;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +43,15 @@ public class UserController {
             return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
         } catch (ResourceNotFoundException e){
             throw new ResourceNotFoundException("Currently no users!");
+        }
+    }
+
+    @GetMapping("/books/{user_id}")
+    public ResponseEntity<?> findBookNameByUserId(@PathVariable ("user_id") int userId){
+        try {
+            return new ResponseEntity<>(userService.findBookNameByUserId(userId), HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException("User not found!");
         }
     }
 }
