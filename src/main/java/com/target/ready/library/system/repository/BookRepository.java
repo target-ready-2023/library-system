@@ -11,7 +11,9 @@ import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException
 import java.util.List;
 
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 
@@ -26,7 +28,7 @@ public interface BookRepository {
     //    public void deleteBook(int bookId);
 //    public Book updateBookDetails(int bookId, BookDto bookDto);
     public void deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException;
-    public Book updateBookDetails(int bookId, BookDto bookDto);
+//    public Book updateBookDetails(int bookId, BookDto bookDto);
     public Book updateBookDetails(int bookId, BookDtoUpdate bookDtoUpdate) throws JsonProcessingException, ResourceAlreadyExistsException;
     public Mono<Long> totalBooks();
     public Mono<Long> countBooksByCategoryName(String categoryName);

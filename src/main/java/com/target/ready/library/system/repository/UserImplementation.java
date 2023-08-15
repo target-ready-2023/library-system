@@ -30,11 +30,11 @@ public class UserImplementation implements UserRepository{
 
 
     @Override
-    public List<Integer> findBooksByUserId(int userId) {
+    public List<UserCatalog> findBooksByUserId(int userId) {
         return   webClient.get().uri(libraryBaseUrl3 + "user/books/"+userId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToFlux(Integer.class)
+                .bodyToFlux(UserCatalog.class)
                 .collectList()
                 .block();
     }

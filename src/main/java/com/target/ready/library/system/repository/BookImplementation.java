@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -19,7 +20,8 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Repository
-public abstract class BookImplementation implements BookRepository {
+
+public  class BookImplementation implements BookRepository {
 
     private final WebClient webClient;
     @Value("${library.baseUrl}")

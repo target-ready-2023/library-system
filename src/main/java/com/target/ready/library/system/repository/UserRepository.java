@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserRepository {
 
-    public List<Integer> findBooksByUserId(int userId);
+    public List<UserCatalog> findBooksByUserId(int userId);
     public Integer deleteBookByUserId(int bookId,int userId);
 
     public UserCatalog addUserCatalog(UserCatalog userCatalog) throws ResourceAlreadyExistsException, ResourceNotFoundException;
