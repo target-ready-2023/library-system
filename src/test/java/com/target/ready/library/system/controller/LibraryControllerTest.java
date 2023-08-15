@@ -247,7 +247,7 @@ public class LibraryControllerTest {
         bookDtoUpdate.setBook(bookToUpdate);
         when(librarySystemService.findByBookId(bookId)).thenReturn(bookToUpdate);
         when(librarySystemService.updateBookDetails(bookId, bookDtoUpdate)).thenReturn(bookDtoUpdate);
-        ResponseEntity<?> response = libraryController.updateBookDetails(bookId, bookDtoUpdate,null);
+        ResponseEntity<?> response = libraryController.updateBookDetails(bookDtoUpdate,null);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody() instanceof BookDtoUpdate);

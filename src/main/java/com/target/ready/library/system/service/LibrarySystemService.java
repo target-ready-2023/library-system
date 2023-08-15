@@ -170,8 +170,11 @@ public class LibrarySystemService {
 
     }
 
+
+
     public Integer bookReturned(int bookId, int userId) {
         Integer returnedBookId = 0;
+
         Integer flag=0;
         List<UserCatalog> userCatalogs = userRepository.findBooksByUserId(userId);
         List<Integer> bookIds = new ArrayList<>();
@@ -181,6 +184,8 @@ public class LibrarySystemService {
         }
 
         for (Integer eachBookId : bookIds) {
+
+
             if (eachBookId == bookId) {
                 flag=1;
                 Inventory inventory = inventoryRepository.findByBookId(bookId);
@@ -190,8 +195,13 @@ public class LibrarySystemService {
 
             }
         }
+
         if(flag==0){
-            throw new ResourceNotFoundException("Student doesn't have this book");
+            throw new ResourceNotFoundException("Student doesn't have this book");}
+
+        if(returnedBookId == 0){
+            throw new ResourceNotFoundException("The book was already returned by the user!");
+
         }
         //return "Book Returned Successfully";
         return returnedBookId;

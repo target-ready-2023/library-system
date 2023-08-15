@@ -39,7 +39,7 @@ public class LibraryController {
     @GetMapping("/books_directory")
     @Operation(
             description = "Get all the books",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
@@ -61,7 +61,7 @@ public class LibraryController {
     @GetMapping("books_directory/total_count")
     @Operation(
             description = "Get all the books count",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
@@ -78,12 +78,12 @@ public class LibraryController {
     @PostMapping("/inventory/books")
     @Operation(
             description = "Addition of books and its details",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "201",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<?> addBook(@Valid @RequestBody BookDto bookDto,BindingResult bindingResult) {
+    public ResponseEntity<?> addBook(@Valid @RequestBody BookDto bookDto, BindingResult bindingResult) {
         try {
             return new ResponseEntity<>(librarySystemService.addBook(bookDto), HttpStatus.CREATED);
         } catch (JsonProcessingException e) {
@@ -94,39 +94,39 @@ public class LibraryController {
     @GetMapping("/book/{book_id}")
     @Operation(
             description = "Get book according to its id",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
     public ResponseEntity<Book> findByBookId(@PathVariable("book_id") int bookId) {
-        try{
-        return new ResponseEntity<>(librarySystemService.findByBookId(bookId),HttpStatus.OK);
-    }    catch (Exception e) {
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        try {
+            return new ResponseEntity<>(librarySystemService.findByBookId(bookId), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
-}
 
     @GetMapping("/book/category/{category_name}")
     @Operation(
             description = "Get book according to its category",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName,@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
-        int pageSize=5;
-        if(pageNumber<0)
+    public ResponseEntity<List<Book>> findBookByCategoryName(@PathVariable("category_name") String categoryName, @RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
+        int pageSize = 5;
+        if (pageNumber < 0)
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName,pageNumber,pageSize)
-                   ,HttpStatus.OK);
+        return new ResponseEntity<>(librarySystemService.findBookByCategoryName(categoryName, pageNumber, pageSize)
+                , HttpStatus.OK);
     }
 
     @GetMapping("/books/category/total_count/{categoryName}")
     @Operation(
             description = "Get number of books according to its category",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
@@ -143,15 +143,15 @@ public class LibraryController {
     @GetMapping("books/{book_name}")
     @Operation(
             description = "Get book according to its name",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<List<Book>> findByBookName(@PathVariable("book_name") String bookName){
+    public ResponseEntity<List<Book>> findByBookName(@PathVariable("book_name") String bookName) {
         try {
             return new ResponseEntity<>(librarySystemService.findByBookName(bookName), HttpStatus.OK);
-        }catch (Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
         }
 
@@ -161,7 +161,7 @@ public class LibraryController {
     @DeleteMapping("book/{book_id}")
     @Operation(
             description = "Delete book from the database",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "202",
                     content = @Content(
                             mediaType = "application/json"
@@ -175,20 +175,21 @@ public class LibraryController {
                 librarySystemService.deleteBook(bookId);
                 return new ResponseEntity<>("Book deleted successfully", HttpStatus.ACCEPTED);
             }
-        } catch (DataAccessException ex){
+        } catch (DataAccessException ex) {
             return new ResponseEntity<>("'Couldn't access database", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PutMapping("/inventory/book/update/{book_id}")
+    @PutMapping("/inventory/book/update")
     @Operation(
             description = "Update book details",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<?> updateBookDetails(@PathVariable("book_id") int id, @RequestBody @Valid BookDtoUpdate bookDtoUpdate, BindingResult bindingResult) {
+    public ResponseEntity<?> updateBookDetails(@RequestBody @Valid BookDtoUpdate bookDtoUpdate, BindingResult bindingResult) {
+        int id = bookDtoUpdate.getBook().getBookId();
         try {
             Book existingBook = librarySystemService.findByBookId(id);
             if (existingBook == null) {
@@ -196,62 +197,63 @@ public class LibraryController {
             } else {
                 return new ResponseEntity<>(librarySystemService.updateBookDetails(id, bookDtoUpdate), HttpStatus.OK);
             }
-        }
-        catch (JsonProcessingException je){
-            return new ResponseEntity<>("An error occurred while processing your request",HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (JsonProcessingException je) {
+            return new ResponseEntity<>("An error occurred while processing your request", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("inventory/issue/book")
     @Operation(
             description = "Issue book to the student",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "201",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> bookIssued(@RequestBody IssueDto issueDto){
-        return new ResponseEntity<>(librarySystemService.booksIssued(issueDto.getBookId(), issueDto.getStudentId()),HttpStatus.CREATED);
+    public ResponseEntity<String> bookIssued(@RequestBody IssueDto issueDto) {
+        return new ResponseEntity<>(librarySystemService.booksIssued(issueDto.getBookId(), issueDto.getStudentId()), HttpStatus.CREATED);
     }
 
 
     @PostMapping("inventory/return/book")
     @Operation(
             description = "Book returned by the student",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "201",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<?> bookReturned(@RequestBody IssueDto issueDto){
+
+    public ResponseEntity<Integer> bookReturned(@RequestBody IssueDto issueDto) {
+
         return new ResponseEntity<>(librarySystemService.bookReturned(issueDto.getBookId(), issueDto.getStudentId())
-                ,HttpStatus.CREATED);
+                , HttpStatus.CREATED);
     }
 
 
     @GetMapping("book/no_of_copies/{book_id}")
     @Operation(
             description = "No of copies of the given book present in the database",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
 
-    public ResponseEntity<Integer> getNoOfCopiesByBookId(@PathVariable("book_id") Integer bookId){
-        return new ResponseEntity<>(librarySystemService.getNoOfCopiesByBookId(bookId),HttpStatus.OK);
+    public ResponseEntity<Integer> getNoOfCopiesByBookId(@PathVariable("book_id") Integer bookId) {
+        return new ResponseEntity<>(librarySystemService.getNoOfCopiesByBookId(bookId), HttpStatus.OK);
     }
 
     @GetMapping("inventory/book/{book_id}")
     @Operation(
             description = "No of copies available of the  given book",
-            responses = { @ApiResponse(
+            responses = {@ApiResponse(
                     responseCode = "200",
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<Inventory> findByBookId(@PathVariable("book_id") Integer bookId){
-        return new ResponseEntity<>(librarySystemService.findByBookId(bookId),HttpStatus.OK);
+    public ResponseEntity<Inventory> findByBookId(@PathVariable("book_id") Integer bookId) {
+        return new ResponseEntity<>(librarySystemService.findByBookId(bookId), HttpStatus.OK);
     }
 
 
