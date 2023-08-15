@@ -38,15 +38,6 @@ public  class BookImplementation implements BookRepository {
         this.webClient = webClient;
     }
 
-//    @Override
-//    public List<Book> findBookByCategoryName(String categoryName) {
-//        return   webClient.get()
-//                .uri(libraryBaseUrl + "book/category/"+categoryName).accept(MediaType.APPLICATION_JSON)
-//                .retrieve()
-//                .toEntityList(Book.class)
-//                .block()
-//                .getBody();
-//    }
 
     @Override
     public List<Book> findBookByCategoryName(String categoryName, int pageNumber, int pageSize) throws ResourceNotFoundException {
@@ -80,15 +71,23 @@ public  class BookImplementation implements BookRepository {
         return webClient.get()
                 .uri(libraryBaseUrl + "books/" + bookName)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .toEntityList(Book.class)
-                .block()
-                .getBody();
+
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToFlux(Book.class).collectList();
+                    }
+                })
+                .block();
     }
 
 
     @Override
-    public List<Book> getAllBooks(int pageNumber, int pageSize) {
+    public List<Book> getAllBooks(int pageNumber, int pageSize) throws ResourceNotFoundException{
         return WebClient.builder()
                 .baseUrl(libraryBaseUrl)
                 .build()
@@ -97,10 +96,17 @@ public  class BookImplementation implements BookRepository {
                         .path("books_directory/{pageNumber}/{pageSize}")
                         .build(pageNumber, pageSize))
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .toEntityList(Book.class)
-                .block()
-                .getBody();
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToFlux(Book.class).collectList();
+                    }
+                })
+                .block();
     }
 
     @Override
@@ -135,12 +141,20 @@ public  class BookImplementation implements BookRepository {
 
 
     @Override
-    public Book findByBookId(int bookId) {
+    public Book findByBookId(int bookId) throws ResourceNotFoundException{
         return webClient.get()
                 .uri(libraryBaseUrl + "book/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Book.class)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToMono(Book.class);
+                    }
+                })
                 .block();
     }
 

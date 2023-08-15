@@ -2,6 +2,7 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.UserProfile;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping("/student")
-    public ResponseEntity<UserProfile> addUser(@RequestBody UserProfile userProfile) {
+    public ResponseEntity<UserProfile> addUser(@RequestBody UserProfile userProfile) throws ResourceAlreadyExistsException {
         try {
             return new ResponseEntity<>(userService.addUser(userProfile), HttpStatus.CREATED);
         } catch (JsonProcessingException e) {

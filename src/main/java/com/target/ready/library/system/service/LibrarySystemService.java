@@ -159,20 +159,24 @@ public class LibrarySystemService {
     public String booksIssued(int bookId, int userId) throws ResourceNotFoundException, ResourceAlreadyExistsException {
 
 
-        UserCatalog userCatalog = new UserCatalog();
-        userCatalog.setBookId(bookId);
-        userCatalog.setUserId(userId);
-        userRepository.addUserCatalog(userCatalog);
-        Inventory inventory = inventoryRepository.findByBookId(bookId);
-        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
-        inventoryRepository.addInventory(inventory);
-        return "Book issued";
+        try {
+            UserCatalog userCatalog = new UserCatalog();
+            userCatalog.setBookId(bookId);
+            userCatalog.setUserId(userId);
+            userRepository.addUserCatalog(userCatalog);
+            Inventory inventory = inventoryRepository.findByBookId(bookId);
+            inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
+            inventoryRepository.addInventory(inventory);
+            return "Book issued";
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
 
 
-    public Integer bookReturned(int bookId, int userId) {
+    public Integer bookReturned(int bookId, int userId) throws ResourceNotFoundException{
         Integer returnedBookId = 0;
 
         Integer flag=0;
