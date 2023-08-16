@@ -115,17 +115,10 @@ public class LibrarySystemService {
     }
 
     public String deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException{
-        try {
+
             bookRepository.deleteBook(bookId);
             categoryService.deleteBookCategory(bookId);
             return "Book deleted Successfully!";
-        } catch (DataAccessException ex)
-        {
-            throw ex;
-        }
-        catch(ResourceNotFoundException ex){
-            throw ex;
-        }
     }
 
     @Transactional
