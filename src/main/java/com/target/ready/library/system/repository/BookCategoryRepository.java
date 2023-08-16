@@ -12,6 +12,6 @@ import java.util.List;
 public interface BookCategoryRepository {
 
     public BookCategory addBookCategory(BookCategory bookCategory) throws JsonProcessingException, ResourceAlreadyExistsException;
-    public String deleteBookCategory(int bookId) throws DataAccessException, ResourceNotFoundException;
+    public String deleteBookCategory(int bookId) throws  ResourceNotFoundException;
     public List<BookCategory> findAllCategoriesByBookId(int bookId);
 }

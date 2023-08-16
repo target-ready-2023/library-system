@@ -141,7 +141,7 @@ public class LibraryController {
     }
 
 
-    @DeleteMapping("book/{book_id}")
+    @DeleteMapping("books/{book_id}")
     @Operation(
             description = "Delete book from the database",
             responses = {@ApiResponse(

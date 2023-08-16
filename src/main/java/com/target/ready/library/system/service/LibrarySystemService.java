@@ -114,9 +114,10 @@ public class LibrarySystemService {
         return books;
     }
 
-    public String deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException{
+    public String deleteBook(int bookId) throws ResourceNotFoundException{
 
             bookRepository.deleteBook(bookId);
+        System.out.println("Ananya");
             categoryService.deleteBookCategory(bookId);
             return "Book deleted Successfully!";
     }
@@ -153,6 +154,7 @@ public class LibrarySystemService {
 
 
         try {
+           bookRepository.findByBookId(bookId);
             UserCatalog userCatalog = new UserCatalog();
             userCatalog.setBookId(bookId);
             userCatalog.setUserId(userId);
