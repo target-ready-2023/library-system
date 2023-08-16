@@ -1,5 +1,6 @@
 package com.target.ready.library.system.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.repository.BookCategoryImplementation;
@@ -12,11 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = {CategoryControllerTest.class})
 public class CategoryControllerTest {
@@ -69,28 +71,57 @@ public class CategoryControllerTest {
     }
 
 
+    @Test
+    public void testFindAllCategoriesWithNegativePageNumber() {
+        int pageNumber = -1;
+
+        ResponseEntity<?> response = categoryController.findAllCategories(pageNumber);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Collections.emptyList(), response.getBody());
+
+        verify(categoryService, times(0)).findAllCategories(anyInt(), anyInt());
+    }
+
+    @Test
+    public void addCategoryTest() throws JsonProcessingException {
+        Category category=new Category();
+        category.setCategoryName("Horror");
+        when(categoryService.addCategory(category)).thenReturn(category);
+        ResponseEntity<?> category1=categoryController.addCategory(category);
+        assertEquals(HttpStatus.CREATED,category1.getStatusCode());
+    }
+
+    @Test
+    public void addCategoryWithJsonProcessingExceptionTest() throws JsonProcessingException {
+        Category category = new Category();
+        category.setCategoryName("Horror");
+
+        when(categoryService.addCategory(category)).thenThrow(JsonProcessingException.class);
+
+        //categoryController = new CategoryController(categoryService);
+
+        ResponseEntity<?> responseEntity = categoryController.addCategory(category);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("An error occurred while processing the request", responseEntity.getBody());
+
+        //verify(categoryService, times(1)).addCategory(category);
+    }
+
+
+    @Test
+    public void findCategoryByCategoryNameTest(){
+        Category category=new Category();
+        category.setCategoryName("Horror");
+        when(categoryService.findCategoryBycategoryName(category.getCategoryName())).thenReturn(category);
+        assertNotNull(categoryController.findCategoryByCategoryName(category.getCategoryName()));
+        ResponseEntity<?> category1=categoryController.findCategoryByCategoryName(category.getCategoryName());
+        assertEquals(HttpStatus.OK,category1.getStatusCode());
+    }
 
 
 
-//    @Test
-//    public void addCategoryTest(){
-//        Category category=new Category();
-//        category.setCategoryName("Horror");
-//        when(categoryService.addCategory(category)).thenReturn(category);
-//        Category category1=categoryController.addCategory(category);
-//        assertEquals("Horror",category1.getCategoryName());
-//    }
-//
-//    @Test
-//    public void findByCategoryNameTest(){
-//    Category category=new Category();
-//    category.setCategoryName("Horror");
-//    when(categoryService.findByCategoryName(category.getCategoryName())).thenReturn(category);
-//    assertNotNull(categoryController.findByCategoryName(category.getCategoryName()));
-//    assertEquals("Horror",categoryController.findByCategoryName(category.getCategoryName()).getCategoryName());
-//    }
-//
-//
 //    @Test
 //    public void addBookCategoryTest(){
 //        BookCategory bookCategory=new BookCategory();

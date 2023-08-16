@@ -219,11 +219,11 @@ public class LibraryControllerTest {
         book.setPublicationYear(1981);
 
         when(librarySystemService.findByBookId(2)).thenReturn(book);
-        when(librarySystemService.deleteBook(2)).thenReturn("Book deleted Successfully!");
+        when(librarySystemService.deleteBook(2)).thenReturn("Book deleted successfully");
 
         ResponseEntity<String> response = libraryController.deleteBook(book.getBookId());
         assertEquals(response.getStatusCode(),HttpStatus.ACCEPTED);
-        assertEquals(response.getBody(),"Book deleted Successfully!");
+        assertEquals(response.getBody(),"Book deleted successfully");
     }
 
     @Test
