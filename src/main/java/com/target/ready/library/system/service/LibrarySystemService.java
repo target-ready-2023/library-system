@@ -114,18 +114,12 @@ public class LibrarySystemService {
         return books;
     }
 
-    public String deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException{
-        try {
+    public String deleteBook(int bookId) throws ResourceNotFoundException{
+
             bookRepository.deleteBook(bookId);
+        System.out.println("Ananya");
             categoryService.deleteBookCategory(bookId);
             return "Book deleted Successfully!";
-        } catch (DataAccessException ex)
-        {
-            throw ex;
-        }
-        catch(ResourceNotFoundException ex){
-            throw ex;
-        }
     }
 
     @Transactional
@@ -161,6 +155,7 @@ public class LibrarySystemService {
 
 
         try {
+           bookRepository.findByBookId(bookId);
             UserCatalog userCatalog = new UserCatalog();
             userCatalog.setBookId(bookId);
             userCatalog.setUserId(userId);

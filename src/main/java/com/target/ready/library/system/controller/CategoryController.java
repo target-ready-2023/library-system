@@ -3,6 +3,7 @@ package com.target.ready.library.system.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,7 +32,7 @@ public class CategoryController {
             content = @Content(
                     mediaType = "application/json"
             ))})
-    public ResponseEntity<?> addCategory(@RequestBody Category category)  {
+    public ResponseEntity<?> addCategory(@RequestBody Category category) throws ResourceAlreadyExistsException {
         try {
             return new ResponseEntity<>(categoryService.addCategory(category),HttpStatus.CREATED);
         }
@@ -50,18 +51,15 @@ public class CategoryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<?> findAllCategories(@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) {
+    public ResponseEntity<?> findAllCategories(@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) throws ResourceNotFoundException {
         List<Category> categories;
         int pageSize = 10;
-        try {
             if (pageNumber < 0) {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
             }
             categories = categoryService.findAllCategories(pageNumber, pageSize);
             return new ResponseEntity<>(categories, HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            return new ResponseEntity<>("No category available currently!", HttpStatus.NOT_FOUND);
-        }
+
     }
 
     @GetMapping("categories/{book_id}")
@@ -72,7 +70,7 @@ public class CategoryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<?> findAllCategoriesByBookId(@PathVariable("book_id") int bookId) {
+    public ResponseEntity<?> findAllCategoriesByBookId(@PathVariable("book_id") int bookId) throws ResourceNotFoundException {
 
             return new ResponseEntity<>(categoryService.findAllCategoriesByBookId(bookId),HttpStatus.OK);
 
@@ -80,7 +78,7 @@ public class CategoryController {
 
     }
 
-    @GetMapping("inventory/categories/{category_name}")
+    @GetMapping("inventory/category/{category_name}")
     @Operation(
             description = "Finding all the categories of the given book",
             responses = { @ApiResponse(
@@ -88,7 +86,7 @@ public class CategoryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<?> findCategoryByCategoryName(@PathVariable("category_name") String categoryName){
+    public ResponseEntity<?> findCategoryByCategoryName(@PathVariable("category_name") String categoryName) throws ResourceNotFoundException{
 
             return new ResponseEntity<>(categoryService.findCategoryBycategoryName(categoryName),HttpStatus.OK);
 

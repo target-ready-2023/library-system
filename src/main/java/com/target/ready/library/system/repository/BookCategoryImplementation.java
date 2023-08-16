@@ -53,13 +53,13 @@ public class BookCategoryImplementation implements BookCategoryRepository{
     }
 
     @Override
-    public String deleteBookCategory(int bookId) throws DataAccessException, ResourceNotFoundException {
+    public String deleteBookCategory(int bookId) throws  ResourceNotFoundException {
         String resp = webClient.delete()
                 .uri(libraryBaseUrl2 + "inventory/delete/bookCategory/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .flatMap(response -> {
-                    if (response.statusCode().isError() && response.statusCode().value() == 409) {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
                         return response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
                     } else {
