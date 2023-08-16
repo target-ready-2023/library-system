@@ -19,6 +19,7 @@ import com.target.ready.library.system.service.LibrarySystemService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,6 +67,18 @@ public class LibraryControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, response.getBody().size());
 
+    }
+
+    @Test
+    public void testGetAllBooksWithNegativePageNumber() {
+        int pageNumber = -1;
+
+        ResponseEntity<List<Book>> response = libraryController.getAllBooks(pageNumber);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(Collections.emptyList(), response.getBody());
+
+        verify(librarySystemService, times(0)).getAllBooks(anyInt(), anyInt());
     }
 
     @Test
@@ -156,6 +169,18 @@ public class LibraryControllerTest {
     }
 
     @Test
+    public void testFindBookByCategoryNamePageNumberNegative() {
+        String categoryName = "Mystery";
+        int pageNumber = -1;
+
+        ResponseEntity<List<Book>> response = libraryController.findBookByCategoryName(categoryName, pageNumber);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        verify(librarySystemService, times(0)).findBookByCategoryName(anyString(), anyInt(), anyInt());
+    }
+
+    @Test
     public void getTotalBookCategoryCountTest() {
         List<Book> books = new ArrayList<>();
         List<BookCategory> bookCategories = new ArrayList<>();
@@ -233,6 +258,20 @@ public class LibraryControllerTest {
         ResponseEntity<?> response=libraryController.addBook(new BookDto(),bindingResult);
         assertEquals(new BookDto(),response.getBody());
     }
+    @Test
+    public void testAddBookWithJsonProcessingError() throws JsonProcessingException {
+        BookDto bookDto = new BookDto();
+        BindingResult bindingResult = mock(BindingResult.class);
+
+        when(librarySystemService.addBook(bookDto)).thenThrow(JsonProcessingException.class);
+
+        ResponseEntity<?> response = libraryController.addBook(bookDto, bindingResult);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("An error occurred while processing your request.", response.getBody());
+
+        verify(librarySystemService, times(1)).addBook(bookDto);
+    }
 
     @Test
     void updateBookDetailsTest() throws JsonProcessingException {
@@ -255,6 +294,75 @@ public class LibraryControllerTest {
         assertEquals(bookToUpdate.getBookName(), responseBody.getBook().getBookName());
         assertEquals(bookToUpdate.getAuthorName(), responseBody.getBook().getAuthorName());
     }
+
+
+
+
+
+    @Test
+    public void testGetNoOfCopiesByBookId() {
+        int bookId = 123;
+        int expectedNoOfCopies = 5;
+
+        when(librarySystemService.getNoOfCopiesByBookId(bookId)).thenReturn(expectedNoOfCopies);
+
+        ResponseEntity<Integer> response = libraryController.getNoOfCopiesByBookId(bookId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedNoOfCopies, response.getBody());
+
+        verify(librarySystemService, times(1)).getNoOfCopiesByBookId(bookId);
+    }
+
+//    @Test
+//    public void testUpdateBookDetailsBookNotFound() throws JsonProcessingException {
+//        int bookId = 123;
+//        BookDtoUpdate bookDtoUpdate = new BookDtoUpdate();
+//        bookDtoUpdate.setBook(new Book()); // Set a valid Book object
+//
+//        when(librarySystemService.findByBookId(bookId)).thenReturn(null);
+//
+//        ResponseEntity<?> response = libraryController.updateBookDetails(bookDtoUpdate, mock(BindingResult.class));
+//
+//        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+//        assertEquals("Book does not exist", response.getBody());
+//
+//        verify(librarySystemService, times(1)).findByBookId(bookId);
+//        verify(librarySystemService, times(0)).updateBookDetails(anyInt(), any(BookDtoUpdate.class));
+//    }
+    @Test
+    public void testUpdateBookDetailsWithJsonProcessingError() throws JsonProcessingException {
+        BookDtoUpdate bookDtoUpdate = new BookDtoUpdate();
+        bookDtoUpdate.setBook(new Book()); // Set a valid Book object
+
+        int id = bookDtoUpdate.getBook().getBookId();
+        when(librarySystemService.findByBookId(id)).thenReturn(new Book());
+        when(librarySystemService.updateBookDetails(id, bookDtoUpdate)).thenThrow(JsonProcessingException.class);
+
+        ResponseEntity<?> response = libraryController.updateBookDetails(bookDtoUpdate, mock(BindingResult.class));
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals("An error occurred while processing your request", response.getBody());
+
+        verify(librarySystemService, times(1)).findByBookId(id);
+        verify(librarySystemService, times(1)).updateBookDetails(id, bookDtoUpdate);
+    }
+
+//    @Test
+//    public void testFindByBookId()  {
+//        int bookId = 123;
+//        Inventory expectedInventory = new Inventory(bookId,6, 6);
+//
+//        when(librarySystemService.findByBookId(bookId)).thenReturn(expectedInventory);
+//
+//        ResponseEntity<?> response = libraryController.findByBookId(bookId);
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals(expectedInventory, response.getBody());
+//
+//        verify(librarySystemService, times(1)).findByBookId(bookId);
+//    }
+
 
 
 }

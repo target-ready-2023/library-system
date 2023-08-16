@@ -96,26 +96,26 @@ public class LibrarySystemServiceTest {
         assertEquals(repoCount, serviceCount);
     }
 
-//    @Test
-//    public void booksIssuedTest() {
-//        int bookId = 1;
-//        int userId = 1;
-//
-//        Inventory inventory = new Inventory();
-//        inventory.setInvBookId(1);
-//        inventory.setNoOfBooksLeft(5);
-//        inventory.setNoOfCopies(5);
-//        when(inventoryRepository.findByBookId(inventory.getInvBookId())).thenReturn(inventory);
-//        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
-//
-//        UserCatalog user = new UserCatalog();
-//        user.setBookId(1);
-//        user.setUserId(1);
-//        when(userRepository.addUserCatalog(user)).thenReturn(user);
-//
-//        String response = librarySystemService.booksIssued(1, 1);
-//        assertEquals("Book issued", response);
-//    }
+    @Test
+    public void booksIssuedTest() throws JsonProcessingException {
+        int bookId = 1;
+        int userId = 1;
+
+        Inventory inventory = new Inventory();
+        inventory.setInvBookId(1);
+        inventory.setNoOfBooksLeft(5);
+        inventory.setNoOfCopies(5);
+        when(inventoryRepository.findByBookId(inventory.getInvBookId())).thenReturn(inventory);
+        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
+
+        UserCatalog user = new UserCatalog();
+        user.setBookId(1);
+        user.setUserId(1);
+        when(userRepository.addUserCatalog(user)).thenReturn(user);
+
+        String response = librarySystemService.booksIssued(1, 1);
+        assertEquals("Book issued", response);
+    }
 
 //    @Test
 //    public void bookReturnedTest() {
