@@ -28,7 +28,7 @@ public class UserController {
 
 
     @DeleteMapping("delete/user/{user_id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("user_id") int userId) {
+    public ResponseEntity<String> deleteUser(@PathVariable("user_id") int userId) throws ResourceAlreadyExistsException,ResourceNotFoundException {
         String message = userService.deleteUser(userId);
         if(message.equals("User has books checked out. Cannot delete user")){
             return new ResponseEntity<>("user cannot be deleted, as user has issued a book",HttpStatus.CONFLICT);
@@ -39,20 +39,13 @@ public class UserController {
     }
 
     @GetMapping("users")
-    public ResponseEntity<?> getAllUsers(){
-        try {
+    public ResponseEntity<?> getAllUsers() throws ResourceNotFoundException{
             return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
-        } catch (ResourceNotFoundException e){
-            throw new ResourceNotFoundException("Currently no users!");
-        }
+
     }
 
     @GetMapping("/books/{user_id}")
-    public ResponseEntity<?> findBookNameByUserId(@PathVariable ("user_id") int userId){
-        try {
+    public ResponseEntity<?> findBookNameByUserId(@PathVariable ("user_id") int userId) throws ResourceNotFoundException{
             return new ResponseEntity<>(userService.findBookNameByUserId(userId), HttpStatus.OK);
-        } catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException("User not found!");
-        }
     }
 }

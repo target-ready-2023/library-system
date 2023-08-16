@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.dto.BookDtoUpdate;
 import com.target.ready.library.system.entity.Book;
-
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -62,8 +60,17 @@ public  class BookImplementation implements BookRepository {
                 .get()
                 .uri(libraryBaseUrl + "books/category/total_count/" + categoryName)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Long.class);
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToMono(Long.class);
+                    }
+                });
+
     }
 
     @Override
@@ -115,8 +122,17 @@ public  class BookImplementation implements BookRepository {
                 .get()
                 .uri(libraryBaseUrl + "books_directory/total_count")
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Long.class);
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToMono(Long.class);
+                    }
+                });
+
     }
 
     public Book addBook(BookDto bookDto) throws ResourceAlreadyExistsException, JsonProcessingException {

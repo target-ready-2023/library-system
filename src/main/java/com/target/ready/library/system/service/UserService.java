@@ -25,9 +25,6 @@ public class UserService {
 
     public String deleteUser(int userId) throws ResourceAlreadyExistsException,ResourceNotFoundException{
 
-        if(userRepository.findBooksByUserId(userId).size()>0){
-            return "User has books checked out. Cannot delete user";
-        }
             return userRepository.deleteUser(userId);
     }
 
