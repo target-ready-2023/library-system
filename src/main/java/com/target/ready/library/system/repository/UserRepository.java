@@ -10,10 +10,10 @@ import java.util.List;
 
 public interface UserRepository {
 
-    public List<Integer> findBooksByUserId(int userId);
+    public List<UserCatalog> findBooksByUserId(int userId);
     public Integer deleteBookByUserId(int bookId,int userId);
 
-    public UserCatalog addUserCatalog(UserCatalog userCatalog) throws ResourceAlreadyExistsException, ResourceNotFoundException;
+    public UserCatalog addUserCatalog(UserCatalog userCatalog) throws ResourceAlreadyExistsException, ResourceNotFoundException,JsonProcessingException;
     public UserProfile addUser(UserProfile userProfile) throws JsonProcessingException, ResourceAlreadyExistsException;
 
     public UserProfile findByUserId(int userId);

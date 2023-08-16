@@ -2,6 +2,7 @@ package com.target.ready.library.system.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
@@ -22,7 +23,7 @@ public class UserService {
     public UserProfile addUser(UserProfile userProfile) throws JsonProcessingException, ResourceAlreadyExistsException {
         return userRepository.addUser(userProfile);}
 
-    public String deleteUser(int userId) {
+    public String deleteUser(int userId) throws ResourceAlreadyExistsException,ResourceNotFoundException{
 
         if(userRepository.findBooksByUserId(userId).size()>0){
             return "User has books checked out. Cannot delete user";
@@ -35,9 +36,14 @@ public class UserService {
         return userRepository.getAllUsers();
     }
 
-    public List<String> findBookNameByUserId(int userId) {
+    public List<String> findBookNameByUserId(int userId) throws ResourceNotFoundException{
         List<String> bookNames = new ArrayList<>();
-        List<Integer> bookIds = userRepository.findBooksByUserId(userId);
+        List<UserCatalog> userCatalogs = userRepository.findBooksByUserId(userId);
+        List<Integer> bookIds = new ArrayList<>();
+        for (UserCatalog eachUserCatalog : userCatalogs) {
+            int bookId1 = eachUserCatalog.getBookId();
+            bookIds.add(bookId1);
+        }
 
         for (int bookId : bookIds) {
             Book book = bookRepository.findByBookId(bookId);

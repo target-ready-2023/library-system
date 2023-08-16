@@ -37,15 +37,12 @@ public class CategoryService {
         return result;
     }
 
-    public List<Category> findAllCategories(int page_number, int page_size) {
-        try {
+    public List<Category> findAllCategories(int page_number, int page_size) throws ResourceNotFoundException{
+
             List<Category> response = categoryRepository.findAllCategories(page_number,page_size);
 
             return response;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+
     }
 
 
@@ -54,12 +51,10 @@ public class CategoryService {
 
     }
 
-    public String deleteBookCategory(int bookId) {
+    public String deleteBookCategory(int bookId) throws ResourceNotFoundException{
         try {
             return bookCategoryRepository.deleteBookCategory(bookId);
         } catch (DataAccessException e) {
-            throw e;
-        } catch (ResourceNotFoundException e) {
             throw e;
         }
     }

@@ -2,6 +2,7 @@ package com.target.ready.library.system.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
@@ -30,27 +31,42 @@ public class UserImplementation implements UserRepository{
 
 
     @Override
-    public List<Integer> findBooksByUserId(int userId) {
+    public List<UserCatalog> findBooksByUserId(int userId) throws ResourceNotFoundException{
         return   webClient.get().uri(libraryBaseUrl3 + "user/books/"+userId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToFlux(Integer.class)
-                .collectList()
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToFlux(UserCatalog.class).collectList();
+                    }
+                })
                 .block();
     }
     @Override
-    public Integer deleteBookByUserId(int bookId,int userId) {
+    public Integer deleteBookByUserId(int bookId,int userId) throws ResourceNotFoundException{
         return webClient.delete()
                 .uri(libraryBaseUrl3 + "user/books/"+userId+"/"+bookId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(Integer.class)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToMono(Integer.class);
+                    }
+                })
                 .block();
     }
 
     @Override
-    public UserCatalog addUserCatalog(UserCatalog userCatalog) throws ResourceAlreadyExistsException,ResourceNotFoundException{
-        try {
+    public UserCatalog addUserCatalog(UserCatalog userCatalog) throws ResourceAlreadyExistsException,ResourceNotFoundException,JsonProcessingException{
+
             return webClient.post()
                     .uri(libraryBaseUrl3 + "user/catalog")
                     .accept(MediaType.APPLICATION_JSON)
@@ -71,13 +87,11 @@ public class UserImplementation implements UserRepository{
                         }
                     })
                     .block();
-        } catch (Exception e) {
-            throw new RuntimeException("User with Issuedbook not added", e);
-        }
+
     }
 
     @Override
-    public UserProfile addUser(UserProfile userProfile) throws JsonProcessingException ,ResourceAlreadyExistsException{
+    public UserProfile addUser(UserProfile userProfile) throws ResourceAlreadyExistsException, JsonProcessingException {
 
             return webClient.post()
                     .uri(libraryBaseUrl3 + "user")
@@ -99,32 +113,59 @@ public class UserImplementation implements UserRepository{
     }
 
     @Override
-    public UserProfile findByUserId(int userId) {
+    public UserProfile findByUserId(int userId) throws ResourceNotFoundException{
         return webClient.get().uri(libraryBaseUrl3 + "user/"+userId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(UserProfile.class)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToMono(UserProfile.class);
+                    }
+                })
                 .block();
     }
 
 
     @Override
-    public String deleteUser(int userId) {
+    public String deleteUser(int userId) throws ResourceNotFoundException,ResourceAlreadyExistsException{
         return webClient.delete()
                 .uri(libraryBaseUrl3 + "delete/user/"+userId)
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else if (response.statusCode().isError() && response.statusCode().value() == 409) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceAlreadyExistsException(errorBody)));
+
+                    }
+                    else {
+                        return response.bodyToMono(String.class);
+                    }
+                })
+                .block();}
 
 
-    public List<UserProfile> getAllUsers() {
+    public List<UserProfile> getAllUsers() throws ResourceNotFoundException{
         return   webClient.get().uri(libraryBaseUrl3 + "users")
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .bodyToFlux(UserProfile.class)
-                .collectList()
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToFlux(UserProfile.class).collectList();
+                    }
+                })
                 .block();
     }
 }

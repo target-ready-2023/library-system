@@ -223,7 +223,9 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
+
     public ResponseEntity<Integer> bookReturned(@RequestBody IssueDto issueDto) {
+
         return new ResponseEntity<>(librarySystemService.bookReturned(issueDto.getBookId(), issueDto.getStudentId())
                 , HttpStatus.CREATED);
     }

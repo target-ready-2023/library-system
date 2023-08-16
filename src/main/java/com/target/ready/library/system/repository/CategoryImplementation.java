@@ -2,6 +2,7 @@ package com.target.ready.library.system.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
@@ -46,7 +47,7 @@ public class CategoryImplementation implements CategoryRepository{
     }
 
     @Override
-    public List<Category> findAllCategories(int pageNumber, int pageSize) {
+    public List<Category> findAllCategories(int pageNumber, int pageSize) throws ResourceNotFoundException {
         return WebClient.builder()
                 .baseUrl(libraryBaseUrl2)
                 .build()
@@ -55,10 +56,17 @@ public class CategoryImplementation implements CategoryRepository{
                         .path("categories/{pageNumber}/{pageSize}")
                         .build(pageNumber, pageSize))
                 .accept(MediaType.APPLICATION_JSON)
-                .retrieve()
-                .toEntityList(Category.class)
-                .block()
-                .getBody();
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToFlux(Category.class).collectList();
+                    }
+                })
+                .block();
     }
 
     @Override

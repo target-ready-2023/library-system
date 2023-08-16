@@ -158,35 +158,54 @@ public class LibrarySystemService {
 
     public String booksIssued(int bookId, int userId) throws ResourceNotFoundException, ResourceAlreadyExistsException {
 
-        UserCatalog userCatalog = new UserCatalog();
-        userCatalog.setBookId(bookId);
-        userCatalog.setUserId(userId);
-        userRepository.addUserCatalog(userCatalog);
-        Inventory inventory = inventoryRepository.findByBookId(bookId);
-        inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
-        inventoryRepository.addInventory(inventory);
-        return "Book issued";
+
+        try {
+            UserCatalog userCatalog = new UserCatalog();
+            userCatalog.setBookId(bookId);
+            userCatalog.setUserId(userId);
+            userRepository.addUserCatalog(userCatalog);
+            Inventory inventory = inventoryRepository.findByBookId(bookId);
+            inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
+            inventoryRepository.addInventory(inventory);
+            return "Book issued";
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
 
 
-    public Integer bookReturned(int bookId, int userId) {
+    public Integer bookReturned(int bookId, int userId) throws ResourceNotFoundException{
         Integer returnedBookId = 0;
-        List<Integer> bookIdList = userRepository.findBooksByUserId(userId);
-        if(bookIdList.isEmpty()){
-            throw new ResourceNotFoundException("This book was not issued by the user!");
+
+        Integer flag=0;
+        List<UserCatalog> userCatalogs = userRepository.findBooksByUserId(userId);
+        List<Integer> bookIds = new ArrayList<>();
+        for (UserCatalog eachUserCatalog : userCatalogs) {
+            int bookId1 = eachUserCatalog.getBookId();
+            bookIds.add(bookId1);
         }
-        for (Integer eachBookId : bookIdList) {
+
+        for (Integer eachBookId : bookIds) {
+
+
             if (eachBookId == bookId) {
+                flag=1;
                 Inventory inventory = inventoryRepository.findByBookId(bookId);
                 inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() + 1);
                 inventoryRepository.addInventory(inventory);
                 returnedBookId = userRepository.deleteBookByUserId(bookId, userId);
+
             }
         }
+
+        if(flag==0){
+            throw new ResourceNotFoundException("Student doesn't have this book");}
+
         if(returnedBookId == 0){
             throw new ResourceNotFoundException("The book was already returned by the user!");
+
         }
         //return "Book Returned Successfully";
         return returnedBookId;
