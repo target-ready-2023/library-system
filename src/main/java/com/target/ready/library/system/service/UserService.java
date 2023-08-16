@@ -36,6 +36,7 @@ public class UserService {
     public List<String> findBookNameByUserId(int userId) throws ResourceNotFoundException{
         List<String> bookNames = new ArrayList<>();
         List<UserCatalog> userCatalogs = userRepository.findBooksByUserId(userId);
+        System.out.println(userCatalogs);
         List<Integer> bookIds = new ArrayList<>();
         for (UserCatalog eachUserCatalog : userCatalogs) {
             int bookId1 = eachUserCatalog.getBookId();
@@ -44,6 +45,7 @@ public class UserService {
 
         for (int bookId : bookIds) {
             Book book = bookRepository.findByBookId(bookId);
+            System.out.println(book);
             if (book != null) {
                 bookNames.add(book.getBookName());
             }

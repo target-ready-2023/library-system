@@ -176,17 +176,18 @@ public  class BookImplementation implements BookRepository {
 
 
     @Override
-    public void deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException {
-        webClient.delete()
-                .uri(libraryBaseUrl + "book/" + bookId)
+    public String deleteBook(int bookId) throws ResourceNotFoundException {
+        return webClient.delete()
+                .uri(libraryBaseUrl + "books/" + bookId)
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .flatMap(response -> {
-                    if (response.statusCode().isError() && response.statusCode().value() == 409) {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
                         return response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
                     } else {
-                        return response.bodyToMono(Book.class);
+                        return response.bodyToMono(String.class);
                     }
                 })
                 .block();

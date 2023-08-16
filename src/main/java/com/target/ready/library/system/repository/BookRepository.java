@@ -22,7 +22,7 @@ public interface BookRepository {
     public Book findByBookId(int bookId);
     //    public void deleteBook(int bookId);
 //    public Book updateBookDetails(int bookId, BookDto bookDto);
-    public void deleteBook(int bookId) throws ResourceNotFoundException, DataAccessException;
+    public String deleteBook(int bookId) throws ResourceNotFoundException;
 //    public Book updateBookDetails(int bookId, BookDto bookDto);
     public Book updateBookDetails(int bookId, BookDtoUpdate bookDtoUpdate) throws JsonProcessingException, ResourceAlreadyExistsException;
     public Mono<Long> totalBooks() ;

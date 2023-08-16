@@ -78,7 +78,7 @@ public class CategoryController {
 
     }
 
-    @GetMapping("inventory/categories/{category_name}")
+    @GetMapping("inventory/category/{category_name}")
     @Operation(
             description = "Finding all the categories of the given book",
             responses = { @ApiResponse(

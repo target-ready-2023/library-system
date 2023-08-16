@@ -52,11 +52,9 @@ public class CategoryService {
     }
 
     public String deleteBookCategory(int bookId) throws ResourceNotFoundException{
-        try {
+
             return bookCategoryRepository.deleteBookCategory(bookId);
-        } catch (DataAccessException e) {
-            throw e;
-        }
+
     }
 
     public List<BookCategory> findAllCategoriesByBookId(int bookId) throws ResourceNotFoundException{
