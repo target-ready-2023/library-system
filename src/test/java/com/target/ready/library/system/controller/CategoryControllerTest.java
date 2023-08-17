@@ -72,7 +72,7 @@ public class CategoryControllerTest {
 
 
     @Test
-    public void testFindAllCategoriesWithNegativePageNumber() {
+    public void FindAllCategoriesWithNegativePageNumberTest() {
         int pageNumber = -1;
 
         ResponseEntity<?> response = categoryController.findAllCategories(pageNumber);

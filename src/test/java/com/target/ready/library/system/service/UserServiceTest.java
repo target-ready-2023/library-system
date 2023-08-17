@@ -109,41 +109,41 @@ public class UserServiceTest {
         assertEquals("",newUserProfile.getUserRole(), addedUserProfile.getUserRole());
     }
 
-//    @Test
-//    public void testFindBookNameByUserId() {
-//        int userId = 123; // Replace with a valid user ID
-//
-//        // Create a list of mock UserCatalog objects
-//        List<UserCatalog> mockUserCatalogs = new ArrayList<>();
-//        mockUserCatalogs.add(new UserCatalog(1, 123));
-//        mockUserCatalogs.add(new UserCatalog(2, 123));
-//        // ... Add more mock UserCatalog objects as needed
-//
-//        // Create a list of mock Book objects
-//        List<Book> mockBooks = new ArrayList<>();
-//        mockBooks.add(new Book(1, "wings of fire","Biography of abdul kalam","Dr A P J Abdul Kalam",1999));
-//        mockBooks.add(new Book(2, "Life of Pi","Story of Boy","Yamm Martel",2001));
-//        // ... Add more mock Book objects as needed
-//
-//        // Mock the behavior of the repository
-//        when(userRepository.findBooksByUserId(eq(userId)))
-//                .thenReturn(mockUserCatalogs);
-//        when(bookRepository.findByBookId(anyInt()))
-//                .thenReturn(null) // For books not found
-//                .thenReturn(mockBooks.get(0)) // For the first book
-//                .thenReturn(mockBooks.get(1)); // For the second book
-//
-//        // Call the service method
-//        List<String> result = userService.findBookNameByUserId(userId);
-//
-//        // Verify the repository methods were called
-//        verify(userRepository).findBooksByUserId(userId);
-//        verify(bookRepository, times(2)).findByBookId(anyInt());
-//
-//        // Verify the returned result
-//        assertNotNull(result);
-//        assertEquals("",2, result.size());
-//        assertEquals("","wings of fire", result.get(0));
-//        assertEquals("","Life of Pi", result.get(1));
-//    }
+    @Test
+    public void testFindBookNameByUserId() {
+        int userId = 1; // Replace with a valid user ID
+
+        // Create a list of mock UserCatalog objects
+        List<UserCatalog> mockUserCatalogs = new ArrayList<>();
+        mockUserCatalogs.add(new UserCatalog(1, 1));
+        mockUserCatalogs.add(new UserCatalog(1, 2));
+        // ... Add more mock UserCatalog objects as needed
+
+        // Create a list of mock Book objects
+        List<Book> mockBooks = new ArrayList<>();
+        mockBooks.add(new Book(1, "wings of fire","Biography of abdul kalam","Dr A P J Abdul Kalam",1999));
+        mockBooks.add(new Book(2, "Life of Pi","Story of Boy","Yamm Martel",2001));
+        // ... Add more mock Book objects as needed
+
+        // Mock the behavior of the repository
+        when(userRepository.findBooksByUserId(eq(userId)))
+                .thenReturn(mockUserCatalogs);
+        when(bookRepository.findByBookId(anyInt()))
+                .thenReturn(null) // For books not found
+                .thenReturn(mockBooks.get(0)) // For the first book
+                .thenReturn(mockBooks.get(1)); // For the second book
+
+        // Call the service method
+        List<String> result = userService.findBookNameByUserId(userId);
+
+        // Verify the repository methods were called
+        verify(userRepository).findBooksByUserId(userId);
+        verify(bookRepository, times(2)).findByBookId(anyInt());
+
+        // Verify the returned result
+        assertNotNull(result);
+        assertEquals("",2, result.size());
+        assertEquals("","wings of fire", result.get(0));
+        assertEquals("","Life of Pi", result.get(1));
+    }
 }
