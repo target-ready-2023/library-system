@@ -149,9 +149,8 @@ public class LibrarySystemService {
         return updatedBookDto;
     }
 
+
     public Book booksIssued(int bookId, int userId) throws ResourceNotFoundException, ResourceAlreadyExistsException {
-
-
         try {
             Book book = bookRepository.findByBookId(bookId);
             UserCatalog userCatalog = new UserCatalog();

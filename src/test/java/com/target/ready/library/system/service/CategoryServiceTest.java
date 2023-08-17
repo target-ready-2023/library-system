@@ -1,7 +1,10 @@
 package com.target.ready.library.system.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.CategoryRepository;
 import org.junit.jupiter.api.Test;
@@ -13,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {CategoryServiceTest.class})
@@ -52,46 +58,57 @@ public class CategoryServiceTest {
         assertEquals(2,categoryService.findAllCategories(0,10).size());
     }
 
+    @Test
+    public void findCategoryByCategoryNameTest() throws ResourceNotFoundException {
+        String categoryName = "Fiction";
+        Category mockCategory = new Category();
+        mockCategory.setCategoryName(categoryName);
+        when(categoryRepository.findCategoryBycategoryName(eq(categoryName.toLowerCase())))
+                .thenReturn(mockCategory);
+        Category result = categoryService.findCategoryBycategoryName(categoryName);
+        verify(categoryRepository).findCategoryBycategoryName(categoryName.toLowerCase());
+        assertNotNull(result);
+        assertEquals(categoryName, result.getCategoryName());
+    }
 
-//    @Test
-//    public void addCategoryTest(){
-//        Category category=new Category();
-//        category.setCategoryName("Horror");
-//        when(categoryRepository.save(category)).thenAnswer(invocation -> {
-//            Category category1 = invocation.getArgument(0);
-//            category1.setCategoryId(1);
-//            return category1;
-//        });
-//        assertNotNull(categoryService.addCategory(category));
-//        assertEquals(1,categoryService.addCategory(category).getCategoryId());
-//        assertEquals("Horror", categoryService.addCategory(category).getCategoryName());
-//
-//    }
-//
-//    @Test
-//    public void findByCategoryNameTest(){
-//        Category category=new Category();
-//        category.setCategoryName("Adventure");
-//        when(categoryRepository.findBycategoryName(category.getCategoryName())).thenReturn(category);
-//        assertNotNull(categoryService.findByCategoryName(category.getCategoryName()));
-//        assertEquals("Adventure",categoryService.findByCategoryName(category.getCategoryName()).getCategoryName());
-//    }
-//
-//    @Test
-//    public void addBookCategoryTest(){
-//        BookCategory bookCategory=new BookCategory();
-//        bookCategory.setBookId(1);
-//        bookCategory.setCategoryName("Horror");
-//        when(bookCategoryRepository.save(bookCategory)).thenAnswer(invocation -> {
-//            BookCategory bookCategory1=invocation.getArgument(0);
-//            bookCategory1.setId(2);
-//            return bookCategory1;
-//        });
-//        assertNotNull(categoryService.addBookCategory(bookCategory));
-//        assertEquals(1,categoryService.addBookCategory(bookCategory).getBookId());
-//        assertEquals("Horror",categoryService.addBookCategory(bookCategory).getCategoryName());
-//        assertEquals(2,categoryService.addBookCategory(bookCategory).getId());
-//    }
+    @Test
+    public void addCategoryTest() throws ResourceAlreadyExistsException, JsonProcessingException {
+        Category newCategory = new Category();
+        newCategory.setCategoryName("Fiction");
+
+        when(categoryRepository.addCategory(eq(newCategory)))
+                .thenReturn(newCategory);
+        Category addedCategory = categoryService.addCategory(newCategory);
+
+        verify(categoryRepository).addCategory(newCategory);
+
+        assertNotNull(addedCategory);
+        assertEquals(newCategory.getCategoryName(), addedCategory.getCategoryName());
+    }
+
+    @Test
+    public void addBookCategoryTest() throws JsonProcessingException, ResourceAlreadyExistsException {
+        BookCategory newBookCategory = new BookCategory();
+        newBookCategory.setCategoryName("Fiction");
+        when(bookCategoryRepository.addBookCategory(eq(newBookCategory)))
+                .thenReturn(newBookCategory);
+        BookCategory addedBookCategory = categoryService.addBookCategory(newBookCategory);
+        verify(bookCategoryRepository).addBookCategory(newBookCategory);
+        assertNotNull(addedBookCategory);
+        assertEquals(newBookCategory.getCategoryName(), addedBookCategory.getCategoryName());
+    }
+
+    @Test
+    public void deleteBookCategoryTest() throws ResourceNotFoundException {
+        int bookId = 123;
+        when(bookCategoryRepository.deleteBookCategory(eq(bookId)))
+                .thenReturn("Deleted");
+        String result = categoryService.deleteBookCategory(bookId);
+        verify(bookCategoryRepository).deleteBookCategory(bookId);
+        assertNotNull(result);
+        assertEquals("Deleted", result);
+    }
+
 
 
 

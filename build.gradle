@@ -5,6 +5,14 @@ plugins {
 	id 'jacoco'
 }
 
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java']
+		}
+	}
+}
+
 group = 'com.targetReady'
 version = '0.0.1-SNAPSHOT'
 
@@ -43,8 +51,12 @@ dependencies {
 
 test {
 	useJUnitPlatform()
+//	jacoco {
+//		excludes = ['com/target/ready/library/system/entity']
+//	}
 }
 
 jacoco {
 	toolVersion = "0.8.7"
+
 }

@@ -98,7 +98,6 @@ public class LibrarySystemServiceTest {
 
     //@Test
     public void booksIssuedTest() throws JsonProcessingException {
-
         int bookId = 1;
         int userId = 1;
 
@@ -123,6 +122,8 @@ public class LibrarySystemServiceTest {
         assertEquals(book, issuedBook);
 
     }
+
+
 
     //@Test
     /*public void bookReturnedTest() {
@@ -347,5 +348,8 @@ public class LibrarySystemServiceTest {
         verify(categoryService, times(categoryNames.size())).addBookCategory(any());
         verify(categoryService, times(1)).addCategory(any());
     }
+
+
+    
 
 }
