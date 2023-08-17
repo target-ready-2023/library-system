@@ -91,8 +91,8 @@ public class LibraryControllerTest {
        user.setBookId(1);
        user.setStudentId(2);
 
-       when(librarySystemService.booksIssued(user.getBookId(),user.getStudentId())).thenReturn(String.valueOf(user));
-       ResponseEntity<String> response = libraryController.bookIssued(user);
+       when(librarySystemService.booksIssued(user.getBookId(),user.getStudentId())).thenReturn(new Book());
+       ResponseEntity<Book> response = libraryController.bookIssued(user);
        assertEquals(HttpStatus.CREATED, response.getStatusCode());
        assertNotNull(response);
     }
