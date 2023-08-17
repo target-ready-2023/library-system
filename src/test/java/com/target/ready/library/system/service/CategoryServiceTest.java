@@ -3,14 +3,17 @@ package com.target.ready.library.system.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.CategoryRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +59,19 @@ public class CategoryServiceTest {
 
         when(categoryRepository.findAllCategories(0,10)).thenReturn(myCategories);
         assertEquals(2,categoryService.findAllCategories(0,10).size());
+    }
+
+    @Test
+    public void getTotalCategoryCountTest() {
+        List<Category> myCategories = new ArrayList<Category>();
+
+        myCategories.add(new Category(1,"Horror"));
+        myCategories.add(new Category(2, "Adventure"));
+
+        Mono<Long> repoCount = Mono.just(0L);
+        when(categoryRepository.totalCategories()).thenReturn(repoCount);
+        Mono<Long> serviceCount = categoryService.getTotalCategoryCount();
+        Assertions.assertEquals(repoCount, serviceCount);
     }
 
     @Test

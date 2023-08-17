@@ -70,6 +70,25 @@ public class CategoryImplementation implements CategoryRepository{
     }
 
     @Override
+    public Mono<Long> totalCategories() {
+        return webClient
+                .get()
+                .uri(libraryBaseUrl2 + "categories/total_count")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToMono(Long.class);
+                    }
+                });
+
+    }
+
+    @Override
     public Category addCategory(Category category) throws ResourceAlreadyExistsException,JsonProcessingException{
 
             return webClient.post().uri(libraryBaseUrl2 + "inventory/category")

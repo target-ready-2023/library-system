@@ -3,14 +3,17 @@ package com.target.ready.library.system.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.BookCategory;
 import com.target.ready.library.system.entity.Category;
+import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.repository.BookCategoryImplementation;
 import com.target.ready.library.system.service.CategoryService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,7 +73,17 @@ public class CategoryControllerTest {
         assertEquals(2, categoriesSize.size());
     }
 
-
+    @Test
+    public void getTotalCategoriesCountTest() {
+        myCategories = new ArrayList<>();
+        myCategories.add(new Category(1, "Horror"));
+        myCategories.add(new Category(2, "Thriller"));
+        Mono<Long> serviceResult=Mono.just(0L);
+        when(categoryService.getTotalCategoryCount()).thenReturn(serviceResult);
+        ResponseEntity<Mono<Long>> categoryResult=categoryController.getTotalCategoryCount();
+        Assertions.assertEquals(HttpStatus.OK, categoryResult.getStatusCode());
+        Assertions.assertEquals(serviceResult,categoryResult.getBody());
+    }
     @Test
     public void FindAllCategoriesWithNegativePageNumberTest() {
         int pageNumber = -1;

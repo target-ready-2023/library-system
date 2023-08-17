@@ -3,6 +3,7 @@ package com.target.ready.library.system.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target.ready.library.system.entity.Book;
+import com.target.ready.library.system.entity.Category;
 import com.target.ready.library.system.entity.UserCatalog;
 import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
@@ -153,8 +154,15 @@ public class UserImplementation implements UserRepository{
                 .block();}
 
 
-    public List<UserProfile> getAllUsers() throws ResourceNotFoundException{
-        return   webClient.get().uri(libraryBaseUrl3 + "users")
+    public List<UserProfile> getAllUsers(int pageNumber,int pageSize) throws ResourceNotFoundException{
+
+        return WebClient.builder()
+                .baseUrl(libraryBaseUrl3)
+                .build()
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("users/{pageNumber}/{pageSize}")
+                        .build(pageNumber, pageSize))
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .flatMap(response -> {
@@ -167,5 +175,40 @@ public class UserImplementation implements UserRepository{
                     }
                 })
                 .block();
+    }
+
+    public List<UserProfile> fetchAllUsers() throws ResourceNotFoundException{
+        return   webClient.get().uri(libraryBaseUrl3 + "AllUsers")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToFlux(UserProfile.class).collectList();
+                    }
+                })
+                .block();
+    }
+
+    @Override
+    public Mono<Long> totalUsers() {
+        return webClient
+                .get()
+                .uri(libraryBaseUrl3 + "users/total_count")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .flatMap(response -> {
+                    if (response.statusCode().isError() && response.statusCode().value() == 404) {
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new ResourceNotFoundException(errorBody)));
+
+                    } else {
+                        return response.bodyToMono(Long.class);
+                    }
+                });
+
     }
 }

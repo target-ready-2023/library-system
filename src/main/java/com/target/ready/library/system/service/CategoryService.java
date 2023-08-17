@@ -8,8 +8,14 @@ import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.CategoryRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -45,6 +51,9 @@ public class CategoryService {
 
     }
 
+    public Mono<Long> getTotalCategoryCount() {
+        return categoryRepository.totalCategories();
+    }
 
     public  BookCategory addBookCategory(BookCategory bookCategory) throws JsonProcessingException,ResourceAlreadyExistsException {
        return bookCategoryRepository.addBookCategory(bookCategory);

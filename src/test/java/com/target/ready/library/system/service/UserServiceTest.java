@@ -1,5 +1,6 @@
 package com.target.ready.library.system.service;
 
+import com.target.ready.library.system.entity.Book;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.Book;
 import com.target.ready.library.system.entity.UserCatalog;
@@ -7,14 +8,22 @@ import com.target.ready.library.system.entity.UserProfile;
 import com.target.ready.library.system.repository.BookCategoryRepository;
 import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,19 +56,42 @@ public class UserServiceTest {
         assertEquals("User deleted successfully", response, "User deleted successfully");
 
     }
+    @Test
+    public void getAllUsersTest() {
+        List<UserProfile> mockUsers = new ArrayList<>();
+        mockUsers.add(new UserProfile());
+        mockUsers.add(new UserProfile());
+
+        when(userRepository.getAllUsers(0,5)).thenReturn(mockUsers);
+        List<UserProfile> result = userService.getAllUsers(0,5);
+        verify(userRepository).getAllUsers(0,5);
+        Assertions.assertEquals(2, result.size());
+    }
 
     @Test
-    public void getAllUsersTest()  {
+    public void fetchAllUsersTest() {
         List<UserProfile> mockUsers = new ArrayList<>();
-        mockUsers.add(new UserProfile(1, "Disha", "student"));
-        mockUsers.add(new UserProfile(2, "Niraj", "Librarian"));
-        when(userRepository.getAllUsers())
-                .thenReturn(mockUsers);
-        List<UserProfile> result = userService.getAllUsers();
-        verify(userRepository).getAllUsers();
-        assertNotNull(result);
-        assertEquals("",mockUsers.size(), result.size());
+        mockUsers.add(new UserProfile());
+        mockUsers.add(new UserProfile());
+
+        when(userRepository.fetchAllUsers()).thenReturn(mockUsers);
+        List<UserProfile> result = userService.fetchAllUsers();
+        verify(userRepository).fetchAllUsers();
+        Assertions.assertEquals(2, result.size());
     }
+
+    @Test
+    public void getTotalUserCountTest() {
+        List<UserProfile> mockUsers = new ArrayList<>();
+        mockUsers.add(new UserProfile());
+        mockUsers.add(new UserProfile());
+        Mono<Long> repoCount = Mono.just(0L);
+        when(userRepository.totalUsers()).thenReturn(repoCount);
+        Mono<Long> serviceCount = userService.getTotalUsersCount();
+        Assertions.assertEquals(repoCount, serviceCount);
+    }
+
+
 
     @Test
     public void addUserTest() throws JsonProcessingException {
