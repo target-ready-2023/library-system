@@ -70,7 +70,7 @@ public class LibraryControllerTest {
     }
 
     @Test
-    public void testGetAllBooksWithNegativePageNumber() {
+    public void getAllBooksWithNegativePageNumberTest() {
         int pageNumber = -1;
 
         ResponseEntity<List<Book>> response = libraryController.getAllBooks(pageNumber);
@@ -104,8 +104,8 @@ public class LibraryControllerTest {
        user.setBookId(1);
        user.setStudentId(2);
 
-       when(librarySystemService.booksIssued(user.getBookId(),user.getStudentId())).thenReturn(String.valueOf(user));
-       ResponseEntity<String> response = libraryController.bookIssued(user);
+       when(librarySystemService.booksIssued(user.getBookId(),user.getStudentId())).thenReturn(new Book());
+       ResponseEntity<Book> response = libraryController.bookIssued(user);
        assertEquals(HttpStatus.CREATED, response.getStatusCode());
        assertNotNull(response);
     }
@@ -169,7 +169,7 @@ public class LibraryControllerTest {
     }
 
     @Test
-    public void testFindBookByCategoryNamePageNumberNegative() {
+    public void findBookByCategoryNamePageNumberNegativeTest() {
         String categoryName = "Mystery";
         int pageNumber = -1;
 
@@ -259,7 +259,7 @@ public class LibraryControllerTest {
         assertEquals(new BookDto(),response.getBody());
     }
     @Test
-    public void testAddBookWithJsonProcessingError() throws JsonProcessingException {
+    public void addBookWithJsonProcessingErrorTest() throws JsonProcessingException {
         BookDto bookDto = new BookDto();
         BindingResult bindingResult = mock(BindingResult.class);
 
@@ -300,7 +300,7 @@ public class LibraryControllerTest {
 
 
     @Test
-    public void testGetNoOfCopiesByBookId() {
+    public void getNoOfCopiesByBookIdTest() {
         int bookId = 123;
         int expectedNoOfCopies = 5;
 
@@ -314,24 +314,8 @@ public class LibraryControllerTest {
         verify(librarySystemService, times(1)).getNoOfCopiesByBookId(bookId);
     }
 
-//    @Test
-//    public void testUpdateBookDetailsBookNotFound() throws JsonProcessingException {
-//        int bookId = 123;
-//        BookDtoUpdate bookDtoUpdate = new BookDtoUpdate();
-//        bookDtoUpdate.setBook(new Book()); // Set a valid Book object
-//
-//        when(librarySystemService.findByBookId(bookId)).thenReturn(null);
-//
-//        ResponseEntity<?> response = libraryController.updateBookDetails(bookDtoUpdate, mock(BindingResult.class));
-//
-//        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-//        assertEquals("Book does not exist", response.getBody());
-//
-//        verify(librarySystemService, times(1)).findByBookId(bookId);
-//        verify(librarySystemService, times(0)).updateBookDetails(anyInt(), any(BookDtoUpdate.class));
-//    }
     @Test
-    public void testUpdateBookDetailsWithJsonProcessingError() throws JsonProcessingException {
+    public void updateBookDetailsWithJsonProcessingErrorTest() throws JsonProcessingException {
         BookDtoUpdate bookDtoUpdate = new BookDtoUpdate();
         bookDtoUpdate.setBook(new Book()); // Set a valid Book object
 
@@ -348,20 +332,6 @@ public class LibraryControllerTest {
         verify(librarySystemService, times(1)).updateBookDetails(id, bookDtoUpdate);
     }
 
-//    @Test
-//    public void testFindByBookId()  {
-//        int bookId = 123;
-//        Inventory expectedInventory = new Inventory(bookId,6, 6);
-//
-//        when(librarySystemService.findByBookId(bookId)).thenReturn(expectedInventory);
-//
-//        ResponseEntity<?> response = libraryController.findByBookId(bookId);
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertEquals(expectedInventory, response.getBody());
-//
-//        verify(librarySystemService, times(1)).findByBookId(bookId);
-//    }
 
 
 

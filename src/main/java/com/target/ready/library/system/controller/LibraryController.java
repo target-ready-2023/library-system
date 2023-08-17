@@ -185,7 +185,7 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<String> bookIssued(@RequestBody IssueDto issueDto) throws ResourceNotFoundException, ResourceAlreadyExistsException {
+    public ResponseEntity<Book> bookIssued(@RequestBody IssueDto issueDto) throws ResourceNotFoundException, ResourceAlreadyExistsException {
         return new ResponseEntity<>(librarySystemService.booksIssued(issueDto.getBookId(), issueDto.getStudentId()), HttpStatus.CREATED);
     }
 

@@ -30,25 +30,8 @@ public class UserControllerTest {
     @InjectMocks
     UserController userController;
 
-//    @Test
-//    public void addUserTest(){
-//        List<UserProfile> users = new ArrayList<>();
-//        UserProfile user1 = new UserProfile();
-//        user1.setUserId(1);
-//        user1.setUserName("Rohit");
-//        users.add(user1);
-//        UserProfile user2 = new UserProfile();
-//        user2.setUserId(2);
-//        user2.setUserName("Kirti");
-//        users.add(user2);
-////        when(userService.addUser(user1)).thenReturn(String.valueOf(user1));
-////        userController.addUser(user1);
-//        assertEquals("User added successfully", user1, users.get(0));
-//
-//    }
-
     @Test
-    public void testAddUser() throws JsonProcessingException, ResourceAlreadyExistsException {
+    public void addUserTest() throws JsonProcessingException, ResourceAlreadyExistsException {
         UserProfile userProfile = new UserProfile();
         userProfile.setUserId(1);
         userProfile.setUserName("john");
@@ -87,7 +70,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddUserJsonProcessingException() throws JsonProcessingException {
-        UserProfile userProfile = new UserProfile(1, "john", "user");
+        UserProfile userProfile = new UserProfile(1, "john", "student");
 
         when(userService.addUser(userProfile)).thenThrow(JsonProcessingException.class);
 
@@ -99,7 +82,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testFindBookNameByUserId() throws ResourceNotFoundException {
+    public void findBookNameByUserIdTest() throws ResourceNotFoundException {
         int userId = 1;
 
         List<Integer> bookIds = List.of(101, 102);
@@ -127,7 +110,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUserWithBooksCheckedOut() {
+    public void deleteUserWithBooksCheckedOutTest() {
         int userId = 1;
         String errorMessage = "User has books checked out. Cannot delete user";
 

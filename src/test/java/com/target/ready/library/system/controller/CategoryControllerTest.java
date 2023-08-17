@@ -99,14 +99,12 @@ public class CategoryControllerTest {
 
         when(categoryService.addCategory(category)).thenThrow(JsonProcessingException.class);
 
-        //categoryController = new CategoryController(categoryService);
-
         ResponseEntity<?> responseEntity = categoryController.addCategory(category);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
         assertEquals("An error occurred while processing the request", responseEntity.getBody());
 
-        //verify(categoryService, times(1)).addCategory(category);
+
     }
 
 
@@ -120,17 +118,5 @@ public class CategoryControllerTest {
         assertEquals(HttpStatus.OK,category1.getStatusCode());
     }
 
-
-
-//    @Test
-//    public void addBookCategoryTest(){
-//        BookCategory bookCategory=new BookCategory();
-//        bookCategory.setBookId(1);
-//        bookCategory.setCategoryName("Horror");
-//        when(categoryService.addBookCategory(bookCategory)).thenReturn(bookCategory);
-//        assertNotNull(categoryController.addBookCategory(bookCategory));
-//        assertEquals("Horror",categoryController.addBookCategory(bookCategory).getCategoryName());
-//        assertEquals(1,categoryController.addBookCategory(bookCategory).getBookId());
-//    }
 
 }

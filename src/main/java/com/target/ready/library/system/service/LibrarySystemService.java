@@ -1,13 +1,12 @@
 package com.target.ready.library.system.service;
 
-
+import com.target.ready.library.system.repository.BookRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.dto.BookDto;
 import com.target.ready.library.system.dto.BookDtoUpdate;
 import com.target.ready.library.system.entity.*;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
-import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.InventoryRepository;
 import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,11 +150,9 @@ public class LibrarySystemService {
     }
 
 
-    public String booksIssued(int bookId, int userId) throws ResourceNotFoundException, ResourceAlreadyExistsException {
-
-
+    public Book booksIssued(int bookId, int userId) throws ResourceNotFoundException, ResourceAlreadyExistsException {
         try {
-           bookRepository.findByBookId(bookId);
+            Book book = bookRepository.findByBookId(bookId);
             UserCatalog userCatalog = new UserCatalog();
             userCatalog.setBookId(bookId);
             userCatalog.setUserId(userId);
@@ -163,7 +160,7 @@ public class LibrarySystemService {
             Inventory inventory = inventoryRepository.findByBookId(bookId);
             inventory.setNoOfBooksLeft(inventory.getNoOfBooksLeft() - 1);
             inventoryRepository.addInventory(inventory);
-            return "Book issued";
+            return book;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
