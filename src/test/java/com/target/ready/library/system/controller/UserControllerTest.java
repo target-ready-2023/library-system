@@ -1,11 +1,14 @@
 package com.target.ready.library.system.controller;
 
 
+import com.target.ready.library.system.entity.Book;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.target.ready.library.system.entity.UserProfile;
+import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.exceptions.ResourceAlreadyExistsException;
 import com.target.ready.library.system.exceptions.ResourceNotFoundException;
 import com.target.ready.library.system.service.UserService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,6 +16,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,24 +53,7 @@ public class UserControllerTest {
 
 
 
-    @Test
-    public void testGetAllUsers() throws ResourceNotFoundException {
-        List<UserProfile> users = new ArrayList<>();
-        UserProfile user1 = new UserProfile(1, "john", "user");
-        UserProfile user2 = new UserProfile(2, "jane", "admin");
-        users.add(user1);
-        users.add(user2);
 
-        when(userService.getAllUsers()).thenReturn(users);
-
-        ResponseEntity<?> response = userController.getAllUsers();
-        //assertEquals(HttpStatus.OK.value(), response.getStatusCodeValue());
-
-        assertEquals("", HttpStatus.OK, response.getStatusCode());
-        //assertEquals(users.size(), response.getBody().size());
-
-        verify(userService, times(1)).getAllUsers();
-    }
 
     @Test
     public void testAddUserJsonProcessingException() throws JsonProcessingException {
@@ -107,6 +94,47 @@ public class UserControllerTest {
         ResponseEntity<String> response = userController.deleteUser(user.getUserId());
         assertEquals("User deleted successfully!!", response.getBody(), "User deleted successfully!!");
 
+    }
+
+    @Test
+    public void getAllUsersTest() throws ResourceNotFoundException {
+
+        List<UserProfile> userList = new ArrayList<>();
+        userList.add(new UserProfile(1, "User1", "Librarian"));
+        userList.add(new UserProfile(2, "User2", "Student"));
+
+        when(userService.getAllUsers(0,5)).thenReturn(userList);
+        ResponseEntity<?> response = userController.getAllUsers(0);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(userList, response.getBody());
+    }
+
+    @Test
+    public void fetchAllUsersTest() throws ResourceNotFoundException {
+
+        List<UserProfile> userList = new ArrayList<>();
+        userList.add(new UserProfile(1, "User1", "Librarian"));
+        userList.add(new UserProfile(2, "User2", "Student"));
+
+        when(userService.fetchAllUsers()).thenReturn(userList);
+        ResponseEntity<?> response = userController.fetchAllUsers();
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(userList, response.getBody());
+    }
+
+    @Test
+    public void getTotalUsersCountTest() {
+        List<UserProfile> userList = new ArrayList<>();
+        userList.add(new UserProfile(1, "User1", "Librarian"));
+        userList.add(new UserProfile(2, "User2", "Student"));
+
+        Mono<Long> serviceResult=Mono.just(0L);
+        when(userService.getTotalUsersCount()).thenReturn(serviceResult);
+        ResponseEntity<Mono<Long>> categoryResult=userController.getTotalUsersCount();
+        Assertions.assertEquals(HttpStatus.OK, categoryResult.getStatusCode());
+        Assertions.assertEquals(serviceResult,categoryResult.getBody());
     }
 
     @Test

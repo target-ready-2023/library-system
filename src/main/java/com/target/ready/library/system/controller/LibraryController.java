@@ -60,13 +60,11 @@ public class LibraryController {
                     content = @Content(
                             mediaType = "application/json"
                     ))})
-    public ResponseEntity<Mono<Long>> getTotalBookCount() {
-        try {
+    public ResponseEntity<Mono<Long>> getTotalBookCount() throws ResourceNotFoundException{
+
             Mono<Long> totalCount = librarySystemService.getTotalBookCount();
             return new ResponseEntity<>(totalCount, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
     }
 
     @PostMapping("/inventory/books")

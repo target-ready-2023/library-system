@@ -10,6 +10,7 @@ import com.target.ready.library.system.repository.BookRepository;
 import com.target.ready.library.system.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,16 @@ public class UserService {
     }
 
 
-    public List<UserProfile> getAllUsers() throws ResourceNotFoundException{
-        return userRepository.getAllUsers();
+    public List<UserProfile> getAllUsers(int pageNumber,int pageSize) throws ResourceNotFoundException{
+        return userRepository.getAllUsers(pageNumber,pageSize);
     }
 
+    public List<UserProfile> fetchAllUsers() throws ResourceNotFoundException{
+        return userRepository.fetchAllUsers();
+    }
+    public Mono<Long> getTotalUsersCount() {
+        return userRepository.totalUsers();
+    }
     public List<String> findBookNameByUserId(int userId) throws ResourceNotFoundException{
         List<String> bookNames = new ArrayList<>();
         List<UserCatalog> userCatalogs = userRepository.findBooksByUserId(userId);

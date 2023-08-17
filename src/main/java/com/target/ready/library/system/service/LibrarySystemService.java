@@ -116,7 +116,7 @@ public class LibrarySystemService {
     public String deleteBook(int bookId) throws ResourceNotFoundException{
 
             bookRepository.deleteBook(bookId);
-        System.out.println("Ananya");
+
             categoryService.deleteBookCategory(bookId);
             return "Book deleted Successfully!";
     }

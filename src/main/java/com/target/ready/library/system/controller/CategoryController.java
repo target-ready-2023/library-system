@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,12 +54,27 @@ public class CategoryController {
                     ))})
     public ResponseEntity<?> findAllCategories(@RequestParam(value = "page_number", defaultValue = "0", required = false) Integer pageNumber) throws ResourceNotFoundException {
         List<Category> categories;
-        int pageSize = 10;
+        int pageSize = 5;
             if (pageNumber < 0) {
                 return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
             }
             categories = categoryService.findAllCategories(pageNumber, pageSize);
             return new ResponseEntity<>(categories, HttpStatus.OK);
+
+    }
+
+    @GetMapping("categories/total_count")
+    @Operation(
+            description = "Get all the categories count",
+            responses = {@ApiResponse(
+                    responseCode = "200",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))})
+    public ResponseEntity<Mono<Long>> getTotalCategoryCount() throws ResourceNotFoundException{
+
+            Mono<Long> totalCount = categoryService.getTotalCategoryCount();
+            return new ResponseEntity<>(totalCount, HttpStatus.OK);
 
     }
 
